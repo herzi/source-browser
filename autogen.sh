@@ -34,4 +34,4 @@ fi
 
 NOCONFIGURE="yes" GNOME_DATADIR="$gnome_datadir" USE_GNOME2_MACROS=1 . $gnome_autogen
 
-$srcdir/configure --enable-maintainer-mode `$(which grep) ^DISTCHECK configure.in | sed 's/^DISTCHECK_CONFIGURE_FLAGS="\(.*\)"$/\1/'` $@
+$srcdir/configure --enable-maintainer-mode `$(which grep) ^DISTCHECK $srcdir/configure.ac | sed 's/^DISTCHECK_CONFIGURE_FLAGS="\(.*\)"$/\1/'` $@
