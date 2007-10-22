@@ -84,7 +84,7 @@ load_history (GdkScreen  * screen,
 	GPid pid = 0;
 	gint out_fd = 0;
 
-	lines_read = 1;
+	lines_read = 1; // FIXME: this is a bug in GtkTextView (it doesn't swallow the trailing \n)
 
 	argv[2] = g_path_get_basename (file_path);
 	gdk_spawn_on_screen_with_pipes (screen,
