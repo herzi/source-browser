@@ -30,8 +30,14 @@ static GtkWidget* tview = NULL;
 static void
 watch_cb (GPid pid,
 	  gint status,
-	  gpointer unused)
+	  gpointer data)
 {
+	GIOChannel* channel = data;
+	GString* string = g_string_new ("");
+	while (G_IO_STATUS_NORMAL == g_io_channel_read_line_string (channel, string, NULL, NULL)) {
+		g_print ("%s", string->str);
+	}
+	g_string_free (string, TRUE);
 	g_spawn_close_pid (pid);
 }
 
@@ -42,7 +48,7 @@ load_history (GdkScreen  * screen,
 	gchar* working_folder = g_path_get_dirname (file_path);
 	gchar* argv[] = {
 		"git-blame",
-		"--interactive",
+		"--incremental",
 		NULL,
 		NULL
 	};
@@ -61,12 +67,13 @@ load_history (GdkScreen  * screen,
 			     &out_fd,
 			     NULL,
 			     NULL); // FIXME: error, pipes, flags
+	GIOChannel* out_chan = g_io_channel_unix_new (out_fd);
 	g_free (argv[2]);
 	g_free (working_folder);
 
 	g_child_watch_add (pid,
 			   watch_cb,
-			   NULL);
+			   out_chan);
 }
 
 static void
@@ -95,6 +102,9 @@ selection_changed_cb (GtkFileChooser* chooser)
 	load_history (gtk_widget_get_screen (GTK_WIDGET (chooser)),
 		      path);
 	g_free (path);
+
+	// FIXME: disable loading of new files until the history is loaded
+	// FIXME: make history loading cancellable
 }
 
 int
