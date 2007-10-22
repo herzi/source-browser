@@ -30,7 +30,26 @@ static GtkWidget* tview = NULL;
 static void
 selection_changed_cb (GtkFileChooser* chooser)
 {
-	g_print ("file selected: %s\n", gtk_file_chooser_get_filename (chooser));
+	GMappedFile* file;
+	GError* error = NULL;
+	gchar* path;
+
+	path = gtk_file_chooser_get_filename (chooser);
+	g_print ("file selected: %s\n", path);
+	file = g_mapped_file_new (path, FALSE, &error);
+	g_free (path);
+	if (!file) {
+		// FIXME: open popup
+		g_warning ("%s", error->message);
+		g_error_free (error);
+		return;
+	}
+
+	gtk_text_buffer_set_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (tview)),
+				  g_mapped_file_get_contents (file),
+				  g_mapped_file_get_length (file));
+
+	g_mapped_file_free (file);
 }
 
 int
