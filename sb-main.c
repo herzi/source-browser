@@ -37,6 +37,7 @@ main (int   argc,
 {
 	GtkWidget* window;
 	GtkWidget* chooser;
+	GtkWidget* vbox;
 
 	gtk_init (&argc, &argv);
 
@@ -48,10 +49,17 @@ main (int   argc,
 	gtk_window_set_title        (GTK_WINDOW (window),
 				     _("Source Browser"));
 
+	vbox = gtk_vbox_new (FALSE, 6);
+	gtk_container_add (GTK_CONTAINER (window),
+			   vbox);
+
 	chooser = gtk_file_chooser_button_new (_("Choose File"),
 					       GTK_FILE_CHOOSER_ACTION_OPEN);
-	gtk_container_add (GTK_CONTAINER (window),
-			   chooser);
+	gtk_box_pack_start (GTK_BOX (vbox),
+			    chooser,
+			    FALSE,
+			    FALSE,
+			    0);
 
 	g_signal_connect (chooser, "selection-changed",
 			  G_CALLBACK (selection_changed_cb), NULL);
