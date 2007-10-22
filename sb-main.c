@@ -25,6 +25,8 @@
 
 #include <glib/gi18n.h>
 
+static GtkWidget* tview = NULL;
+
 static void
 selection_changed_cb (GtkFileChooser* chooser)
 {
@@ -39,7 +41,6 @@ main (int   argc,
 	GtkWidget* chooser;
 	GtkWidget* vbox;
 	GtkWidget* scrolled;
-	GtkWidget* tview;
 
 	gtk_init (&argc, &argv);
 
