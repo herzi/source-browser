@@ -28,6 +28,48 @@
 static GtkWidget* tview = NULL;
 
 static void
+watch_cb (GPid pid,
+	  gint status,
+	  gpointer unused)
+{
+	g_spawn_close_pid (pid);
+}
+
+static void
+load_history (GdkScreen  * screen,
+	      gchar const* file_path)
+{
+	gchar* working_folder = g_path_get_dirname (file_path);
+	gchar* argv[] = {
+		"git-blame",
+		"--interactive",
+		NULL,
+		NULL
+	};
+	GPid pid = 0;
+	gint out_fd = 0;
+	argv[2] = g_path_get_basename (file_path);
+	gdk_spawn_on_screen_with_pipes (screen,
+			     working_folder,
+			     argv,
+			     NULL,
+			     G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+			     NULL,
+			     NULL,
+			     &pid,
+			     NULL,
+			     &out_fd,
+			     NULL,
+			     NULL); // FIXME: error, pipes, flags
+	g_free (argv[2]);
+	g_free (working_folder);
+
+	g_child_watch_add (pid,
+			   watch_cb,
+			   NULL);
+}
+
+static void
 selection_changed_cb (GtkFileChooser* chooser)
 {
 	GMappedFile* file;
@@ -35,13 +77,12 @@ selection_changed_cb (GtkFileChooser* chooser)
 	gchar* path;
 
 	path = gtk_file_chooser_get_filename (chooser);
-	g_print ("file selected: %s\n", path);
 	file = g_mapped_file_new (path, FALSE, &error);
-	g_free (path);
 	if (!file) {
 		// FIXME: open popup
 		g_warning ("%s", error->message);
 		g_error_free (error);
+		g_free (path);
 		return;
 	}
 
@@ -50,6 +91,10 @@ selection_changed_cb (GtkFileChooser* chooser)
 				  g_mapped_file_get_length (file));
 
 	g_mapped_file_free (file);
+
+	load_history (gtk_widget_get_screen (GTK_WIDGET (chooser)),
+		      path);
+	g_free (path);
 }
 
 int
