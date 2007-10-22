@@ -25,6 +25,12 @@
 
 #include <glib/gi18n.h>
 
+static void
+selection_changed_cb (GtkFileChooser* chooser)
+{
+	g_print ("file selected: %s\n", gtk_file_chooser_get_filename (chooser));
+}
+
 int
 main (int   argc,
       char**argv)
@@ -46,6 +52,9 @@ main (int   argc,
 					       GTK_FILE_CHOOSER_ACTION_OPEN);
 	gtk_container_add (GTK_CONTAINER (window),
 			   chooser);
+
+	g_signal_connect (chooser, "selection-changed",
+			  G_CALLBACK (selection_changed_cb), NULL);
 
 	gtk_widget_show_all (window);
 	gtk_main ();
