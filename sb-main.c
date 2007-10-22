@@ -25,11 +25,13 @@
 
 #include <glib/gi18n.h>
 
-static GtkWidget* tview = NULL;
+static GtkWidget* tview  = NULL;
+static GtkWidget* status = NULL;
+static gint lines_read = 0;
 
 static void
 watch_cb (GPid pid,
-	  gint status,
+	  gint status_,
 	  gpointer data)
 {
 	GIOChannel* channel = data;
@@ -42,7 +44,14 @@ watch_cb (GPid pid,
 			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 			gchar** words = g_strsplit (string->str, " ", -1);
 			revision = g_strdup (words[0]);
+			lines_read += atoi (words[3]);
+			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (status),
+						       1.0 * lines_read / gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (tview))));
 			g_strfreev (words);
+			gchar* message = g_strdup_printf (_("%d / %d"), lines_read, gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (tview))));
+			gtk_progress_bar_set_text (GTK_PROGRESS_BAR (status),
+						   message);
+			g_free (message);
 		} else if (g_str_has_prefix (string->str, "filename ")) {
 			g_free (revision);
 			revision = NULL;
@@ -74,6 +83,9 @@ load_history (GdkScreen  * screen,
 	};
 	GPid pid = 0;
 	gint out_fd = 0;
+
+	lines_read = 1;
+
 	argv[2] = g_path_get_basename (file_path);
 	gdk_spawn_on_screen_with_pipes (screen,
 			     working_folder,
@@ -168,6 +180,13 @@ main (int   argc,
 	tview = gtk_text_view_new ();
 	gtk_container_add (GTK_CONTAINER (scrolled),
 			   tview);
+
+	status = gtk_progress_bar_new ();
+	gtk_box_pack_start (GTK_BOX (vbox),
+			    status,
+			    FALSE,
+			    FALSE,
+			    0);
 
 	gtk_widget_show_all (window);
 	gtk_main ();
