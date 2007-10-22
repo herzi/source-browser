@@ -39,6 +39,7 @@ main (int   argc,
 	GtkWidget* chooser;
 	GtkWidget* vbox;
 	GtkWidget* scrolled;
+	GtkWidget* tview;
 
 	gtk_init (&argc, &argv);
 
@@ -62,12 +63,16 @@ main (int   argc,
 			    FALSE,
 			    0);
 
+	g_signal_connect (chooser, "selection-changed",
+			  G_CALLBACK (selection_changed_cb), NULL);
+
 	scrolled = gtk_scrolled_window_new (NULL, NULL);
 	gtk_box_pack_start_defaults (GTK_BOX (vbox),
 				     scrolled);
 
-	g_signal_connect (chooser, "selection-changed",
-			  G_CALLBACK (selection_changed_cb), NULL);
+	tview = gtk_text_view_new ();
+	gtk_container_add (GTK_CONTAINER (scrolled),
+			   tview);
 
 	gtk_widget_show_all (window);
 	gtk_main ();
