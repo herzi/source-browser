@@ -34,9 +34,27 @@ watch_cb (GPid pid,
 {
 	GIOChannel* channel = data;
 	GString* string = g_string_new ("");
+
+	gchar* revision = NULL;
+
 	while (G_IO_STATUS_NORMAL == g_io_channel_read_line_string (channel, string, NULL, NULL)) {
-		g_print ("%s", string->str);
+		if (!revision) {
+			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
+			gchar** words = g_strsplit (string->str, " ", -1);
+			revision = g_strdup (words[0]);
+			g_strfreev (words);
+		} else if (g_str_has_prefix (string->str, "filename ")) {
+			g_free (revision);
+			revision = NULL;
+#if 0
+		} else {
+			// FIXME: meta-information about the commit
+			g_debug ("Got unknown line: %s",
+				 string->str);
+#endif
+		}
 	}
+
 	g_string_free (string, TRUE);
 	g_spawn_close_pid (pid);
 }
@@ -49,6 +67,8 @@ load_history (GdkScreen  * screen,
 	gchar* argv[] = {
 		"git-blame",
 		"--incremental",
+		"-M",
+		"-C",
 		NULL,
 		NULL
 	};
