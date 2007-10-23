@@ -66,9 +66,8 @@ io_watch_cb (GIOChannel  * channel,
 
 	state = g_io_channel_read_unichar (channel, &read, NULL);
 	if (G_LIKELY (read != '\n')) {
-		//g_string_append_unichar (string, read);
+		g_string_append_unichar (string, read);
 	} else {
-#if 0
 		if (!revision) {
 			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 			gchar** words = g_strsplit (string->str, " ", -1);
@@ -92,10 +91,9 @@ io_watch_cb (GIOChannel  * channel,
 				 string->str);
 #endif
 		}
-#endif
-		//g_string_set_size (string, 0);
+		g_string_free (string, TRUE);
+		string = NULL;
 	}
-	//g_string_free (string, TRUE);
 
 	if (state == G_IO_STATUS_NORMAL) {
 		return TRUE;
