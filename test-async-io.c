@@ -23,10 +23,30 @@
  * if advised of the possibility of such damage.
  */
 
+#include <glib.h>
+
+static gboolean
+idle_cb (gpointer unused)
+{
+	return FALSE;
+}
+
 int
 main (int   argc,
       char**argv)
 {
+	GMainLoop* loop;
+	guint      idle_handler;
+
+	loop = g_main_loop_new (NULL, FALSE);
+	idle_handler = g_idle_add_full (G_MAXINT,
+					idle_cb,
+					NULL,
+					NULL);
+
+	g_source_remove   (idle_handler);
+	g_main_loop_unref (loop);
+
 	return 0;
 }
 
