@@ -25,17 +25,26 @@
 
 #include <glib.h>
 
+static GMainLoop* loop = NULL;
+static int wrote_messages = 0;
+
 static gboolean
 idle_cb (gpointer unused)
 {
-	return FALSE;
+	wrote_messages++;
+
+	if (wrote_messages < 20) {
+		return TRUE;
+	} else {
+		g_main_loop_quit (loop);
+		return FALSE;
+	}
 }
 
 int
 main (int   argc,
       char**argv)
 {
-	GMainLoop* loop;
 	guint      idle_handler;
 
 	loop = g_main_loop_new (NULL, FALSE);
@@ -44,7 +53,7 @@ main (int   argc,
 					NULL,
 					NULL);
 
-	g_source_remove   (idle_handler);
+	g_main_loop_run   (loop);
 	g_main_loop_unref (loop);
 
 	return 0;
