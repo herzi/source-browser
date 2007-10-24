@@ -61,6 +61,7 @@ io_watch_cb (GIOChannel  * channel,
 	static GString* string = NULL;
 	static gchar* revision = NULL;
 	gunichar read = 0;
+	GtkWidget* window = GTK_WIDGET (unused);
 
 	if (G_UNLIKELY (!string)) {
 		string = g_string_new ("");
@@ -145,7 +146,7 @@ load_history (GtkWidget  * window,
 	io = g_io_add_watch (out_chan,
 			     G_IO_IN | G_IO_PRI,
 			     io_watch_cb,
-			     NULL);
+			     window);
 
 	g_child_watch_add (pid,
 			   watch_cb,
