@@ -44,8 +44,9 @@ watch_cb (GPid pid,
 	  gint status_,
 	  gpointer data)
 {
+	GIOChannel* channel = data;
 	g_print ("pre-done.\n");
-	while (io_watch_cb (data, G_IO_IN, NULL)) {} // FIXME: finish
+	while (io_watch_cb (channel, G_IO_IN, NULL)) {} // FIXME: finish
 	//g_source_remove (io);
 	io = 0;
 	g_print ("done.\n");
