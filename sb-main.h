@@ -26,6 +26,7 @@
 
 #include <gtk/gtk.h>
 
-void selection_changed_cb (GtkFileChooser* chooser);
+void selection_changed_cb (GtkFileChooser* chooser,
+			   GtkWidget     * window);
 
 #endif /* !SB_MAIN_H */

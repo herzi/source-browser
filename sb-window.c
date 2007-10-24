@@ -50,7 +50,7 @@ sb_window_new (void)
 	chooser = gtk_file_chooser_button_new (_("Choose File"),
 					       GTK_FILE_CHOOSER_ACTION_OPEN);
 	g_signal_connect (chooser, "selection-changed",
-			  G_CALLBACK (selection_changed_cb), NULL);
+			  G_CALLBACK (selection_changed_cb), result);
 	gtk_box_pack_start (GTK_BOX (vbox),
 			    chooser,
 			    FALSE,

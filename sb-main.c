@@ -153,7 +153,8 @@ load_history (GdkScreen  * screen,
 }
 
 void
-selection_changed_cb (GtkFileChooser* chooser)
+selection_changed_cb (GtkFileChooser* chooser,
+		      GtkWidget     * window)
 {
 	GMappedFile* file;
 	GError* error = NULL;
@@ -169,7 +170,7 @@ selection_changed_cb (GtkFileChooser* chooser)
 		return;
 	}
 
-	gtk_text_buffer_set_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (tview)),
+	gtk_text_buffer_set_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window))),
 				  g_mapped_file_get_contents (file),
 				  g_mapped_file_get_length (file));
 
