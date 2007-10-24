@@ -30,7 +30,6 @@
 
 #include <glib/gi18n.h>
 
-static GtkWidget* tview  = NULL;
 static GtkWidget* status = NULL;
 static gint lines_read = 0;
 static guint io = 0;
@@ -57,13 +56,13 @@ watch_cb (GPid pid,
 static gboolean
 io_watch_cb (GIOChannel  * channel,
 	     GIOCondition  condition,
-	     gpointer      unused)
+	     gpointer      data)
 {
 	GIOStatus state = G_IO_STATUS_NORMAL;
 	static GString* string = NULL;
 	static gchar* revision = NULL;
 	gunichar read = 0;
-	GtkWidget* window = GTK_WIDGET (unused);
+	GtkWidget* window = GTK_WIDGET (data);
 
 	if (G_UNLIKELY (!string)) {
 		string = g_string_new ("");
@@ -82,9 +81,9 @@ io_watch_cb (GIOChannel  * channel,
 			revision = g_strdup (words[0]);
 			lines_read += atoi (words[3]);
 			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (status),
-						       1.0 * lines_read / gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (tview))));
+						       1.0 * lines_read / gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window)))));
 			g_strfreev (words);
-			gchar* message = g_strdup_printf (_("%d / %d"), lines_read, gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (tview))));
+			gchar* message = g_strdup_printf (_("%d / %d"), lines_read, gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window)))));
 			gtk_progress_bar_set_text (GTK_PROGRESS_BAR (status),
 						   message);
 			g_free (message);
@@ -203,8 +202,6 @@ main (int   argc,
 	gtk_init (&argc, &argv);
 
 	window = sb_window_new ();
-
-	tview = sb_window_get_display (window);
 
 	status = sb_window_get_status (window);
 
