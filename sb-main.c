@@ -45,8 +45,9 @@ watch_cb (GPid pid,
 	  gpointer data)
 {
 	GIOChannel* channel = ((gpointer*)data)[0];
+	GtkWidget * window  = ((gpointer*)data)[1];
 	g_print ("pre-done.\n");
-	while (io_watch_cb (channel, G_IO_IN, NULL)) {} // FIXME: finish
+	while (io_watch_cb (channel, G_IO_IN, window)) {} // FIXME: finish
 	//g_source_remove (io);
 	io = 0;
 	g_print ("done.\n");
@@ -150,12 +151,15 @@ load_history (GtkWidget  * window,
 			     io_watch_cb,
 			     window);
 
-	channel_and_window = g_new0 (gpointer, 2);
+	channel_and_window = g_new (gpointer, 2);
 	channel_and_window[0] = out_chan;
+	channel_and_window[1] = window;
 
-	g_child_watch_add (pid,
-			   watch_cb,
-			   channel_and_window);
+	g_child_watch_add_full (G_PRIORITY_DEFAULT,
+				pid,
+				watch_cb,
+				channel_and_window,
+				g_free);
 }
 
 void
