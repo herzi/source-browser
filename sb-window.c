@@ -29,12 +29,25 @@ GtkWidget*
 sb_window_new (void)
 {
 	GtkWidget* result = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	GtkWidget* vbox   = gtk_vbox_new (FALSE, 6);
 	g_signal_connect (result, "destroy",
 			  G_CALLBACK (gtk_main_quit), NULL);
 	gtk_window_set_default_size (GTK_WINDOW (result),
 				     400, 300);
 	gtk_window_set_title        (GTK_WINDOW (result),
 				     _("Source Browser"));
+
+	gtk_container_add (GTK_CONTAINER (result),
+			   vbox);
+
 	return result;
+}
+
+GtkWidget*
+sb_window_get_vbox (GtkWidget* self)
+{
+	g_return_val_if_fail (GTK_IS_WINDOW (self), NULL);
+
+	return gtk_bin_get_child (GTK_BIN (self));
 }
 

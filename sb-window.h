@@ -28,7 +28,8 @@
 
 G_BEGIN_DECLS
 
-GtkWidget* sb_window_new (void);
+GtkWidget* sb_window_new      (void);
+GtkWidget* sb_window_get_vbox (GtkWidget* self);
 
 G_END_DECLS
 

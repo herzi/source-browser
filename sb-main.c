@@ -194,9 +194,7 @@ main (int   argc,
 
 	window = sb_window_new ();
 
-	vbox = gtk_vbox_new (FALSE, 6);
-	gtk_container_add (GTK_CONTAINER (window),
-			   vbox);
+	vbox = sb_window_get_vbox (window);
 
 	chooser = gtk_file_chooser_button_new (_("Choose File"),
 					       GTK_FILE_CHOOSER_ACTION_OPEN);
