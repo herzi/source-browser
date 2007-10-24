@@ -24,5 +24,8 @@
 #ifndef SB_MAIN_H
 #define SB_MAIN_H
 
+#include <gtk/gtk.h>
+
+void selection_changed_cb (GtkFileChooser* chooser);
 
 #endif /* !SB_MAIN_H */

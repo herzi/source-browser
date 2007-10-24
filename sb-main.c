@@ -21,6 +21,8 @@
  * USA
  */
 
+#include "sb-main.h"
+
 #include <gtk/gtk.h>
 
 #include "sb-display.h"
@@ -150,7 +152,7 @@ load_history (GdkScreen  * screen,
 			   out_chan);
 }
 
-static void
+void
 selection_changed_cb (GtkFileChooser* chooser)
 {
 	GMappedFile* file;
