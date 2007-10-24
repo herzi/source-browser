@@ -23,6 +23,7 @@
 
 #include <gtk/gtk.h>
 
+#include "sb-display.h"
 #include "sb-window.h"
 
 #include <glib/gi18n.h>
@@ -211,7 +212,7 @@ main (int   argc,
 	gtk_box_pack_start_defaults (GTK_BOX (vbox),
 				     scrolled);
 
-	tview = gtk_text_view_new ();
+	tview = sb_display_new ();
 	gtk_container_add (GTK_CONTAINER (scrolled),
 			   tview);
 
