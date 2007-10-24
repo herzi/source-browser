@@ -30,7 +30,6 @@
 
 #include <glib/gi18n.h>
 
-//static GtkWidget* status = NULL;
 static gint lines_read = 0;
 static guint io = 0;
 
@@ -197,13 +196,8 @@ int
 main (int   argc,
       char**argv)
 {
-	GtkWidget* window;
-
 	gtk_init (&argc, &argv);
-
-	window = sb_window_new ();
-
-	gtk_widget_show_all (window);
+	gtk_widget_show_all (sb_window_new ());
 	gtk_main ();
 	return 0;
 }
