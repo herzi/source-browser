@@ -188,25 +188,17 @@ main (int   argc,
       char**argv)
 {
 	GtkWidget* window;
-	GtkWidget* vbox;
-	GtkWidget* scrolled;
 
 	gtk_init (&argc, &argv);
 
 	window = sb_window_new ();
 
-	vbox = sb_window_get_vbox (window);
-
-	scrolled = gtk_scrolled_window_new (NULL, NULL);
-	gtk_box_pack_start_defaults (GTK_BOX (vbox),
-				     scrolled);
-
 	tview = sb_display_new ();
-	gtk_container_add (GTK_CONTAINER (scrolled),
+	gtk_container_add (GTK_CONTAINER (sb_window_get_swin (window)),
 			   tview);
 
 	status = gtk_progress_bar_new ();
-	gtk_box_pack_start (GTK_BOX (vbox),
+	gtk_box_pack_start (GTK_BOX (sb_window_get_vbox (window)),
 			    status,
 			    FALSE,
 			    FALSE,
