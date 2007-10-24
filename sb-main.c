@@ -195,12 +195,7 @@ main (int   argc,
 
 	tview = sb_window_get_display (window);
 
-	status = gtk_progress_bar_new ();
-	gtk_box_pack_start (GTK_BOX (sb_window_get_vbox (window)),
-			    status,
-			    FALSE,
-			    FALSE,
-			    0);
+	status = sb_window_get_status (window);
 
 	gtk_widget_show_all (window);
 	gtk_main ();

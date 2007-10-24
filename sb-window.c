@@ -35,6 +35,7 @@ sb_window_new (void)
 	GtkWidget* chooser;
 	GtkWidget* display;
 	GtkWidget* scrolled;
+	GtkWidget* status;
 
 	g_signal_connect (result, "destroy",
 			  G_CALLBACK (gtk_main_quit), NULL);
@@ -64,6 +65,13 @@ sb_window_new (void)
 	gtk_container_add (GTK_CONTAINER (scrolled),
 			   display);
 
+	status = gtk_progress_bar_new ();
+	gtk_box_pack_start (GTK_BOX (vbox),
+			    status,
+			    FALSE,
+			    FALSE,
+			    0);
+
 	return result;
 }
 
@@ -75,8 +83,9 @@ sb_window_get_display (GtkWidget* self)
 	return gtk_bin_get_child (GTK_BIN (sb_window_get_swin (self)));
 }
 
-GtkWidget*
-sb_window_get_swin (GtkWidget* self)
+static GtkWidget*
+sb_window_get_nth_in_box (GtkWidget* self,
+			  guint      n)
 {
 	GtkWidget* result;
 	GList    * children;
@@ -84,10 +93,26 @@ sb_window_get_swin (GtkWidget* self)
 	g_return_val_if_fail (GTK_IS_WINDOW (self), NULL);
 
 	children = gtk_container_get_children (GTK_CONTAINER (sb_window_get_vbox (self)));
-	result = g_list_nth_data (children, 1);
+	result = g_list_nth_data (children, n);
 	g_list_free (children);
 
 	return result;
+}
+
+GtkWidget*
+sb_window_get_status (GtkWidget* self)
+{
+	g_return_val_if_fail (GTK_IS_WINDOW (self), NULL);
+
+	return sb_window_get_nth_in_box (self, 2);
+}
+
+GtkWidget*
+sb_window_get_swin (GtkWidget* self)
+{
+	g_return_val_if_fail (GTK_IS_WINDOW (self), NULL);
+
+	return sb_window_get_nth_in_box (self, 1);
 }
 
 GtkWidget*
