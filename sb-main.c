@@ -108,7 +108,7 @@ io_watch_cb (GIOChannel  * channel,
 }
 
 static void
-load_history (GdkScreen  * screen,
+load_history (GtkWidget  * window,
 	      gchar const* file_path)
 {
 	gchar* working_folder = g_path_get_dirname (file_path);
@@ -126,7 +126,7 @@ load_history (GdkScreen  * screen,
 	lines_read = 1; // FIXME: this is a bug in GtkTextView (it doesn't swallow the trailing \n)
 
 	argv[2] = g_path_get_basename (file_path);
-	gdk_spawn_on_screen_with_pipes (screen,
+	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (window),
 			     working_folder,
 			     argv,
 			     NULL,
@@ -176,7 +176,7 @@ selection_changed_cb (GtkFileChooser* chooser,
 
 	g_mapped_file_free (file);
 
-	load_history (gtk_widget_get_screen (GTK_WIDGET (chooser)),
+	load_history (window,
 		      path);
 	g_free (path);
 
