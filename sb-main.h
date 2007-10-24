@@ -28,5 +28,7 @@
 
 void selection_changed_cb (GtkFileChooser* chooser,
 			   GtkWidget     * window);
+void load_history         (GtkWidget     * window,
+			   gchar const   * path);
 
 #endif /* !SB_MAIN_H */

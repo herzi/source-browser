@@ -29,10 +29,12 @@
 G_BEGIN_DECLS
 
 GtkWidget* sb_window_new         (void);
-GtkWidget* sb_window_get_display (GtkWidget* self);
-GtkWidget* sb_window_get_status  (GtkWidget* self);
-GtkWidget* sb_window_get_swin    (GtkWidget* self);
-GtkWidget* sb_window_get_vbox    (GtkWidget* self);
+GtkWidget* sb_window_get_display (GtkWidget  * self);
+GtkWidget* sb_window_get_status  (GtkWidget  * self);
+GtkWidget* sb_window_get_swin    (GtkWidget  * self);
+GtkWidget* sb_window_get_vbox    (GtkWidget  * self);
+void       sb_window_open        (GtkWidget  * self,
+				  gchar const* path);
 
 G_END_DECLS
 

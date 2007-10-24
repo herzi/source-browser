@@ -123,3 +123,30 @@ sb_window_get_vbox (GtkWidget* self)
 	return gtk_bin_get_child (GTK_BIN (self));
 }
 
+void
+sb_window_open (GtkWidget  * window,
+		gchar const* path)
+{
+	GMappedFile* file;
+	GError* error = NULL;
+	file = g_mapped_file_new (path, FALSE, &error);
+	if (!file) {
+		// FIXME: open popup
+		g_warning ("%s", error->message);
+		g_error_free (error);
+		return;
+	}
+
+	gtk_text_buffer_set_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window))),
+				  g_mapped_file_get_contents (file),
+				  g_mapped_file_get_length (file));
+
+	g_mapped_file_free (file);
+
+	load_history (window,
+		      path);
+
+	// FIXME: disable loading of new files until the history is loaded
+	// FIXME: make history loading cancellable
+}
+
