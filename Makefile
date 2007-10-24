@@ -9,4 +9,7 @@ test-async-io: test-async-io.c
 check: test-async-io
 	@./test-async-io && echo "test-async-io passed" || (echo "FATAL: test-async-io failed"; exit 1)
 
-.PHONY: check
+clean:
+	rm -rf source-browser test-async-io
+
+.PHONY: check clean
