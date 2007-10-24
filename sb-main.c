@@ -30,7 +30,7 @@
 
 #include <glib/gi18n.h>
 
-static GtkWidget* status = NULL;
+//static GtkWidget* status = NULL;
 static gint lines_read = 0;
 static guint io = 0;
 
@@ -80,11 +80,11 @@ io_watch_cb (GIOChannel  * channel,
 			gchar** words = g_strsplit (string->str, " ", -1);
 			revision = g_strdup (words[0]);
 			lines_read += atoi (words[3]);
-			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (status),
+			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (sb_window_get_status (window)),
 						       1.0 * lines_read / gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window)))));
 			g_strfreev (words);
 			gchar* message = g_strdup_printf (_("%d / %d"), lines_read, gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window)))));
-			gtk_progress_bar_set_text (GTK_PROGRESS_BAR (status),
+			gtk_progress_bar_set_text (GTK_PROGRESS_BAR (sb_window_get_status (window)),
 						   message);
 			g_free (message);
 		} else if (g_str_has_prefix (string->str, "filename ")) {
@@ -202,8 +202,6 @@ main (int   argc,
 	gtk_init (&argc, &argv);
 
 	window = sb_window_new ();
-
-	status = sb_window_get_status (window);
 
 	gtk_widget_show_all (window);
 	gtk_main ();
