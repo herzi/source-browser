@@ -44,7 +44,7 @@ watch_cb (GPid pid,
 	  gint status_,
 	  gpointer data)
 {
-	GIOChannel* channel = data;
+	GIOChannel* channel = ((gpointer*)data)[0];
 	g_print ("pre-done.\n");
 	while (io_watch_cb (channel, G_IO_IN, NULL)) {} // FIXME: finish
 	//g_source_remove (io);
@@ -124,6 +124,7 @@ load_history (GtkWidget  * window,
 	};
 	GPid pid = 0;
 	gint out_fd = 0;
+	gpointer* channel_and_window;
 
 	lines_read = 1; // FIXME: this is a bug in GtkTextView (it doesn't swallow the trailing \n)
 
@@ -149,9 +150,12 @@ load_history (GtkWidget  * window,
 			     io_watch_cb,
 			     window);
 
+	channel_and_window = g_new0 (gpointer, 2);
+	channel_and_window[0] = out_chan;
+
 	g_child_watch_add (pid,
 			   watch_cb,
-			   out_chan);
+			   channel_and_window);
 }
 
 void
