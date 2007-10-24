@@ -193,9 +193,7 @@ main (int   argc,
 
 	window = sb_window_new ();
 
-	tview = sb_display_new ();
-	gtk_container_add (GTK_CONTAINER (sb_window_get_swin (window)),
-			   tview);
+	tview = sb_window_get_display (window);
 
 	status = gtk_progress_bar_new ();
 	gtk_box_pack_start (GTK_BOX (sb_window_get_vbox (window)),

@@ -23,6 +23,7 @@
 
 #include "sb-window.h"
 
+#include "sb-display.h"
 #include "sb-main.h"
 #include <glib/gi18n.h>
 
@@ -32,6 +33,7 @@ sb_window_new (void)
 	GtkWidget* result = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	GtkWidget* vbox   = gtk_vbox_new (FALSE, 6);
 	GtkWidget* chooser;
+	GtkWidget* display;
 	GtkWidget* scrolled;
 
 	g_signal_connect (result, "destroy",
@@ -58,7 +60,19 @@ sb_window_new (void)
 	gtk_box_pack_start_defaults (GTK_BOX (vbox),
 				     scrolled);
 
+	display = sb_display_new ();
+	gtk_container_add (GTK_CONTAINER (scrolled),
+			   display);
+
 	return result;
+}
+
+GtkWidget*
+sb_window_get_display (GtkWidget* self)
+{
+	g_return_val_if_fail (GTK_IS_WINDOW (self), NULL);
+
+	return gtk_bin_get_child (GTK_BIN (sb_window_get_swin (self)));
 }
 
 GtkWidget*
