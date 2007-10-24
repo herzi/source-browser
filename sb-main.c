@@ -192,12 +192,6 @@ main (int   argc,
 	gtk_init (&argc, &argv);
 
 	window = sb_window_new ();
-	g_signal_connect (window, "destroy",
-			  G_CALLBACK (gtk_main_quit), NULL);
-	gtk_window_set_default_size (GTK_WINDOW (window),
-				     400, 300);
-	gtk_window_set_title        (GTK_WINDOW (window),
-				     _("Source Browser"));
 
 	vbox = gtk_vbox_new (FALSE, 6);
 	gtk_container_add (GTK_CONTAINER (window),
@@ -205,14 +199,13 @@ main (int   argc,
 
 	chooser = gtk_file_chooser_button_new (_("Choose File"),
 					       GTK_FILE_CHOOSER_ACTION_OPEN);
+	g_signal_connect (chooser, "selection-changed",
+			  G_CALLBACK (selection_changed_cb), NULL);
 	gtk_box_pack_start (GTK_BOX (vbox),
 			    chooser,
 			    FALSE,
 			    FALSE,
 			    0);
-
-	g_signal_connect (chooser, "selection-changed",
-			  G_CALLBACK (selection_changed_cb), NULL);
 
 	scrolled = gtk_scrolled_window_new (NULL, NULL);
 	gtk_box_pack_start_defaults (GTK_BOX (vbox),

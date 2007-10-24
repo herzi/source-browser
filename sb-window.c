@@ -23,10 +23,18 @@
 
 #include "sb-window.h"
 
+#include <glib/gi18n.h>
+
 GtkWidget*
 sb_window_new (void)
 {
 	GtkWidget* result = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	g_signal_connect (result, "destroy",
+			  G_CALLBACK (gtk_main_quit), NULL);
+	gtk_window_set_default_size (GTK_WINDOW (result),
+				     400, 300);
+	gtk_window_set_title        (GTK_WINDOW (result),
+				     _("Source Browser"));
 	return result;
 }
 
