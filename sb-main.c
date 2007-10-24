@@ -188,7 +188,6 @@ main (int   argc,
       char**argv)
 {
 	GtkWidget* window;
-	GtkWidget* chooser;
 	GtkWidget* vbox;
 	GtkWidget* scrolled;
 
@@ -197,16 +196,6 @@ main (int   argc,
 	window = sb_window_new ();
 
 	vbox = sb_window_get_vbox (window);
-
-	chooser = gtk_file_chooser_button_new (_("Choose File"),
-					       GTK_FILE_CHOOSER_ACTION_OPEN);
-	g_signal_connect (chooser, "selection-changed",
-			  G_CALLBACK (selection_changed_cb), NULL);
-	gtk_box_pack_start (GTK_BOX (vbox),
-			    chooser,
-			    FALSE,
-			    FALSE,
-			    0);
 
 	scrolled = gtk_scrolled_window_new (NULL, NULL);
 	gtk_box_pack_start_defaults (GTK_BOX (vbox),

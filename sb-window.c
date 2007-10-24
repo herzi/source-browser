@@ -23,6 +23,7 @@
 
 #include "sb-window.h"
 
+#include "sb-main.h"
 #include <glib/gi18n.h>
 
 GtkWidget*
@@ -30,6 +31,8 @@ sb_window_new (void)
 {
 	GtkWidget* result = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	GtkWidget* vbox   = gtk_vbox_new (FALSE, 6);
+	GtkWidget* chooser;
+
 	g_signal_connect (result, "destroy",
 			  G_CALLBACK (gtk_main_quit), NULL);
 	gtk_window_set_default_size (GTK_WINDOW (result),
@@ -39,6 +42,16 @@ sb_window_new (void)
 
 	gtk_container_add (GTK_CONTAINER (result),
 			   vbox);
+
+	chooser = gtk_file_chooser_button_new (_("Choose File"),
+					       GTK_FILE_CHOOSER_ACTION_OPEN);
+	g_signal_connect (chooser, "selection-changed",
+			  G_CALLBACK (selection_changed_cb), NULL);
+	gtk_box_pack_start (GTK_BOX (vbox),
+			    chooser,
+			    FALSE,
+			    FALSE,
+			    0);
 
 	return result;
 }
