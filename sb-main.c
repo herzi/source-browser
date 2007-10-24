@@ -160,21 +160,17 @@ load_history (GtkWidget  * window,
 				g_free);
 }
 
-void
-selection_changed_cb (GtkFileChooser* chooser,
-		      GtkWidget     * window)
+static void
+sb_window_open (GtkWidget  * window,
+		gchar const* path)
 {
 	GMappedFile* file;
 	GError* error = NULL;
-	gchar* path;
-
-	path = gtk_file_chooser_get_filename (chooser);
 	file = g_mapped_file_new (path, FALSE, &error);
 	if (!file) {
 		// FIXME: open popup
 		g_warning ("%s", error->message);
 		g_error_free (error);
-		g_free (path);
 		return;
 	}
 
@@ -186,10 +182,19 @@ selection_changed_cb (GtkFileChooser* chooser,
 
 	load_history (window,
 		      path);
-	g_free (path);
 
 	// FIXME: disable loading of new files until the history is loaded
 	// FIXME: make history loading cancellable
+}
+
+void
+selection_changed_cb (GtkFileChooser* chooser,
+		      GtkWidget     * window)
+{
+	gchar* path = gtk_file_chooser_get_filename (chooser);
+	sb_window_open (window,
+			path);
+	g_free (path);
 }
 
 int
