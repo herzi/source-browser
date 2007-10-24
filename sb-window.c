@@ -25,6 +25,7 @@
 
 #include "sb-display.h"
 #include "sb-main.h"
+#include "sb-progress.h"
 #include <glib/gi18n.h>
 
 GtkWidget*
@@ -65,7 +66,7 @@ sb_window_new (void)
 	gtk_container_add (GTK_CONTAINER (scrolled),
 			   display);
 
-	status = gtk_progress_bar_new ();
+	status = sb_progress_new ();
 	gtk_box_pack_start (GTK_BOX (vbox),
 			    status,
 			    FALSE,
