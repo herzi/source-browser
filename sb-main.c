@@ -36,15 +36,15 @@ static guint io = 0;
 
 static gboolean io_watch_cb (GIOChannel  * channel,
 			     GIOCondition  condition,
-			     gpointer      unused);
+			     gpointer      data);
 
 static void
 watch_cb (GPid pid,
 	  gint status_,
 	  gpointer data)
 {
-	GIOChannel* channel = ((gpointer*)data)[0];
-	GtkWidget * window  = ((gpointer*)data)[1];
+	GIOChannel* channel = sb_callback_data_peek (data, "channel");
+	GtkWidget * window  = sb_callback_data_peek (data, "window");
 	g_print ("pre-done.\n");
 	while (io_watch_cb (channel, G_IO_IN, window)) {} // FIXME: finish
 	//g_source_remove (io);
