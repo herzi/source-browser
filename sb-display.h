@@ -26,6 +26,31 @@
 
 #include <gtk/gtk.h>
 
-GtkWidget* sb_display_new (void);
+G_BEGIN_DECLS
+
+typedef struct _SbDisplay        SbDisplay;
+typedef struct _SbDisplayPrivate SbDisplayPrivate;
+typedef struct _SbDisplayClass   SbDisplayClass;
+
+#define SB_TYPE_DISPLAY         (sb_display_get_type ())
+#define SB_DISPLAY(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_DISPLAY, SbDisplay))
+#define SB_DISPLAY_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), SB_TYPE_DISPLAY, SbDisplayClass))
+#define SB_IS_DISPLAY(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), SB_TYPE_DISPLAY))
+#define SB_IS_DISPLAY_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), SB_TYPE_DISPLAY))
+#define SB_DISPLAY_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), SB_TYPE_DISPLAY, SbDisplayClass))
+
+GType      sb_display_get_type (void);
+GtkWidget* sb_display_new      (void);
+
+struct _SbDisplay {
+	GtkTextView       base_instance;
+	SbDisplayPrivate* _private;
+};
+
+struct _SbDisplayClass {
+	GtkTextViewClass  base_class;
+};
+
+G_END_DECLS
 
 #endif /* !SB_DISPLAY_H */

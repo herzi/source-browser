@@ -23,10 +23,19 @@
 
 #include "sb-display.h"
 
+G_DEFINE_TYPE (SbDisplay, sb_display, GTK_TYPE_TEXT_VIEW);
+
+static void
+sb_display_init (SbDisplay* self)
+{}
+
+static void
+sb_display_class_init (SbDisplayClass* self_class)
+{}
+
 GtkWidget*
 sb_display_new (void)
 {
-	GtkWidget* result = gtk_text_view_new ();
-	return result;
+	return g_object_new (SB_TYPE_DISPLAY, NULL);
 }
 
