@@ -27,24 +27,28 @@ SbCallbackData*
 sb_callback_data_new  (gchar const* name,
 		       ...)
 {
-	SbCallbackData* self = g_new0 (gpointer, 2);
-	if (name) {
-		gsize len = 0;
-		va_list argv;
-		gpointer data;
-		GDestroyNotify notify;
+	SbCallbackData* self;
+	GDestroyNotify  notify;
+	gpointer        data;
+	va_list         argv;
+	gsize           len;
 
-		va_start (argv, name);
+	g_return_val_if_fail (name, NULL);
 
-		while (name) {
-			data   = va_arg (argv, gpointer);
-			notify = va_arg (argv, GDestroyNotify);
+	va_start (argv, name);
 
-			self[len++] = data;
+	len = 0;
+	self = g_new0 (gpointer, 2);
 
-			name = va_arg (argv, gchar const*);
-		}
+	while (name) {
+		data   = va_arg (argv, gpointer);
+		notify = va_arg (argv, GDestroyNotify);
+
+		self[len++] = data;
+
+		name = va_arg (argv, gchar const*);
 	}
+
 	return self;
 }
 
