@@ -28,6 +28,15 @@
 #include "sb-progress.h"
 #include <glib/gi18n.h>
 
+static void
+display_load_started_cb (SbDisplay* display,
+			 GtkWidget* window)
+{
+	GtkTextBuffer* buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window)));
+	sb_progress_set_target (SB_PROGRESS (sb_window_get_status (window)),
+				gtk_text_buffer_get_line_count (buffer));
+}
+
 GtkWidget*
 sb_window_new (void)
 {
@@ -63,6 +72,8 @@ sb_window_new (void)
 				     scrolled);
 
 	display = sb_display_new ();
+	g_signal_connect  (display, "load-started",
+			   G_CALLBACK (display_load_started_cb), result);
 	gtk_container_add (GTK_CONTAINER (scrolled),
 			   display);
 
@@ -128,7 +139,6 @@ void
 sb_window_open (GtkWidget  * window,
 		gchar const* path)
 {
-	GtkTextBuffer* buffer;
 	GError       * error = NULL;
 
 	sb_display_load_path (SB_DISPLAY (sb_window_get_display (window)),
@@ -141,10 +151,6 @@ sb_window_open (GtkWidget  * window,
 		g_error_free (error);
 		return;
 	}
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window)));
-	sb_progress_set_target   (SB_PROGRESS (sb_window_get_status (window)),
-				  gtk_text_buffer_get_line_count (buffer));
 
 	load_history (window,
 		      path);
