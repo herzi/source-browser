@@ -31,7 +31,6 @@
 
 #include <glib/gi18n.h>
 
-static gint lines_read = 0;
 static guint io = 0;
 
 static gboolean io_watch_cb (GIOChannel  * channel,
@@ -80,12 +79,12 @@ io_watch_cb (GIOChannel  * channel,
 			SbProgress* progress = SB_PROGRESS (sb_window_get_status (window));
 			gchar** words = g_strsplit (string->str, " ", -1);
 			revision = g_strdup (words[0]);
-			lines_read += atoi (words[3]);
+			sb_progress_advance (progress, atoi (words[3]));
 			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress),
-						       1.0 * lines_read / sb_progress_get_target (progress));
+						       1.0 * sb_progress_get_status (progress) / sb_progress_get_target (progress));
 			g_strfreev (words);
 			gchar* message = g_strdup_printf (_("%d / %d"),
-							  lines_read,
+							  sb_progress_get_status (progress),
 							  sb_progress_get_target (progress));
 			gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress),
 						   message);
@@ -129,7 +128,8 @@ load_history (GtkWidget  * window,
 	gint out_fd = 0;
 	gpointer* channel_and_window;
 
-	lines_read = 1; // FIXME: this is a bug in GtkTextView (it doesn't swallow the trailing \n)
+	// FIXME: this is a bug in GtkTextView (it doesn't swallow the trailing \n)
+	sb_progress_set_status (SB_PROGRESS (sb_window_get_status (window)), 1);
 
 	argv[2] = g_path_get_basename (file_path);
 	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (window),
