@@ -24,6 +24,7 @@
 #include "sb-progress.h"
 
 struct _SbProgressPrivate {
+	gulong status;
 	gulong target;
 };
 
@@ -52,6 +53,35 @@ sb_progress_new (void)
 }
 
 gulong
+sb_progress_get_status (SbProgress const* self)
+{
+	g_return_val_if_fail (SB_IS_PROGRESS (self), 0);
+
+	return self->_private->status;
+}
+
+void
+sb_progress_set_status (SbProgress* self,
+			gulong      status)
+{
+	g_return_if_fail (SB_IS_PROGRESS (self));
+	g_return_if_fail (status <= self->_private->target);
+
+	self->_private->status = status;
+
+	// FIXME: g_object_notify (G_OBJECT (self), "status");
+}
+
+void
+sb_progress_advance (SbProgress* self,
+		     gulong      progress)
+{
+	g_return_if_fail (SB_IS_PROGRESS (self));
+
+	sb_progress_set_status (self, self->_private->status + progress);
+}
+
+gulong
 sb_progress_get_target (SbProgress const* self)
 {
 	g_return_val_if_fail (SB_IS_PROGRESS (self), 0);
@@ -66,6 +96,11 @@ sb_progress_set_target (SbProgress* self,
 	g_return_if_fail (SB_IS_PROGRESS (self));
 
 	self->_private->target = target;
+
+	if (G_UNLIKELY (self->_private->status > self->_private->target)) {
+		sb_progress_set_status (self, self->_private->target);
+		g_assert (self->_private->status <= self->_private->target); // FIXME: g_warn_if_fail()
+	}
 
 	// FIXME: g_object_notify (G_OBJECT (self), target);
 }

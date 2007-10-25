@@ -41,6 +41,11 @@ typedef struct _SbProgressClass   SbProgressClass;
 
 GType      sb_progress_get_type   (void);
 GtkWidget* sb_progress_new        (void);
+gulong     sb_progress_get_status (SbProgress const* self);
+void       sb_progress_set_status (SbProgress      * self,
+				   gulong            status);
+void       sb_progress_advance    (SbProgress      * self,
+				   gulong            progress);
 gulong     sb_progress_get_target (SbProgress const* self);
 void       sb_progress_set_target (SbProgress      * self,
 				   gulong            target);
