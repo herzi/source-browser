@@ -83,6 +83,9 @@ io_watch_cb (GIOChannel  * channel,
 			SbProgress* progress = SB_PROGRESS (sb_window_get_status (window));
 			gchar** words = g_strsplit (string->str, " ", -1);
 			revision = g_strdup (words[0]);
+			g_signal_emit_by_name (sb_window_get_display (window),
+					       "load-progress",
+					       atoi (words[3]));
 			sb_progress_advance (progress, atoi (words[3]));
 			g_strfreev (words);
 		} else if (g_str_has_prefix (string->str, "filename ")) {
