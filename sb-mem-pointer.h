@@ -30,9 +30,10 @@ G_BEGIN_DECLS
 
 typedef struct _SbMemPointer SbMemPointer;
 
-SbMemPointer* sb_mem_pointer_new  (gpointer        data,
-				   GDestroyNotify  destroy);
-void          sb_mem_pointer_free (SbMemPointer  * self);
+SbMemPointer* sb_mem_pointer_new      (gpointer            data,
+				       GDestroyNotify      destroy);
+gpointer      sb_mem_pointer_get_data (SbMemPointer const* self);
+void          sb_mem_pointer_free     (SbMemPointer      * self);
 
 G_END_DECLS
 

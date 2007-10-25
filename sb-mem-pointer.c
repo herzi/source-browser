@@ -33,6 +33,9 @@ sb_mem_pointer_new  (gpointer        data,
 		     GDestroyNotify  destroy)
 {
 	SbMemPointer* self = g_slice_new (SbMemPointer);
+	self->data    = data;
+	self->destroy = destroy;
+	return self;
 }
 
 void
@@ -47,6 +50,8 @@ sb_mem_pointer_free (SbMemPointer  * self)
 gpointer
 sb_mem_pointer_get_data (SbMemPointer const* self)
 {
+	g_return_val_if_fail (self, NULL);
+
 	return self->data;
 }
 
