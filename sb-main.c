@@ -146,7 +146,9 @@ load_history (GtkWidget  * window,
 			     io_watch_cb,
 			     window);
 
-	channel_and_window = sb_callback_data_new ("sliff");
+	channel_and_window = sb_callback_data_new ("channel", out_chan, g_io_channel_unref,
+						   "window",  window,   NULL,
+						   NULL);
 	channel_and_window[0] = out_chan;
 	channel_and_window[1] = window;
 
