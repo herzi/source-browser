@@ -133,7 +133,7 @@ sb_window_open (GtkWidget  * window,
 	GError       * error = NULL;
 
 	file = g_mapped_file_new (path, FALSE, &error);
-	if (!file) {
+	if (error) {
 		// FIXME: open popup
 		g_warning ("%s", error->message);
 		g_error_free (error);
