@@ -28,7 +28,28 @@
 
 G_BEGIN_DECLS
 
-GtkWidget* sb_progress_new (void);
+typedef struct _SbProgress        SbProgress;
+typedef struct _SbProgressPrivate SbProgressPrivate;
+typedef struct _SbProgressClass   SbProgressClass;
+
+#define SB_TYPE_PROGRESS         (sb_progress_get_type ())
+#define SB_PROGRESS(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_PROGRESS, SbProgress))
+#define SB_PROGRESS_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), SB_TYPE_PROGRESS, SbProgress))
+#define SB_IS_PROGRESS(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), SB_TYPE_PROGRESS))
+#define SB_IS_PROGRESS_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), SB_TYPE_PROGRESS))
+#define SB_PROGRESS_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), SB_TYPE_PROGRESS, SbProgressClass))
+
+GType      sb_progress_get_type (void);
+GtkWidget* sb_progress_new      (void);
+
+struct _SbProgress {
+	GtkProgressBar     base_instance;
+	SbProgressPrivate* _private;
+};
+
+struct _SbProgressClass {
+	GtkProgressClass   base_class;
+};
 
 G_END_DECLS
 

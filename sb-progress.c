@@ -23,9 +23,19 @@
 
 #include "sb-progress.h"
 
+G_DEFINE_TYPE (SbProgress, sb_progress, GTK_TYPE_PROGRESS_BAR);
+
+static void
+sb_progress_init (SbProgress* self)
+{}
+
+static void
+sb_progress_class_init (SbProgressClass* self_class)
+{}
+
 GtkWidget*
 sb_progress_new (void)
 {
-	return gtk_progress_bar_new ();
+	return g_object_new (SB_TYPE_PROGRESS, NULL);
 }
 
