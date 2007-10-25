@@ -37,14 +37,13 @@ sb_callback_data_new  (gchar const* name,
 
 	va_start (argv, name);
 
-	len = 0;
 	self = g_new0 (gpointer, 2);
 
-	for (; name; ) {
+	for (len = 0; name; len++) {
 		data   = va_arg (argv, gpointer);
 		notify = va_arg (argv, GDestroyNotify);
 
-		self[len++] = data;
+		self[len] = data;
 
 		name = va_arg (argv, gchar const*);
 	}
