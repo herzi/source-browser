@@ -80,8 +80,6 @@ io_watch_cb (GIOChannel  * channel,
 			gchar** words = g_strsplit (string->str, " ", -1);
 			revision = g_strdup (words[0]);
 			sb_progress_advance (progress, atoi (words[3]));
-			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress),
-						       1.0 * sb_progress_get_status (progress) / sb_progress_get_target (progress));
 			g_strfreev (words);
 			gchar* message = g_strdup_printf (_("%d / %d"),
 							  sb_progress_get_status (progress),

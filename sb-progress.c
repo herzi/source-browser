@@ -52,6 +52,14 @@ sb_progress_new (void)
 	return g_object_new (SB_TYPE_PROGRESS, NULL);
 }
 
+static inline void
+progress_update (SbProgress* self)
+{
+	// FIXME: perform this in an idle handler
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self),
+				       1.0 * sb_progress_get_status (self) / sb_progress_get_target (self));
+}
+
 gulong
 sb_progress_get_status (SbProgress const* self)
 {
@@ -68,6 +76,7 @@ sb_progress_set_status (SbProgress* self,
 	g_return_if_fail (status <= self->_private->target);
 
 	self->_private->status = status;
+	progress_update (self);
 
 	// FIXME: g_object_notify (G_OBJECT (self), "status");
 }
@@ -101,6 +110,8 @@ sb_progress_set_target (SbProgress* self,
 		sb_progress_set_status (self, self->_private->target);
 		g_assert (self->_private->status <= self->_private->target); // FIXME: g_warn_if_fail()
 	}
+
+	progress_update (self);
 
 	// FIXME: g_object_notify (G_OBJECT (self), target);
 }
