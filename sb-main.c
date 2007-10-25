@@ -47,10 +47,9 @@ watch_cb (GPid pid,
 	GtkWidget * window  = sb_callback_data_peek (data, "window");
 	g_print ("pre-done.\n");
 	if (io) {
-		guint io_tag = io;
-		while (io_watch_cb (channel, G_IO_IN, window))
+		g_source_remove (io);
+		while (io_watch_cb (channel, G_IO_IN, sb_window_get_display (window)))
 			; // parse trailing lines
-		g_source_remove (io_tag);
 	}
 	g_print ("done.\n");
 	g_spawn_close_pid (pid);
@@ -65,14 +64,10 @@ io_watch_cb (GIOChannel  * channel,
 	static GString* string = NULL;
 	static gchar* revision = NULL;
 	gunichar read = 0;
-	GtkWidget* window = GTK_WIDGET (data);
 
 	if (G_UNLIKELY (!string)) {
 		string = g_string_new ("");
 	}
-
-	if (condition != 1)
-	g_print ("%d\n", condition);
 
 	state = g_io_channel_read_unichar (channel, &read, NULL);
 	if (G_LIKELY (read != '\n')) {
@@ -80,10 +75,10 @@ io_watch_cb (GIOChannel  * channel,
 	} else {
 		if (!revision) {
 			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
-			SbProgress* progress = SB_PROGRESS (sb_window_get_status (window));
 			gchar** words = g_strsplit (string->str, " ", -1);
+			SbDisplay* self = SB_DISPLAY (data);
 			revision = g_strdup (words[0]);
-			g_signal_emit_by_name (sb_window_get_display (window),
+			g_signal_emit_by_name (self,
 					       "load-progress",
 					       atoi (words[3]));
 			g_strfreev (words);
@@ -151,7 +146,7 @@ load_history (GtkWidget  * window,
 	io = g_io_add_watch (out_chan,
 			     G_IO_IN | G_IO_PRI,
 			     io_watch_cb,
-			     window);
+			     sb_window_get_display (window));
 
 	channel_and_window = sb_callback_data_new ("channel", out_chan,              g_io_channel_unref,
 						   "window",  g_object_ref (window), g_object_unref,
