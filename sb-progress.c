@@ -23,6 +23,8 @@
 
 #include "sb-progress.h"
 
+#include <glib/gi18n.h>
+
 struct _SbProgressPrivate {
 	gulong status;
 	gulong target;
@@ -56,10 +58,16 @@ static inline void
 progress_update (SbProgress* self)
 {
 	// FIXME: perform this in an idle handler
+	gchar* message = g_strdup_printf (_("%d / %d"),
+					  self->_private->status,
+					  self->_private->target);
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self),
 				       G_LIKELY (self->_private->target) ?
 					          1.0 * self->_private->status / self->_private->target :
 						  0.0);
+	gtk_progress_bar_set_text     (GTK_PROGRESS_BAR (self),
+				       message);
+	g_free (message);
 }
 
 gulong

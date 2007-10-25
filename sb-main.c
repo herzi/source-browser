@@ -81,12 +81,6 @@ io_watch_cb (GIOChannel  * channel,
 			revision = g_strdup (words[0]);
 			sb_progress_advance (progress, atoi (words[3]));
 			g_strfreev (words);
-			gchar* message = g_strdup_printf (_("%d / %d"),
-							  sb_progress_get_status (progress),
-							  sb_progress_get_target (progress));
-			gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress),
-						   message);
-			g_free (message);
 		} else if (g_str_has_prefix (string->str, "filename ")) {
 			g_print ("%s\n", revision);
 			g_free (revision);
