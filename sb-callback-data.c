@@ -27,11 +27,12 @@ SbCallbackData*
 sb_callback_data_new  (gchar const* name,
 		       ...)
 {
-	return NULL;
+	return g_new0 (gpointer, 2);
 }
 
 void
 sb_callback_data_free (SbCallbackData* self)
 {
+	g_free (self);
 }
 
