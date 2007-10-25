@@ -146,8 +146,8 @@ load_history (GtkWidget  * window,
 			     io_watch_cb,
 			     window);
 
-	channel_and_window = sb_callback_data_new ("channel", out_chan, g_io_channel_unref,
-						   "window",  window,   NULL,
+	channel_and_window = sb_callback_data_new ("channel", out_chan,              g_io_channel_unref,
+						   "window",  g_object_ref (window), g_object_unref,
 						   NULL);
 
 	g_child_watch_add_full (G_PRIORITY_DEFAULT,
