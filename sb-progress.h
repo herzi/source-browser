@@ -39,16 +39,19 @@ typedef struct _SbProgressClass   SbProgressClass;
 #define SB_IS_PROGRESS_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), SB_TYPE_PROGRESS))
 #define SB_PROGRESS_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), SB_TYPE_PROGRESS, SbProgressClass))
 
-GType      sb_progress_get_type (void);
-GtkWidget* sb_progress_new      (void);
+GType      sb_progress_get_type   (void);
+GtkWidget* sb_progress_new        (void);
+gulong     sb_progress_get_target (SbProgress const* self);
+void       sb_progress_set_target (SbProgress      * self,
+				   gulong            target);
 
 struct _SbProgress {
-	GtkProgressBar     base_instance;
-	SbProgressPrivate* _private;
+	GtkProgressBar       base_instance;
+	SbProgressPrivate*   _private;
 };
 
 struct _SbProgressClass {
-	GtkProgressClass   base_class;
+	GtkProgressBarClass  base_class;
 };
 
 G_END_DECLS

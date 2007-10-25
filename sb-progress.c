@@ -23,19 +23,50 @@
 
 #include "sb-progress.h"
 
+struct _SbProgressPrivate {
+	gulong target;
+};
+
 G_DEFINE_TYPE (SbProgress, sb_progress, GTK_TYPE_PROGRESS_BAR);
 
 static void
 sb_progress_init (SbProgress* self)
-{}
+{
+	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
+						      SB_TYPE_PROGRESS,
+						      SbProgressPrivate);
+
+	sb_progress_set_target (self, 0);
+}
 
 static void
 sb_progress_class_init (SbProgressClass* self_class)
-{}
+{
+	g_type_class_add_private (self_class, sizeof (SbProgressPrivate));
+}
 
 GtkWidget*
 sb_progress_new (void)
 {
 	return g_object_new (SB_TYPE_PROGRESS, NULL);
+}
+
+gulong
+sb_progress_get_target (SbProgress const* self)
+{
+	g_return_val_if_fail (SB_IS_PROGRESS (self), 0);
+
+	return self->_private->target;
+}
+
+void
+sb_progress_set_target (SbProgress* self,
+			gulong      target)
+{
+	g_return_if_fail (SB_IS_PROGRESS (self));
+
+	self->_private->target = target;
+
+	// FIXME: g_object_notify (G_OBJECT (self), target);
 }
 
