@@ -25,7 +25,7 @@
 
 enum {
 	LOAD_STARTED,
-	// LOAD_PROGRESS,
+	LOAD_PROGRESS,
 	// LOAD_DONE,
 	// LOAD_CANCELLED,
 	N_SIGNALS
@@ -49,6 +49,13 @@ sb_display_class_init (SbDisplayClass* self_class)
 					      g_cclosure_marshal_VOID__VOID,
 					      G_TYPE_NONE,
 					      0);
+	signals[LOAD_PROGRESS] = g_signal_new ("load-progress",
+					       SB_TYPE_DISPLAY,
+					       0, 0,
+					       NULL, NULL,
+					       g_cclosure_marshal_VOID__INT,
+					       G_TYPE_NONE,
+					       1, G_TYPE_INT);
 }
 
 GtkWidget*
