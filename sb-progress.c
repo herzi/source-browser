@@ -57,7 +57,7 @@ progress_update (SbProgress* self)
 {
 	// FIXME: perform this in an idle handler
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self),
-				       self->_private->target ?
+				       G_LIKELY (self->_private->target) ?
 					          1.0 * self->_private->status / self->_private->target :
 						  0.0);
 }
