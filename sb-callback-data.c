@@ -27,8 +27,8 @@ SbCallbackData*
 sb_callback_data_new  (gchar const* name,
 		       ...)
 {
-	SbCallbackData* self;
 	GDestroyNotify  notify;
+	GHashTable    * self;
 	gpointer        data;
 	va_list         argv;
 	gsize           len;
@@ -37,24 +37,27 @@ sb_callback_data_new  (gchar const* name,
 
 	va_start (argv, name);
 
-	self = g_new0 (gpointer, 2);
+	self = g_hash_table_new_full (g_str_hash, g_str_equal,
+				      g_free,     NULL);
 
 	for (len = 0; name; len++) {
 		data   = va_arg (argv, gpointer);
 		notify = va_arg (argv, GDestroyNotify);
 
-		self[len] = data;
+		g_hash_table_insert (self,
+				     g_strdup (name),
+				     data);
 
 		name = va_arg (argv, gchar const*);
 	}
 
-	return self;
+	return (SbCallbackData*)self;
 }
 
 void
 sb_callback_data_free (gpointer self)
 {
-	g_free (self);
+	g_hash_table_destroy (self);
 }
 
 gpointer
@@ -62,14 +65,8 @@ sb_callback_data_peek (SbCallbackData const* self,
 		       gchar const         * name)
 {
 	g_return_val_if_fail (name, NULL);
+	// FIXME: check if the data has been entered
 
-	if (!strcmp (name, "window")) {
-		return ((gpointer*)self)[1];
-	} else if (!strcmp (name, "channel")) {
-		return ((gpointer*)self)[0];
-	} else {
-		g_warning ("This is not supposed to happen");
-		return NULL;
-	}
+	return g_hash_table_lookup ((GHashTable*)self, name);
 }
 
