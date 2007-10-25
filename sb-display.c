@@ -39,3 +39,11 @@ sb_display_new (void)
 	return g_object_new (SB_TYPE_DISPLAY, NULL);
 }
 
+void
+sb_display_load_path (SbDisplay  * self,
+		      gchar const* path,
+		      GError     **error)
+{
+	// FIXME: add implementation
+}
+

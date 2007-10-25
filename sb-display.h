@@ -39,8 +39,11 @@ typedef struct _SbDisplayClass   SbDisplayClass;
 #define SB_IS_DISPLAY_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), SB_TYPE_DISPLAY))
 #define SB_DISPLAY_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), SB_TYPE_DISPLAY, SbDisplayClass))
 
-GType      sb_display_get_type (void);
-GtkWidget* sb_display_new      (void);
+GType      sb_display_get_type  (void);
+GtkWidget* sb_display_new       (void);
+void       sb_display_load_path (SbDisplay  * self,
+				 gchar const* path,
+				 GError     **error);
 
 struct _SbDisplay {
 	GtkTextView       base_instance;
