@@ -46,9 +46,12 @@ watch_cb (GPid pid,
 	GIOChannel* channel = sb_callback_data_peek (data, "channel");
 	GtkWidget * window  = sb_callback_data_peek (data, "window");
 	g_print ("pre-done.\n");
-	while (io_watch_cb (channel, G_IO_IN, window)) {} // FIXME: finish
-	//g_source_remove (io);
-	io = 0;
+	if (io) {
+		guint io_tag = io;
+		while (io_watch_cb (channel, G_IO_IN, window))
+			; // parse trailing lines
+		g_source_remove (io_tag);
+	}
 	g_print ("done.\n");
 	g_spawn_close_pid (pid);
 }
@@ -100,6 +103,7 @@ io_watch_cb (GIOChannel  * channel,
 	if (state == G_IO_STATUS_NORMAL) {
 		return TRUE;
 	} else {
+		io = 0;
 		return FALSE;
 	}
 }
@@ -136,8 +140,9 @@ load_history (GtkWidget  * window,
 			     NULL,
 			     &out_fd,
 			     NULL,
-			     NULL); // FIXME: error, pipes, flags
+			     NULL); // FIXME: error, pipes
 	GIOChannel* out_chan = g_io_channel_unix_new (out_fd);
+	g_io_channel_set_close_on_unref (out_chan, TRUE);
 	g_free (argv[2]);
 	g_free (working_folder);
 
