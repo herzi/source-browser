@@ -25,6 +25,7 @@
 
 #include <gtk/gtk.h>
 
+#include "sb-callback-data.h"
 #include "sb-display.h"
 #include "sb-progress.h"
 #include "sb-window.h"
@@ -145,7 +146,7 @@ load_history (GtkWidget  * window,
 			     io_watch_cb,
 			     window);
 
-	channel_and_window = g_new (gpointer, 2);
+	channel_and_window = sb_callback_data_new ("sliff");
 	channel_and_window[0] = out_chan;
 	channel_and_window[1] = window;
 
@@ -153,7 +154,7 @@ load_history (GtkWidget  * window,
 				pid,
 				watch_cb,
 				channel_and_window,
-				g_free);
+				sb_callback_data_free);
 }
 
 void

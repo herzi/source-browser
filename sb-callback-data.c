@@ -31,7 +31,7 @@ sb_callback_data_new  (gchar const* name,
 }
 
 void
-sb_callback_data_free (SbCallbackData* self)
+sb_callback_data_free (gpointer self)
 {
 	g_free (self);
 }
