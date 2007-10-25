@@ -23,6 +23,8 @@
 
 #include "sb-callback-data.h"
 
+#include "sb-mem-pointer.h"
+
 SbCallbackData*
 sb_callback_data_new  (gchar const* name,
 		       ...)
@@ -46,7 +48,7 @@ sb_callback_data_new  (gchar const* name,
 
 		g_hash_table_insert (self,
 				     g_strdup (name),
-				     data);
+				     sb_mem_pointer_new (data, notify));
 
 		name = va_arg (argv, gchar const*);
 	}
@@ -64,9 +66,14 @@ gpointer
 sb_callback_data_peek (SbCallbackData const* self,
 		       gchar const         * name)
 {
-	g_return_val_if_fail (name, NULL);
-	// FIXME: check if the data has been entered
+	SbMemPointer* value_exists;
 
-	return g_hash_table_lookup ((GHashTable*)self, name);
+	g_return_val_if_fail (name, NULL);
+
+	value_exists = g_hash_table_lookup ((GHashTable*)self, name);
+
+	g_return_val_if_fail (value_exists, NULL);
+
+	return sb_mem_pointer_get_data (value_exists);
 }
 
