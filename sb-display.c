@@ -23,6 +23,16 @@
 
 #include "sb-display.h"
 
+enum {
+	LOAD_STARTED,
+	// LOAD_PROGRESS,
+	// LOAD_DONE,
+	// LOAD_CANCELLED,
+	N_SIGNALS
+};
+
+static guint signals[N_SIGNALS] = {0};
+
 G_DEFINE_TYPE (SbDisplay, sb_display, GTK_TYPE_TEXT_VIEW);
 
 static void
@@ -31,7 +41,15 @@ sb_display_init (SbDisplay* self)
 
 static void
 sb_display_class_init (SbDisplayClass* self_class)
-{}
+{
+	signals[LOAD_STARTED] = g_signal_new ("load-started",
+					      SB_TYPE_DISPLAY,
+					      0, 0,
+					      NULL, NULL,
+					      g_cclosure_marshal_VOID__VOID,
+					      G_TYPE_NONE,
+					      0);
+}
 
 GtkWidget*
 sb_display_new (void)
@@ -53,6 +71,8 @@ sb_display_load_path (SbDisplay  * self,
 	gtk_text_buffer_set_text (buffer,
 				  g_mapped_file_get_contents (file),
 				  g_mapped_file_get_length (file));
+
+	g_signal_emit (self, signals[LOAD_STARTED], 0);
 
 	g_mapped_file_free (file);
 }
