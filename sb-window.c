@@ -129,10 +129,12 @@ sb_window_open (GtkWidget  * window,
 		gchar const* path)
 {
 	GtkTextBuffer* buffer;
-	GMappedFile  * file;
 	GError       * error = NULL;
 
-	file = g_mapped_file_new (path, FALSE, &error);
+	sb_display_load_path (SB_DISPLAY (sb_window_get_display (window)),
+			      path,
+			      &error);
+
 	if (error) {
 		// FIXME: open popup
 		g_warning ("%s", error->message);
@@ -141,14 +143,8 @@ sb_window_open (GtkWidget  * window,
 	}
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window)));
-
-	gtk_text_buffer_set_text (buffer,
-				  g_mapped_file_get_contents (file),
-				  g_mapped_file_get_length (file));
 	sb_progress_set_target   (SB_PROGRESS (sb_window_get_status (window)),
 				  gtk_text_buffer_get_line_count (buffer));
-
-	g_mapped_file_free (file);
 
 	load_history (window,
 		      path);

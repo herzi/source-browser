@@ -44,6 +44,16 @@ sb_display_load_path (SbDisplay  * self,
 		      gchar const* path,
 		      GError     **error)
 {
-	// FIXME: add implementation
+	GtkTextBuffer* buffer;
+	GMappedFile  * file;
+
+	file = g_mapped_file_new (path, FALSE, error);
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self));
+
+	gtk_text_buffer_set_text (buffer,
+				  g_mapped_file_get_contents (file),
+				  g_mapped_file_get_length (file));
+
+	g_mapped_file_free (file);
 }
 
