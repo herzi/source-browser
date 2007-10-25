@@ -54,3 +54,19 @@ sb_callback_data_free (gpointer self)
 	g_free (self);
 }
 
+gpointer
+sb_callback_data_peek (SbCallbackData const* self,
+		       gchar const         * name)
+{
+	g_return_val_if_fail (name, NULL);
+
+	if (!strcmp (name, "window")) {
+		return ((gpointer*)self)[1];
+	} else if (!strcmp (name, "channel")) {
+		return ((gpointer*)self)[0];
+	} else {
+		g_warning ("This is not supposed to happen");
+		return NULL;
+	}
+}
+

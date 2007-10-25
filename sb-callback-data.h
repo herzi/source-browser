@@ -30,9 +30,11 @@ G_BEGIN_DECLS
 
 typedef gpointer SbCallbackData;
 
-SbCallbackData* sb_callback_data_new  (gchar const* name,
+SbCallbackData* sb_callback_data_new  (gchar const         * name,
 				       ...);
-void            sb_callback_data_free (gpointer self); // self as SbCallbackData
+gpointer        sb_callback_data_peek (SbCallbackData const* self,
+				       gchar const         * name);
+void            sb_callback_data_free (gpointer              self); // self as SbCallbackData
 
 G_END_DECLS
 
