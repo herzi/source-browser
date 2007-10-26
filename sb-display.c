@@ -206,8 +206,7 @@ load_history (SbDisplay  * self,
 						     io_watch_cb,
 						     self);
 
-	channel_and_window = sb_callback_data_new ("channel", out_chan,            g_io_channel_unref,
-						   "display", g_object_ref (self), g_object_unref,
+	channel_and_window = sb_callback_data_new ("display", g_object_ref (self), g_object_unref,
 						   NULL);
 
 	g_child_watch_add_full (G_PRIORITY_DEFAULT,
