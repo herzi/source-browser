@@ -23,6 +23,10 @@
 
 #include "sb-display.h"
 
+struct _SbDisplayPrivate {
+	guint io_handler;
+};
+
 enum {
 	LOAD_STARTED,
 	LOAD_PROGRESS,
@@ -37,11 +41,27 @@ G_DEFINE_TYPE (SbDisplay, sb_display, GTK_TYPE_TEXT_VIEW);
 
 static void
 sb_display_init (SbDisplay* self)
-{}
+{
+	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
+						      SB_TYPE_DISPLAY,
+						      SbDisplayPrivate);
+}
+
+static void
+display_finalize (GObject* object)
+{
+	G_OBJECT_CLASS (sb_display_parent_class)->finalize (object);
+}
 
 static void
 sb_display_class_init (SbDisplayClass* self_class)
 {
+	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+	object_class->finalize = display_finalize;
+
+	g_type_class_add_private (self_class, sizeof (SbDisplayPrivate));
+
 	signals[LOAD_STARTED] = g_signal_new ("load-started",
 					      SB_TYPE_DISPLAY,
 					      0, 0,
@@ -62,6 +82,33 @@ GtkWidget*
 sb_display_new (void)
 {
 	return g_object_new (SB_TYPE_DISPLAY, NULL);
+}
+
+guint
+sb_display_get_io_handler (SbDisplay const* self)
+{
+	g_return_val_if_fail (SB_IS_DISPLAY (self), 0);
+
+	return self->_private->io_handler;
+}
+
+void
+sb_display_set_io_handler (SbDisplay* self,
+			   guint      io_handler)
+{
+	g_return_if_fail (SB_IS_DISPLAY (self));
+
+	if (self->_private->io_handler == io_handler) {
+		return;
+	}
+
+	if (self->_private->io_handler) {
+		//g_source_remove (self->_private->io_handler);
+	}
+
+	self->_private->io_handler = io_handler;
+
+	// FIXME: g_object_notify (G_OBJECT (self), "io-handler");
 }
 
 void
