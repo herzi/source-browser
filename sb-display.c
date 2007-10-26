@@ -154,7 +154,7 @@ child_watch_cb (GPid pid,
 }
 
 static inline void // FIXME: rename function
-load_history (SbDisplay  * display, // FIXME: call self
+load_history (SbDisplay  * self,
 	      gchar const* file_path)
 {
 	gchar* working_folder = g_path_get_dirname (file_path);
@@ -171,7 +171,7 @@ load_history (SbDisplay  * display, // FIXME: call self
 	gpointer* channel_and_window;
 
 	argv[2] = g_path_get_basename (file_path);
-	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (display)),
+	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (self)),
 			     working_folder,
 			     argv,
 			     NULL,
@@ -188,13 +188,13 @@ load_history (SbDisplay  * display, // FIXME: call self
 	g_free (argv[2]);
 	g_free (working_folder);
 
-	display->_private->io_handler = g_io_add_watch (out_chan,
-							G_IO_IN | G_IO_PRI,
-							io_watch_cb,
-							display);
+	self->_private->io_handler = g_io_add_watch (out_chan,
+						     G_IO_IN,
+						     io_watch_cb,
+						     self);
 
-	channel_and_window = sb_callback_data_new ("channel", out_chan,               g_io_channel_unref,
-						   "display", g_object_ref (display), g_object_unref,
+	channel_and_window = sb_callback_data_new ("channel", out_chan,            g_io_channel_unref,
+						   "display", g_object_ref (self), g_object_unref,
 						   NULL);
 
 	g_child_watch_add_full (G_PRIORITY_DEFAULT,
