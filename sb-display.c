@@ -115,6 +115,73 @@ sb_display_set_io_handler (SbDisplay* self,
 }
 
 void
+child_watch_cb (GPid pid,
+		gint status_,
+		gpointer data)
+{
+	GIOChannel* channel = sb_callback_data_peek (data, "channel");
+	SbDisplay * display = sb_callback_data_peek (data, "display");
+	g_print ("pre-done.\n");
+	if (sb_display_get_io_handler (display)) {
+		g_source_remove (sb_display_get_io_handler (display));
+		while (io_watch_cb (channel, G_IO_IN, display))
+			; // parse trailing lines
+	}
+	g_print ("done.\n");
+	g_spawn_close_pid (pid);
+}
+
+gboolean
+io_watch_cb (GIOChannel  * channel,
+	     GIOCondition  condition,
+	     gpointer      data)
+{
+	GIOStatus state = G_IO_STATUS_NORMAL;
+	static GString* string = NULL;
+	static gchar* revision = NULL;
+	SbDisplay* self = SB_DISPLAY (data);
+	gunichar read = 0;
+
+	if (G_UNLIKELY (!string)) {
+		string = g_string_new ("");
+	}
+
+	state = g_io_channel_read_unichar (channel, &read, NULL);
+	if (G_LIKELY (read != '\n')) {
+		g_string_append_unichar (string, read);
+	} else {
+		if (!revision) {
+			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
+			gchar** words = g_strsplit (string->str, " ", -1);
+			revision = g_strdup (words[0]);
+			g_signal_emit_by_name (self,
+					       "load-progress",
+					       atoi (words[3]));
+			g_strfreev (words);
+		} else if (g_str_has_prefix (string->str, "filename ")) {
+			g_print ("%s\n", revision);
+			g_free (revision);
+			revision = NULL;
+#if 0
+		} else {
+			// FIXME: meta-information about the commit
+			g_debug ("Got unknown line: %s",
+				 string->str);
+#endif
+		}
+		g_string_free (string, TRUE);
+		string = NULL;
+	}
+
+	if (state == G_IO_STATUS_NORMAL) {
+		return TRUE;
+	} else {
+		sb_display_set_io_handler (self, 0);
+		return FALSE;
+	}
+}
+
+void
 load_history (SbDisplay  * display,
 	      gchar const* file_path)
 {
