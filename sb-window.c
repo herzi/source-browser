@@ -35,6 +35,9 @@ display_load_started_cb (SbDisplay* display,
 	GtkTextBuffer* buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sb_window_get_display (window)));
 	sb_progress_set_target (SB_PROGRESS (sb_window_get_status (window)),
 				gtk_text_buffer_get_line_count (buffer));
+
+	// FIXME: this is a bug in GtkTextView (it doesn't swallow the trailing \n)
+	sb_progress_set_status (SB_PROGRESS (sb_window_get_status (window)), 1);
 }
 
 static void

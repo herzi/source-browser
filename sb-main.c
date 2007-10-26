@@ -120,9 +120,6 @@ load_history (GtkWidget  * window,
 	gint out_fd = 0;
 	gpointer* channel_and_window;
 
-	// FIXME: this is a bug in GtkTextView (it doesn't swallow the trailing \n)
-	sb_progress_set_status (SB_PROGRESS (sb_window_get_status (window)), 1);
-
 	argv[2] = g_path_get_basename (file_path);
 	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (window),
 			     working_folder,
