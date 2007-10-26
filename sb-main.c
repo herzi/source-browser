@@ -37,9 +37,9 @@ static gboolean io_watch_cb (GIOChannel  * channel,
 			     gpointer      data);
 
 static void
-watch_cb (GPid pid,
-	  gint status_,
-	  gpointer data)
+child_watch_cb (GPid pid,
+		gint status_,
+		gpointer data)
 {
 	GIOChannel* channel = sb_callback_data_peek (data, "channel");
 	SbDisplay * display = sb_callback_data_peek (data, "display");
@@ -153,7 +153,7 @@ load_history (GtkWidget  * window,
 
 	g_child_watch_add_full (G_PRIORITY_DEFAULT,
 				pid,
-				watch_cb,
+				child_watch_cb,
 				channel_and_window,
 				sb_callback_data_free);
 }
