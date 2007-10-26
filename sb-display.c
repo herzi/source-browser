@@ -129,5 +129,11 @@ sb_display_load_path (SbDisplay  * self,
 	g_signal_emit (self, signals[LOAD_STARTED], 0);
 
 	g_mapped_file_free (file);
+
+	load_history (self,
+		      path);
+
+	// FIXME: disable loading of new files until the history is loaded
+	// FIXME: make history loading cancellable
 }
 
