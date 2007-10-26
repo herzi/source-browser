@@ -23,10 +23,15 @@
 
 #include "sb-display.h"
 
+#include "sb-async-reader.h"
 #include "sb-callback-data.h"
 
 struct _SbDisplayPrivate {
 	guint io_handler;
+
+	/* the following are only valid during history loading */
+	// FIXME: move them into an SbHistoryLoader
+	SbAsyncReader* reader;
 };
 
 enum {
@@ -151,13 +156,16 @@ child_watch_cb (GPid pid,
 	}
 	g_print ("done.\n");
 	g_spawn_close_pid (pid);
+
+	g_object_unref (display->_private->reader);
+	display->_private->reader = NULL;
 }
 
 static inline void // FIXME: rename function
 load_history (SbDisplay  * self,
 	      gchar const* file_path)
 {
-	gchar* working_folder = g_path_get_dirname (file_path);
+	gchar* working_folder;
 	gchar* argv[] = {
 		"git-blame",
 		"--incremental",
@@ -170,6 +178,9 @@ load_history (SbDisplay  * self,
 	gint out_fd = 0;
 	gpointer* channel_and_window;
 
+	g_return_if_fail (!self->_private->reader); // protect against multiple execution
+
+	working_folder = g_path_get_dirname (file_path);
 	argv[2] = g_path_get_basename (file_path);
 	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (self)),
 			     working_folder,
@@ -187,6 +198,8 @@ load_history (SbDisplay  * self,
 	g_io_channel_set_close_on_unref (out_chan, TRUE);
 	g_free (argv[2]);
 	g_free (working_folder);
+
+	self->_private->reader     = sb_async_reader_new ();
 
 	self->_private->io_handler = g_io_add_watch (out_chan,
 						     G_IO_IN,
