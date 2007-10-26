@@ -146,8 +146,8 @@ child_watch_cb (GPid pid,
 		gint status_,
 		gpointer data)
 {
-	GIOChannel* channel = sb_callback_data_peek (data, "channel");
 	SbDisplay * display = sb_callback_data_peek (data, "display"); // FIXME: call self
+	GIOChannel* channel = sb_async_reader_get_channel (display->_private->reader);
 	g_print ("pre-done.\n");
 	if (display->_private->io_handler) {
 		g_source_remove (display->_private->io_handler);
