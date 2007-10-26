@@ -24,7 +24,6 @@
 #include "sb-display.h"
 
 #include "sb-callback-data.h"
-#include "sb-main.h"
 
 struct _SbDisplayPrivate {
 	guint io_handler;
@@ -114,24 +113,7 @@ sb_display_set_io_handler (SbDisplay* self,
 	// FIXME: g_object_notify (G_OBJECT (self), "io-handler");
 }
 
-void
-child_watch_cb (GPid pid,
-		gint status_,
-		gpointer data)
-{
-	GIOChannel* channel = sb_callback_data_peek (data, "channel");
-	SbDisplay * display = sb_callback_data_peek (data, "display");
-	g_print ("pre-done.\n");
-	if (sb_display_get_io_handler (display)) {
-		g_source_remove (sb_display_get_io_handler (display));
-		while (io_watch_cb (channel, G_IO_IN, display))
-			; // parse trailing lines
-	}
-	g_print ("done.\n");
-	g_spawn_close_pid (pid);
-}
-
-gboolean
+static gboolean
 io_watch_cb (GIOChannel  * channel,
 	     GIOCondition  condition,
 	     gpointer      data)
@@ -181,7 +163,24 @@ io_watch_cb (GIOChannel  * channel,
 	}
 }
 
-void
+static void
+child_watch_cb (GPid pid,
+		gint status_,
+		gpointer data)
+{
+	GIOChannel* channel = sb_callback_data_peek (data, "channel");
+	SbDisplay * display = sb_callback_data_peek (data, "display");
+	g_print ("pre-done.\n");
+	if (sb_display_get_io_handler (display)) {
+		g_source_remove (sb_display_get_io_handler (display));
+		while (io_watch_cb (channel, G_IO_IN, display))
+			; // parse trailing lines
+	}
+	g_print ("done.\n");
+	g_spawn_close_pid (pid);
+}
+
+static inline void
 load_history (SbDisplay  * display,
 	      gchar const* file_path)
 {
