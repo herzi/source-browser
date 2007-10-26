@@ -165,6 +165,7 @@ static inline void // FIXME: rename function
 load_history (SbDisplay  * self,
 	      gchar const* file_path)
 {
+	GIOChannel* out_chan;
 	gchar* working_folder;
 	gchar* argv[] = {
 		"git-blame",
@@ -194,12 +195,13 @@ load_history (SbDisplay  * self,
 			     &out_fd,
 			     NULL,
 			     NULL); // FIXME: error, pipes
-	GIOChannel* out_chan = g_io_channel_unix_new (out_fd);
+
+	self->_private->reader     = sb_async_reader_new (out_fd);
+
+	out_chan = g_io_channel_unix_new (out_fd);
 	g_io_channel_set_close_on_unref (out_chan, TRUE);
 	g_free (argv[2]);
 	g_free (working_folder);
-
-	self->_private->reader     = sb_async_reader_new (out_fd);
 
 	self->_private->io_handler = g_io_add_watch (out_chan,
 						     G_IO_IN,
