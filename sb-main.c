@@ -32,11 +32,7 @@
 
 #include <glib/gi18n.h>
 
-static gboolean io_watch_cb (GIOChannel  * channel,
-			     GIOCondition  condition,
-			     gpointer      data);
-
-static void
+void
 child_watch_cb (GPid pid,
 		gint status_,
 		gpointer data)
@@ -53,7 +49,7 @@ child_watch_cb (GPid pid,
 	g_spawn_close_pid (pid);
 }
 
-static gboolean
+gboolean
 io_watch_cb (GIOChannel  * channel,
 	     GIOCondition  condition,
 	     gpointer      data)

@@ -32,6 +32,13 @@ void selection_changed_cb (GtkFileChooser* chooser,
 			   GtkWidget     * window);
 void load_history         (SbDisplay     * display,
 			   gchar const   * path);
+gboolean io_watch_cb    (GIOChannel  * channel,
+			 GIOCondition  condition,
+			 gpointer      data);
+void     child_watch_cb (GPid          pid,
+			 gint          status_,
+			 gpointer      data);
+
 
 G_END_DECLS
 
