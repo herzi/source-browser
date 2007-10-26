@@ -99,58 +99,6 @@ io_watch_cb (GIOChannel  * channel,
 	}
 }
 
-void
-load_history (SbDisplay  * display,
-	      gchar const* file_path)
-{
-	gchar* working_folder = g_path_get_dirname (file_path);
-	gchar* argv[] = {
-		"git-blame",
-		"--incremental",
-		"-M",
-		"-C",
-		NULL,
-		NULL
-	};
-	GPid pid = 0;
-	gint out_fd = 0;
-	gpointer* channel_and_window;
-
-	argv[2] = g_path_get_basename (file_path);
-	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (display)),
-			     working_folder,
-			     argv,
-			     NULL,
-			     G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
-			     NULL,
-			     NULL,
-			     &pid,
-			     NULL,
-			     &out_fd,
-			     NULL,
-			     NULL); // FIXME: error, pipes
-	GIOChannel* out_chan = g_io_channel_unix_new (out_fd);
-	g_io_channel_set_close_on_unref (out_chan, TRUE);
-	g_free (argv[2]);
-	g_free (working_folder);
-
-	sb_display_set_io_handler (display,
-				   g_io_add_watch (out_chan,
-						   G_IO_IN | G_IO_PRI,
-						   io_watch_cb,
-						   display));
-
-	channel_and_window = sb_callback_data_new ("channel", out_chan,               g_io_channel_unref,
-						   "display", g_object_ref (display), g_object_unref,
-						   NULL);
-
-	g_child_watch_add_full (G_PRIORITY_DEFAULT,
-				pid,
-				child_watch_cb,
-				channel_and_window,
-				sb_callback_data_free);
-}
-
 int
 main (int   argc,
       char**argv)
