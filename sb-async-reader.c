@@ -73,7 +73,9 @@ reader_set_property (GObject     * object,
 	case PROP_FD:
 		self->_private->file_descriptor = g_value_get_int (value);
 		g_object_notify (object, "file-descriptor");
+		// FIXME: move the channel stuff into the constructed() function
 		self->_private->channel = g_io_channel_unix_new (self->_private->file_descriptor);
+		g_io_channel_set_close_on_unref (self->_private->channel, TRUE);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
