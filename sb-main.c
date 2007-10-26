@@ -104,7 +104,7 @@ io_watch_cb (GIOChannel  * channel,
 }
 
 void
-load_history (GtkWidget  * window,
+load_history (SbDisplay  * display,
 	      gchar const* file_path)
 {
 	gchar* working_folder = g_path_get_dirname (file_path);
@@ -121,7 +121,7 @@ load_history (GtkWidget  * window,
 	gpointer* channel_and_window;
 
 	argv[2] = g_path_get_basename (file_path);
-	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (window),
+	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (display)),
 			     working_folder,
 			     argv,
 			     NULL,
@@ -138,14 +138,14 @@ load_history (GtkWidget  * window,
 	g_free (argv[2]);
 	g_free (working_folder);
 
-	sb_display_set_io_handler (SB_DISPLAY (sb_window_get_display (window)),
+	sb_display_set_io_handler (display,
 				   g_io_add_watch (out_chan,
 						   G_IO_IN | G_IO_PRI,
 						   io_watch_cb,
-						   sb_window_get_display (window)));
+						   display));
 
-	channel_and_window = sb_callback_data_new ("channel", out_chan,              g_io_channel_unref,
-						   "display", g_object_ref (sb_window_get_display (window)), g_object_unref,
+	channel_and_window = sb_callback_data_new ("channel", out_chan,               g_io_channel_unref,
+						   "display", g_object_ref (display), g_object_unref,
 						   NULL);
 
 	g_child_watch_add_full (G_PRIORITY_DEFAULT,

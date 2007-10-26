@@ -24,11 +24,15 @@
 #ifndef SB_MAIN_H
 #define SB_MAIN_H
 
-#include <gtk/gtk.h>
+#include "sb-display.h"
+
+G_BEGIN_DECLS
 
 void selection_changed_cb (GtkFileChooser* chooser,
 			   GtkWidget     * window);
-void load_history         (GtkWidget     * window,
+void load_history         (SbDisplay     * display,
 			   gchar const   * path);
+
+G_END_DECLS
 
 #endif /* !SB_MAIN_H */

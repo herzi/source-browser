@@ -166,7 +166,7 @@ sb_window_open (GtkWidget  * window,
 		return;
 	}
 
-	load_history (window,
+	load_history (SB_DISPLAY (sb_window_get_display (window)),
 		      path);
 
 	// FIXME: disable loading of new files until the history is loaded
