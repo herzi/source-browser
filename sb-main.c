@@ -42,8 +42,7 @@ watch_cb (GPid pid,
 	  gpointer data)
 {
 	GIOChannel* channel = sb_callback_data_peek (data, "channel");
-	GtkWidget * window  = sb_callback_data_peek (data, "window");
-	SbDisplay * display = SB_DISPLAY (sb_window_get_display (window));
+	SbDisplay * display = sb_callback_data_peek (data, "display");
 	g_print ("pre-done.\n");
 	if (sb_display_get_io_handler (display)) {
 		g_source_remove (sb_display_get_io_handler (display));
@@ -149,7 +148,7 @@ load_history (GtkWidget  * window,
 						   sb_window_get_display (window)));
 
 	channel_and_window = sb_callback_data_new ("channel", out_chan,              g_io_channel_unref,
-						   "window",  g_object_ref (window), g_object_unref,
+						   "display", g_object_ref (sb_window_get_display (window)), g_object_unref,
 						   NULL);
 
 	g_child_watch_add_full (G_PRIORITY_DEFAULT,
