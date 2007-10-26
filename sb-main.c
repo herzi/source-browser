@@ -32,8 +32,6 @@
 
 #include <glib/gi18n.h>
 
-static guint io = 0;
-
 static gboolean io_watch_cb (GIOChannel  * channel,
 			     GIOCondition  condition,
 			     gpointer      data);
@@ -45,10 +43,11 @@ watch_cb (GPid pid,
 {
 	GIOChannel* channel = sb_callback_data_peek (data, "channel");
 	GtkWidget * window  = sb_callback_data_peek (data, "window");
+	SbDisplay * display = SB_DISPLAY (sb_window_get_display (window));
 	g_print ("pre-done.\n");
-	if (io) {
-		g_source_remove (io);
-		while (io_watch_cb (channel, G_IO_IN, sb_window_get_display (window)))
+	if (sb_display_get_io_handler (display)) {
+		g_source_remove (sb_display_get_io_handler (display));
+		while (io_watch_cb (channel, G_IO_IN, display))
 			; // parse trailing lines
 	}
 	g_print ("done.\n");
@@ -63,6 +62,7 @@ io_watch_cb (GIOChannel  * channel,
 	GIOStatus state = G_IO_STATUS_NORMAL;
 	static GString* string = NULL;
 	static gchar* revision = NULL;
+	SbDisplay* self = SB_DISPLAY (data);
 	gunichar read = 0;
 
 	if (G_UNLIKELY (!string)) {
@@ -76,7 +76,6 @@ io_watch_cb (GIOChannel  * channel,
 		if (!revision) {
 			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 			gchar** words = g_strsplit (string->str, " ", -1);
-			SbDisplay* self = SB_DISPLAY (data);
 			revision = g_strdup (words[0]);
 			g_signal_emit_by_name (self,
 					       "load-progress",
@@ -100,7 +99,7 @@ io_watch_cb (GIOChannel  * channel,
 	if (state == G_IO_STATUS_NORMAL) {
 		return TRUE;
 	} else {
-		io = 0;
+		sb_display_set_io_handler (self, 0);
 		return FALSE;
 	}
 }
@@ -143,10 +142,11 @@ load_history (GtkWidget  * window,
 	g_free (argv[2]);
 	g_free (working_folder);
 
-	io = g_io_add_watch (out_chan,
-			     G_IO_IN | G_IO_PRI,
-			     io_watch_cb,
-			     sb_window_get_display (window));
+	sb_display_set_io_handler (SB_DISPLAY (sb_window_get_display (window)),
+				   g_io_add_watch (out_chan,
+						   G_IO_IN | G_IO_PRI,
+						   io_watch_cb,
+						   sb_window_get_display (window)));
 
 	channel_and_window = sb_callback_data_new ("channel", out_chan,              g_io_channel_unref,
 						   "window",  g_object_ref (window), g_object_unref,
