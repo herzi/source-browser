@@ -41,9 +41,6 @@ typedef struct _SbDisplayClass   SbDisplayClass;
 
 GType      sb_display_get_type  (void);
 GtkWidget* sb_display_new       (void);
-guint      sb_display_get_io_handler (SbDisplay const* self);
-void       sb_display_set_io_handler (SbDisplay* self,
-				      guint      io_handler);
 void       sb_display_load_path (SbDisplay  * self,
 				 gchar const* path,
 				 GError     **error);

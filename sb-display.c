@@ -86,33 +86,6 @@ sb_display_new (void)
 	return g_object_new (SB_TYPE_DISPLAY, NULL);
 }
 
-guint
-sb_display_get_io_handler (SbDisplay const* self)
-{
-	g_return_val_if_fail (SB_IS_DISPLAY (self), 0);
-
-	return self->_private->io_handler;
-}
-
-void
-sb_display_set_io_handler (SbDisplay* self,
-			   guint      io_handler)
-{
-	g_return_if_fail (SB_IS_DISPLAY (self));
-
-	if (self->_private->io_handler == io_handler) {
-		return;
-	}
-
-	if (self->_private->io_handler) {
-		//g_source_remove (self->_private->io_handler);
-	}
-
-	self->_private->io_handler = io_handler;
-
-	// FIXME: g_object_notify (G_OBJECT (self), "io-handler");
-}
-
 static gboolean
 io_watch_cb (GIOChannel  * channel,
 	     GIOCondition  condition,
@@ -158,7 +131,7 @@ io_watch_cb (GIOChannel  * channel,
 	if (state == G_IO_STATUS_NORMAL) {
 		return TRUE;
 	} else {
-		sb_display_set_io_handler (self, 0);
+		self->_private->io_handler = 0;
 		return FALSE;
 	}
 }
@@ -169,10 +142,10 @@ child_watch_cb (GPid pid,
 		gpointer data)
 {
 	GIOChannel* channel = sb_callback_data_peek (data, "channel");
-	SbDisplay * display = sb_callback_data_peek (data, "display");
+	SbDisplay * display = sb_callback_data_peek (data, "display"); // FIXME: call self
 	g_print ("pre-done.\n");
-	if (sb_display_get_io_handler (display)) {
-		g_source_remove (sb_display_get_io_handler (display));
+	if (display->_private->io_handler) {
+		g_source_remove (display->_private->io_handler);
 		while (io_watch_cb (channel, G_IO_IN, display))
 			; // parse trailing lines
 	}
@@ -215,11 +188,10 @@ load_history (SbDisplay  * display,
 	g_free (argv[2]);
 	g_free (working_folder);
 
-	sb_display_set_io_handler (display,
-				   g_io_add_watch (out_chan,
-						   G_IO_IN | G_IO_PRI,
-						   io_watch_cb,
-						   display));
+	display->_private->io_handler = g_io_add_watch (out_chan,
+							G_IO_IN | G_IO_PRI,
+							io_watch_cb,
+							display);
 
 	channel_and_window = sb_callback_data_new ("channel", out_chan,               g_io_channel_unref,
 						   "display", g_object_ref (display), g_object_unref,
