@@ -196,9 +196,8 @@ load_history (SbDisplay  * self,
 			     NULL,
 			     NULL); // FIXME: error, pipes
 
-	self->_private->reader     = sb_async_reader_new (out_fd);
-
-	out_chan = g_io_channel_unix_new (sb_async_reader_get_fd (self->_private->reader));
+	self->_private->reader = sb_async_reader_new (out_fd);
+	out_chan = sb_async_reader_get_channel (self->_private->reader);
 	g_io_channel_set_close_on_unref (out_chan, TRUE);
 	g_free (argv[2]);
 	g_free (working_folder);

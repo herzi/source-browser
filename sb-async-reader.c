@@ -24,7 +24,8 @@
 #include "sb-async-reader.h"
 
 struct _SbAsyncReaderPrivate {
-	gint file_descriptor;
+	gint        file_descriptor;
+	GIOChannel* channel;
 };
 
 enum {
@@ -72,6 +73,7 @@ reader_set_property (GObject     * object,
 	case PROP_FD:
 		self->_private->file_descriptor = g_value_get_int (value);
 		g_object_notify (object, "file-descriptor");
+		self->_private->channel = g_io_channel_unix_new (self->_private->file_descriptor);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -101,6 +103,14 @@ sb_async_reader_new (gint input_fd)
 	return g_object_new (SB_TYPE_ASYNC_READER,
 			     "file-descriptor", input_fd,
 			     NULL);
+}
+
+GIOChannel*
+sb_async_reader_get_channel (SbAsyncReader const* self)
+{
+	g_return_val_if_fail (SB_IS_ASYNC_READER (self), NULL);
+
+	return self->_private->channel;
 }
 
 gint
