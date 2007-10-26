@@ -103,3 +103,12 @@ sb_async_reader_new (gint input_fd)
 			     NULL);
 }
 
+gint
+sb_async_reader_get_fd (SbAsyncReader const* self)
+{
+	// FIXME: remove this function, we shouldn't expose this
+	g_return_val_if_fail (SB_IS_ASYNC_READER (self), 0);
+
+	return self->_private->file_descriptor;
+}
+

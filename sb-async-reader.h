@@ -34,9 +34,11 @@ typedef struct _SbAsyncReaderClass   SbAsyncReaderClass;
 
 #define SB_TYPE_ASYNC_READER         (sb_async_reader_get_type ())
 #define SB_ASYNC_READER(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_ASYNC_READER, SbAsyncReader))
+#define SB_IS_ASYNC_READER(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), SB_TYPE_ASYNC_READER))
 
 GType          sb_async_reader_get_type (void);
 SbAsyncReader* sb_async_reader_new      (gint input_fd);
+gint           sb_async_reader_get_fd   (SbAsyncReader const* self);
 
 struct _SbAsyncReader {
 	GObject               base_instance;
