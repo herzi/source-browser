@@ -23,15 +23,25 @@
 
 #include "sb-async-reader.h"
 
+struct _SbAsyncReaderPrivate {
+	gint file_descriptor;
+};
+
 G_DEFINE_TYPE (SbAsyncReader, sb_async_reader, G_TYPE_OBJECT);
 
 static void
 sb_async_reader_init (SbAsyncReader* self)
-{}
+{
+	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
+						      SB_TYPE_ASYNC_READER,
+						      SbAsyncReaderPrivate);
+}
 
 static void
 sb_async_reader_class_init (SbAsyncReaderClass* self_class)
-{}
+{
+	g_type_class_add_private (self_class, sizeof (SbAsyncReaderPrivate));
+}
 
 SbAsyncReader*
 sb_async_reader_new (gint input_fd)
