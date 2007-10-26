@@ -43,6 +43,24 @@ sb_async_reader_init (SbAsyncReader* self)
 }
 
 static void
+reader_get_property (GObject   * object,
+		     guint       prop_id,
+		     GValue    * value,
+		     GParamSpec* pspec)
+{
+	SbAsyncReader* self = SB_ASYNC_READER (object);
+
+	switch (prop_id) {
+	case PROP_FD:
+		g_value_set_int (value, self->_private->file_descriptor);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
 reader_set_property (GObject     * object,
 		     guint         prop_id,
 		     GValue const* value,
@@ -66,12 +84,13 @@ sb_async_reader_class_init (SbAsyncReaderClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
+	object_class->get_property = reader_get_property;
 	object_class->set_property = reader_set_property;
 
 	g_object_class_install_property (object_class, PROP_FD,
 					 g_param_spec_int ("file-descriptor", "file-descriptor", "file-descriptor",
 							   0, G_MAXINT, 0,
-							   G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+							   G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_type_class_add_private (self_class, sizeof (SbAsyncReaderPrivate));
 }
