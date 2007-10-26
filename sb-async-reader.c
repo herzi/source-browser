@@ -1,4 +1,4 @@
-/* This file is part of ...
+/* This file is part of source browser
  *
  * AUTHORS
  *     Sven Herzberg  <herzi@gnome-de.org>
@@ -22,4 +22,21 @@
  */
 
 #include "sb-async-reader.h"
+
+G_DEFINE_TYPE (SbAsyncReader, sb_async_reader, G_TYPE_OBJECT);
+
+static void
+sb_async_reader_init (SbAsyncReader* self)
+{}
+
+static void
+sb_async_reader_class_init (SbAsyncReaderClass* self_class)
+{}
+
+SbAsyncReader*
+sb_async_reader_new (void)
+{
+	return g_object_new (SB_TYPE_ASYNC_READER,
+			     NULL);
+}
 

@@ -1,4 +1,4 @@
-/* This file is part of ...
+/* This file is part of source browser
  *
  * AUTHORS
  *     Sven Herzberg  <herzi@gnome-de.org>
@@ -24,5 +24,28 @@
 #ifndef SB_ASYNC_READER_H
 #define SB_ASYNC_READER_H
 
+#include <glib-object.h>
+
+G_BEGIN_DECLS
+
+typedef struct _SbAsyncReader        SbAsyncReader;
+typedef struct _SbAsyncReaderPrivate SbAsyncReaderPrivate;
+typedef struct _SbAsyncReaderClass   SbAsyncReaderClass;
+
+#define SB_TYPE_ASYNC_READER         (sb_async_reader_get_type ())
+
+GType          sb_async_reader_get_type (void);
+SbAsyncReader* sb_async_reader_new      (void);
+
+struct _SbAsyncReader {
+	GObject               base_instance;
+	SbAsyncReaderPrivate* _private;
+};
+
+struct _SbAsyncReaderClass {
+	GObjectClass          base_class;
+};
+
+G_END_DECLS
 
 #endif /* !SB_ASYNC_READER_H */
