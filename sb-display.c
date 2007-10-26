@@ -153,8 +153,8 @@ child_watch_cb (GPid pid,
 	g_spawn_close_pid (pid);
 }
 
-static inline void
-load_history (SbDisplay  * display,
+static inline void // FIXME: rename function
+load_history (SbDisplay  * display, // FIXME: call self
 	      gchar const* file_path)
 {
 	gchar* working_folder = g_path_get_dirname (file_path);
