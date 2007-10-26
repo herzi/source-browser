@@ -146,7 +146,7 @@ child_watch_cb (GPid pid,
 		gint status_,
 		gpointer data)
 {
-	SbDisplay * display = sb_callback_data_peek (data, "display"); // FIXME: call self
+	SbDisplay * display = SB_DISPLAY (data); // FIXME: call self
 	GIOChannel* channel = sb_async_reader_get_channel (display->_private->reader);
 	g_print ("pre-done.\n");
 	if (display->_private->io_handler) {
@@ -206,14 +206,11 @@ load_history (SbDisplay  * self,
 						     io_watch_cb,
 						     self);
 
-	channel_and_window = sb_callback_data_new ("display", g_object_ref (self), g_object_unref,
-						   NULL);
-
 	g_child_watch_add_full (G_PRIORITY_DEFAULT,
 				pid,
 				child_watch_cb,
-				channel_and_window,
-				sb_callback_data_free);
+				self,
+				NULL);
 }
 
 void
