@@ -21,16 +21,7 @@
  * USA
  */
 
-#include "sb-main.h"
-
-#include <gtk/gtk.h>
-
-#include "sb-callback-data.h"
-#include "sb-display.h"
-#include "sb-progress.h"
 #include "sb-window.h"
-
-#include <glib/gi18n.h>
 
 int
 main (int   argc,
