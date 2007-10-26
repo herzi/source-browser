@@ -24,13 +24,12 @@
 #include "sb-window.h"
 
 #include "sb-display.h"
-#include "sb-main.h"
 #include "sb-progress.h"
 #include <glib/gi18n.h>
 
-void
-selection_changed_cb (GtkFileChooser* chooser,
-		      GtkWidget     * window)
+static void
+chooser_selection_changed_cb (GtkFileChooser* chooser,
+			      GtkWidget     * window)
 {
 	gchar* path = gtk_file_chooser_get_filename (chooser);
 	sb_window_open (window,
@@ -82,7 +81,7 @@ sb_window_new (void)
 	chooser = gtk_file_chooser_button_new (_("Choose File"),
 					       GTK_FILE_CHOOSER_ACTION_OPEN);
 	g_signal_connect (chooser, "selection-changed",
-			  G_CALLBACK (selection_changed_cb), result);
+			  G_CALLBACK (chooser_selection_changed_cb), result);
 	gtk_box_pack_start (GTK_BOX (vbox),
 			    chooser,
 			    FALSE,

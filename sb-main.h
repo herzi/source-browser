@@ -28,8 +28,6 @@
 
 G_BEGIN_DECLS
 
-void selection_changed_cb (GtkFileChooser* chooser,
-			   GtkWidget     * window);
 void load_history         (SbDisplay     * display,
 			   gchar const   * path);
 gboolean io_watch_cb    (GIOChannel  * channel,
