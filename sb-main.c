@@ -151,16 +151,6 @@ load_history (SbDisplay  * display,
 				sb_callback_data_free);
 }
 
-void
-selection_changed_cb (GtkFileChooser* chooser,
-		      GtkWidget     * window)
-{
-	gchar* path = gtk_file_chooser_get_filename (chooser);
-	sb_window_open (window,
-			path);
-	g_free (path);
-}
-
 int
 main (int   argc,
       char**argv)

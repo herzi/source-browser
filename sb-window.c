@@ -28,6 +28,16 @@
 #include "sb-progress.h"
 #include <glib/gi18n.h>
 
+void
+selection_changed_cb (GtkFileChooser* chooser,
+		      GtkWidget     * window)
+{
+	gchar* path = gtk_file_chooser_get_filename (chooser);
+	sb_window_open (window,
+			path);
+	g_free (path);
+}
+
 static void
 display_load_started_cb (SbDisplay* display,
 			 GtkWidget* window)
