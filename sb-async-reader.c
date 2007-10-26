@@ -34,7 +34,7 @@ sb_async_reader_class_init (SbAsyncReaderClass* self_class)
 {}
 
 SbAsyncReader*
-sb_async_reader_new (void)
+sb_async_reader_new (gint input_fd)
 {
 	return g_object_new (SB_TYPE_ASYNC_READER,
 			     NULL);

@@ -199,7 +199,7 @@ load_history (SbDisplay  * self,
 	g_free (argv[2]);
 	g_free (working_folder);
 
-	self->_private->reader     = sb_async_reader_new ();
+	self->_private->reader     = sb_async_reader_new (out_fd);
 
 	self->_private->io_handler = g_io_add_watch (out_chan,
 						     G_IO_IN,
