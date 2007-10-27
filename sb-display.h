@@ -45,6 +45,10 @@ void       sb_display_load_path (SbDisplay  * self,
 				 gchar const* path,
 				 GError     **error);
 
+gboolean   io_watch_cb (GIOChannel  * channel,
+			GIOCondition  condition,
+			gpointer      data);
+
 struct _SbDisplay {
 	GtkTextView       base_instance;
 	SbDisplayPrivate* _private;

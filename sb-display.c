@@ -118,7 +118,7 @@ display_parse_line (SbAsyncReader* reader,
 	}
 }
 
-static gboolean
+gboolean
 io_watch_cb (GIOChannel  * channel,
 	     GIOCondition  condition,
 	     gpointer      data)
