@@ -88,9 +88,10 @@ sb_revision_class_init (SbRevisionClass* self_class)
 }
 
 SbRevision*
-sb_revision_new (void)
+sb_revision_new (gchar const* name)
 {
 	return g_object_new (SB_TYPE_REVISION,
+			     "name", name,
 			     NULL);
 }
 

@@ -36,7 +36,7 @@ typedef struct _SbRevisionClass   SbRevisionClass;
 #define SB_REVISION(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_REVISION, SbRevision))
 
 GType       sb_revision_get_type (void);
-SbRevision* sb_revision_new      (void);
+SbRevision* sb_revision_new      (gchar const* name);
 
 struct _SbRevision {
 	GObject            base_instance;
