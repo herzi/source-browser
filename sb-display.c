@@ -133,11 +133,11 @@ io_watch_cb (GIOChannel  * channel,
 		string = NULL;
 	}
 
-	if (state == G_IO_STATUS_NORMAL) {
-		return TRUE;
-	} else {
+	if (state != G_IO_STATUS_NORMAL) {
 		self->_private->io_handler = 0;
 		return FALSE;
+	} else {
+		return TRUE;
 	}
 }
 
