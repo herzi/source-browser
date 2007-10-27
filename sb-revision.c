@@ -23,15 +23,25 @@
 
 #include "sb-revision.h"
 
+struct _SbRevisionPrivate {
+	gchar* name;
+};
+
 G_DEFINE_TYPE (SbRevision, sb_revision, G_TYPE_OBJECT);
 
 static void
 sb_revision_init (SbRevision* self)
-{}
+{
+	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
+						      SB_TYPE_REVISION,
+						      SbRevisionPrivate);
+}
 
 static void
 sb_revision_class_init (SbRevisionClass* self_class)
-{}
+{
+	g_type_class_add_private (self_class, sizeof (SbRevisionPrivate));
+}
 
 SbRevision*
 sb_revision_new (void)
