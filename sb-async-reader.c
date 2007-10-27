@@ -91,7 +91,6 @@ io_watch_cb (GIOChannel  * channel,
 	     gpointer      data)
 {
 	GIOStatus state = G_IO_STATUS_NORMAL;
-	static GString* string = NULL;
 	SbAsyncReader* self = SB_ASYNC_READER (data);
 	gunichar read = 0;
 
@@ -99,26 +98,18 @@ io_watch_cb (GIOChannel  * channel,
 	state = g_io_channel_read_unichar (channel, &read, NULL);
 
 	if (G_UNLIKELY (state != G_IO_STATUS_NORMAL)) {
-		if (string) {
-			g_string_free (string, TRUE);
-			string = NULL;
-		}
 		sb_async_reader_set_io_tag (self,
 					    0);
 		return FALSE;
 	}
 
-	if (G_UNLIKELY (!string)) {
-		string = g_string_new ("");
-	}
-
 	if (G_LIKELY (read != '\n')) {
-		g_string_append_unichar (string, read);
+		g_string_append_unichar (self->_private->buffer, read);
 	} else {
 		g_signal_emit_by_name (self,
 				       "read-line",
-				       string->str); // FIXME: emit by signal id
-		g_string_set_size (string, 0);
+				       self->_private->buffer->str); // FIXME: emit by signal id
+		g_string_set_size (self->_private->buffer, 0);
 	}
 
 	return TRUE;
