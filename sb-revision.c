@@ -38,8 +38,22 @@ sb_revision_init (SbRevision* self)
 }
 
 static void
+revision_finalize (GObject* object)
+{
+	SbRevision* self = SB_REVISION (object);
+
+	g_free (self->_private->name);
+
+	G_OBJECT_CLASS (sb_revision_parent_class)->finalize (object);
+}
+
+static void
 sb_revision_class_init (SbRevisionClass* self_class)
 {
+	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+	object_class->finalize = revision_finalize;
+
 	g_type_class_add_private (self_class, sizeof (SbRevisionPrivate));
 }
 
