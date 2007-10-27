@@ -23,3 +23,20 @@
 
 #include "sb-revision.h"
 
+G_DEFINE_TYPE (SbRevision, sb_revision, G_TYPE_OBJECT);
+
+static void
+sb_revision_init (SbRevision* self)
+{}
+
+static void
+sb_revision_class_init (SbRevisionClass* self_class)
+{}
+
+SbRevision*
+sb_revision_new (void)
+{
+	return g_object_new (SB_TYPE_REVISION,
+			     NULL);
+}
+

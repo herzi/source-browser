@@ -24,5 +24,28 @@
 #ifndef SB_REVISION_H
 #define SB_REVISION_H
 
+#include <glib-object.h>
+
+G_BEGIN_DECLS
+
+typedef struct _SbRevision        SbRevision;
+typedef struct _SbRevisionPrivate SbRevisionPrivate;
+typedef struct _SbRevisionClass   SbRevisionClass;
+
+#define SB_TYPE_REVISION         (sb_revision_get_type ())
+
+GType       sb_revision_get_type (void);
+SbRevision* sb_revision_new      (void);
+
+struct _SbRevision {
+	GObject            base_instance;
+	SbRevisionPrivate* _private;
+};
+
+struct _SbRevisionClass {
+	GObjectClass       base_class;
+};
+
+G_END_DECLS
 
 #endif /* !SB_REVISION_H */
