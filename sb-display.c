@@ -108,7 +108,7 @@ io_watch_cb (GIOChannel  * channel,
 
 	state = g_io_channel_read_unichar (channel, &read, NULL);
 
-	if (state != G_IO_STATUS_NORMAL) {
+	if (G_UNLIKELY (state != G_IO_STATUS_NORMAL)) {
 		self->_private->io_handler = 0;
 		return FALSE;
 	}
@@ -120,9 +120,10 @@ io_watch_cb (GIOChannel  * channel,
 			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 			gchar** words = g_strsplit (string->str, " ", -1);
 			revision = g_strdup (words[0]);
-			g_signal_emit_by_name (self,
-					       "load-progress",
-					       atoi (words[3]));
+			g_signal_emit (self,
+				       signals[LOAD_PROGRESS],
+				       0,
+				       atoi (words[3]));
 			g_strfreev (words);
 		} else if (g_str_has_prefix (string->str, "filename ")) {
 			g_print ("%s\n", revision);
