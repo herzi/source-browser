@@ -220,6 +220,9 @@ load_history (SbDisplay  * self,
 						     io_watch_cb,
 						     self);
 
+	g_signal_connect (self->_private->reader, "read-line",
+			  G_CALLBACK (display_parse_line), self);
+
 	g_child_watch_add_full (G_PRIORITY_DEFAULT,
 				pid,
 				child_watch_cb,
