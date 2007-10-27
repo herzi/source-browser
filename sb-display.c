@@ -157,19 +157,30 @@ io_watch_cb (GIOChannel  * channel,
 	return TRUE;
 }
 
+static inline void
+reader_flush (SbAsyncReader* reader)
+{
+	GIOChannel* channel    = sb_async_reader_get_channel (reader);
+	guint       io_handler = sb_async_reader_get_io_tag (reader);
+
+	if (G_UNLIKELY (!io_handler)) {
+		return;
+	}
+
+	g_source_remove (io_handler);
+	while (io_watch_cb (channel, G_IO_IN, reader))
+		; // parse trailing lines
+}
+
 static void
 child_watch_cb (GPid pid,
 		gint status_,
 		gpointer data)
 {
 	SbDisplay * display = SB_DISPLAY (data); // FIXME: call self
-	GIOChannel* channel = sb_async_reader_get_channel (display->_private->reader);
+
 	g_print ("pre-done.\n");
-	if (sb_async_reader_get_io_tag (display->_private->reader)) {
-		g_source_remove (sb_async_reader_get_io_tag (display->_private->reader));
-		while (io_watch_cb (channel, G_IO_IN, display->_private->reader))
-			; // parse trailing lines
-	}
+	reader_flush (display->_private->reader);
 	g_print ("done.\n");
 	g_spawn_close_pid (pid);
 
