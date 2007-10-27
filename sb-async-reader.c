@@ -30,6 +30,7 @@ struct _SbAsyncReaderPrivate {
 	gint        file_descriptor;
 	guint       io_tag;
 	GIOChannel* channel;
+	GString   * buffer;
 };
 
 enum {
@@ -52,6 +53,18 @@ sb_async_reader_init (SbAsyncReader* self)
 	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
 						      SB_TYPE_ASYNC_READER,
 						      SbAsyncReaderPrivate);
+
+	self->_private->buffer = g_string_sized_new (0);
+}
+
+static void
+reader_finalize (GObject* object)
+{
+	SbAsyncReader* self = SB_ASYNC_READER (object);
+
+	g_string_free (self->_private->buffer, TRUE);
+
+	G_OBJECT_CLASS (sb_async_reader_parent_class)->finalize (object);
 }
 
 static void
@@ -144,6 +157,7 @@ sb_async_reader_class_init (SbAsyncReaderClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
+	object_class->finalize     = reader_finalize;
 	object_class->get_property = reader_get_property;
 	object_class->set_property = reader_set_property;
 
