@@ -125,7 +125,7 @@ io_watch_cb (GIOChannel  * channel,
 {
 	GIOStatus state = G_IO_STATUS_NORMAL;
 	static GString* string = NULL;
-	SbDisplay* self = SB_DISPLAY (data);
+	SbAsyncReader* self = SB_ASYNC_READER (data);
 	gunichar read = 0;
 
 	// FIXME: rewrite to non-blockingly use read()
@@ -136,7 +136,7 @@ io_watch_cb (GIOChannel  * channel,
 			g_string_free (string, TRUE);
 			string = NULL;
 		}
-		sb_async_reader_set_io_tag (self->_private->reader,
+		sb_async_reader_set_io_tag (self,
 					    0);
 		return FALSE;
 	}
@@ -148,7 +148,7 @@ io_watch_cb (GIOChannel  * channel,
 	if (G_LIKELY (read != '\n')) {
 		g_string_append_unichar (string, read);
 	} else {
-		g_signal_emit_by_name (self->_private->reader,
+		g_signal_emit_by_name (self,
 				       "read-line",
 				       string->str); // FIXME: emit by signal id
 		g_string_set_size (string, 0);
@@ -167,7 +167,7 @@ child_watch_cb (GPid pid,
 	g_print ("pre-done.\n");
 	if (sb_async_reader_get_io_tag (display->_private->reader)) {
 		g_source_remove (sb_async_reader_get_io_tag (display->_private->reader));
-		while (io_watch_cb (channel, G_IO_IN, display))
+		while (io_watch_cb (channel, G_IO_IN, display->_private->reader))
 			; // parse trailing lines
 	}
 	g_print ("done.\n");
@@ -218,7 +218,7 @@ load_history (SbDisplay  * self,
 				    g_io_add_watch (sb_async_reader_get_channel (self->_private->reader),
 						    G_IO_IN,
 						    io_watch_cb,
-						    self));
+						    self->_private->reader));
 
 	g_signal_connect (self->_private->reader, "read-line",
 			  G_CALLBACK (display_parse_line), self);
