@@ -23,6 +23,9 @@
 
 #include "sb-async-reader.h"
 
+// FIXME: remove this include
+#include "sb-display.h"
+
 struct _SbAsyncReaderPrivate {
 	gint        file_descriptor;
 	guint       io_tag;
@@ -84,6 +87,12 @@ reader_set_property (GObject     * object,
 		// FIXME: move the channel stuff into the constructed() function
 		self->_private->channel = g_io_channel_unix_new (self->_private->file_descriptor);
 		g_io_channel_set_close_on_unref (self->_private->channel, TRUE);
+
+		sb_async_reader_set_io_tag (self,
+					    g_io_add_watch (sb_async_reader_get_channel (self),
+							    G_IO_IN,
+							    io_watch_cb,
+							    self));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

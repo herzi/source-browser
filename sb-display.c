@@ -225,12 +225,6 @@ load_history (SbDisplay  * self,
 	g_free (argv[2]);
 	g_free (working_folder);
 
-	sb_async_reader_set_io_tag (self->_private->reader,
-				    g_io_add_watch (sb_async_reader_get_channel (self->_private->reader),
-						    G_IO_IN,
-						    io_watch_cb,
-						    self->_private->reader));
-
 	g_signal_connect (self->_private->reader, "read-line",
 			  G_CALLBACK (display_parse_line), self);
 
