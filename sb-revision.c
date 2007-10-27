@@ -27,6 +27,11 @@ struct _SbRevisionPrivate {
 	gchar* name;
 };
 
+enum {
+	PROP_0,
+	PROP_NAME
+};
+
 G_DEFINE_TYPE (SbRevision, sb_revision, G_TYPE_OBJECT);
 
 static void
@@ -56,6 +61,10 @@ revision_set_property (GObject     * object,
 	SbRevision* self = SB_REVISION (object);
 
 	switch (prop_id) {
+	case PROP_NAME:
+		self->_private->name = g_value_dup_string (value);
+		g_object_notify (object, "name");
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -69,6 +78,11 @@ sb_revision_class_init (SbRevisionClass* self_class)
 
 	object_class->finalize     = revision_finalize;
 	object_class->set_property = revision_set_property;
+
+	g_object_class_install_property (object_class,
+					 PROP_NAME,
+					 g_param_spec_string ("name", "name", "name",
+							      NULL, G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_type_class_add_private (self_class, sizeof (SbRevisionPrivate));
 }
