@@ -157,21 +157,6 @@ io_watch_cb (GIOChannel  * channel,
 	return TRUE;
 }
 
-void
-sb_reader_flush (SbAsyncReader* reader)
-{
-	GIOChannel* channel    = sb_async_reader_get_channel (reader);
-	guint       io_handler = sb_async_reader_get_io_tag (reader);
-
-	if (G_UNLIKELY (!io_handler)) {
-		return;
-	}
-
-	g_source_remove (io_handler);
-	while (io_watch_cb (channel, G_IO_IN, reader))
-		; // parse trailing lines
-}
-
 static void
 child_watch_cb (GPid pid,
 		gint status_,
