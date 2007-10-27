@@ -106,6 +106,7 @@ io_watch_cb (GIOChannel  * channel,
 		string = g_string_new ("");
 	}
 
+	// FIXME: rewrite to non-blockingly use read()
 	state = g_io_channel_read_unichar (channel, &read, NULL);
 
 	if (G_UNLIKELY (state != G_IO_STATUS_NORMAL)) {
