@@ -149,9 +149,9 @@ io_watch_cb (GIOChannel  * channel,
 	if (G_LIKELY (read != '\n')) {
 		g_string_append_unichar (string, read);
 	} else {
-		display_parse_line (self->_private->reader,
-				    string->str,
-				    self);
+		g_signal_emit_by_name (self->_private->reader,
+				       "read-line",
+				       string->str); // FIXME: emit by signal id
 		g_string_set_size (string, 0);
 	}
 
