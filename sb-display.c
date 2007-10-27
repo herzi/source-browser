@@ -27,8 +27,6 @@
 #include "sb-callback-data.h"
 
 struct _SbDisplayPrivate {
-	guint io_handler;
-
 	/* the following are only valid during history loading */
 	// FIXME: move them into an SbHistoryLoader
 	SbAsyncReader* reader;
@@ -138,7 +136,8 @@ io_watch_cb (GIOChannel  * channel,
 			g_string_free (string, TRUE);
 			string = NULL;
 		}
-		self->_private->io_handler = 0;
+		sb_async_reader_set_io_tag (self->_private->reader,
+					    0);
 		return FALSE;
 	}
 
@@ -166,8 +165,8 @@ child_watch_cb (GPid pid,
 	SbDisplay * display = SB_DISPLAY (data); // FIXME: call self
 	GIOChannel* channel = sb_async_reader_get_channel (display->_private->reader);
 	g_print ("pre-done.\n");
-	if (display->_private->io_handler) {
-		g_source_remove (display->_private->io_handler);
+	if (sb_async_reader_get_io_tag (display->_private->reader)) {
+		g_source_remove (sb_async_reader_get_io_tag (display->_private->reader));
 		while (io_watch_cb (channel, G_IO_IN, display))
 			; // parse trailing lines
 	}
@@ -215,10 +214,11 @@ load_history (SbDisplay  * self,
 	g_free (argv[2]);
 	g_free (working_folder);
 
-	self->_private->io_handler = g_io_add_watch (sb_async_reader_get_channel (self->_private->reader),
-						     G_IO_IN,
-						     io_watch_cb,
-						     self);
+	sb_async_reader_set_io_tag (self->_private->reader,
+				    g_io_add_watch (sb_async_reader_get_channel (self->_private->reader),
+						    G_IO_IN,
+						    io_watch_cb,
+						    self));
 
 	g_signal_connect (self->_private->reader, "read-line",
 			  G_CALLBACK (display_parse_line), self);
