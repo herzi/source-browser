@@ -92,8 +92,9 @@ sb_display_new (void)
 }
 
 static inline void
-display_parse_line (SbDisplay  * display,
-		    gchar const* line)
+display_parse_line (SbAsyncReader* reader,
+		    gchar const  * line,
+		    SbDisplay    * display)
 {
 }
 
@@ -127,7 +128,9 @@ io_watch_cb (GIOChannel  * channel,
 	if (G_LIKELY (read != '\n')) {
 		g_string_append_unichar (string, read);
 	} else {
-		display_parse_line (self, string->str);
+		display_parse_line (self->_private->reader,
+				    string->str,
+				    self);
 		if (!revision) {
 			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 			gchar** words = g_strsplit (string->str, " ", -1);
