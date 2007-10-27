@@ -91,6 +91,12 @@ sb_display_new (void)
 	return g_object_new (SB_TYPE_DISPLAY, NULL);
 }
 
+static inline void
+display_parse_line (SbDisplay  * display,
+		    gchar const* line)
+{
+}
+
 static gboolean
 io_watch_cb (GIOChannel  * channel,
 	     GIOCondition  condition,
@@ -117,6 +123,7 @@ io_watch_cb (GIOChannel  * channel,
 	if (G_LIKELY (read != '\n')) {
 		g_string_append_unichar (string, read);
 	} else {
+		display_parse_line (self, string->str);
 		if (!revision) {
 			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 			gchar** words = g_strsplit (string->str, " ", -1);
