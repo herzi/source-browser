@@ -72,6 +72,45 @@ reader_get_property (GObject   * object,
 	}
 }
 
+gboolean
+io_watch_cb (GIOChannel  * channel,
+	     GIOCondition  condition,
+	     gpointer      data)
+{
+	GIOStatus state = G_IO_STATUS_NORMAL;
+	static GString* string = NULL;
+	SbAsyncReader* self = SB_ASYNC_READER (data);
+	gunichar read = 0;
+
+	// FIXME: rewrite to non-blockingly use read()
+	state = g_io_channel_read_unichar (channel, &read, NULL);
+
+	if (G_UNLIKELY (state != G_IO_STATUS_NORMAL)) {
+		if (string) {
+			g_string_free (string, TRUE);
+			string = NULL;
+		}
+		sb_async_reader_set_io_tag (self,
+					    0);
+		return FALSE;
+	}
+
+	if (G_UNLIKELY (!string)) {
+		string = g_string_new ("");
+	}
+
+	if (G_LIKELY (read != '\n')) {
+		g_string_append_unichar (string, read);
+	} else {
+		g_signal_emit_by_name (self,
+				       "read-line",
+				       string->str); // FIXME: emit by signal id
+		g_string_set_size (string, 0);
+	}
+
+	return TRUE;
+}
+
 static void
 reader_set_property (GObject     * object,
 		     guint         prop_id,
