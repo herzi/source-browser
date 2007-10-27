@@ -94,8 +94,30 @@ sb_display_new (void)
 static inline void
 display_parse_line (SbAsyncReader* reader,
 		    gchar const  * line,
-		    SbDisplay    * display)
+		    SbDisplay    * self)
 {
+	static gchar* revision = NULL;
+
+	if (G_UNLIKELY (!revision)) {
+		// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
+		gchar** words = g_strsplit (line, " ", -1);
+		revision = g_strdup (words[0]);
+		g_signal_emit (self,
+			       signals[LOAD_PROGRESS],
+			       0,
+			       atoi (words[3]));
+		g_strfreev (words);
+	} else if (g_str_has_prefix (line, "filename ")) {
+		g_print ("%s\n", revision);
+		g_free (revision);
+		revision = NULL;
+#if 0
+	} else {
+		// FIXME: meta-information about the commit
+		g_debug ("Got unknown line: %s",
+			 line);
+#endif
+	}
 }
 
 static gboolean
@@ -105,7 +127,6 @@ io_watch_cb (GIOChannel  * channel,
 {
 	GIOStatus state = G_IO_STATUS_NORMAL;
 	static GString* string = NULL;
-	static gchar* revision = NULL;
 	SbDisplay* self = SB_DISPLAY (data);
 	gunichar read = 0;
 
@@ -131,26 +152,6 @@ io_watch_cb (GIOChannel  * channel,
 		display_parse_line (self->_private->reader,
 				    string->str,
 				    self);
-		if (!revision) {
-			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
-			gchar** words = g_strsplit (string->str, " ", -1);
-			revision = g_strdup (words[0]);
-			g_signal_emit (self,
-				       signals[LOAD_PROGRESS],
-				       0,
-				       atoi (words[3]));
-			g_strfreev (words);
-		} else if (g_str_has_prefix (string->str, "filename ")) {
-			g_print ("%s\n", revision);
-			g_free (revision);
-			revision = NULL;
-#if 0
-		} else {
-			// FIXME: meta-information about the commit
-			g_debug ("Got unknown line: %s",
-				 string->str);
-#endif
-		}
 		g_string_set_size (string, 0);
 	}
 
