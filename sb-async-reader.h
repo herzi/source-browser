@@ -43,6 +43,7 @@ gint           sb_async_reader_get_fd      (SbAsyncReader const* self);
 guint          sb_async_reader_get_io_tag  (SbAsyncReader const* self);
 void           sb_async_reader_set_io_tag  (SbAsyncReader      * self,
 					    guint                io_tag);
+void           sb_reader_flush             (SbAsyncReader      * reader);
 
 struct _SbAsyncReader {
 	GObject               base_instance;

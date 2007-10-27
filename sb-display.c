@@ -157,8 +157,8 @@ io_watch_cb (GIOChannel  * channel,
 	return TRUE;
 }
 
-static inline void
-reader_flush (SbAsyncReader* reader)
+void
+sb_reader_flush (SbAsyncReader* reader)
 {
 	GIOChannel* channel    = sb_async_reader_get_channel (reader);
 	guint       io_handler = sb_async_reader_get_io_tag (reader);
@@ -180,7 +180,7 @@ child_watch_cb (GPid pid,
 	SbDisplay * display = SB_DISPLAY (data); // FIXME: call self
 
 	g_print ("pre-done.\n");
-	reader_flush (display->_private->reader);
+	sb_reader_flush (display->_private->reader);
 	g_print ("done.\n");
 	g_spawn_close_pid (pid);
 
