@@ -33,6 +33,13 @@ enum {
 	PROP_FD
 };
 
+enum {
+	READ_LINE,
+	N_SIGNALS
+};
+
+static guint signals[N_SIGNALS] = {0};
+
 G_DEFINE_TYPE (SbAsyncReader, sb_async_reader, G_TYPE_OBJECT);
 
 static void
@@ -95,6 +102,15 @@ sb_async_reader_class_init (SbAsyncReaderClass* self_class)
 					 g_param_spec_int ("file-descriptor", "file-descriptor", "file-descriptor",
 							   0, G_MAXINT, 0,
 							   G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+	signals[READ_LINE] = g_signal_new ("read-line",
+					   SB_TYPE_ASYNC_READER,
+					   0, 0,
+					   NULL, NULL,
+					   g_cclosure_marshal_VOID__STRING,
+					   G_TYPE_NONE,
+					   1,
+					   G_TYPE_STRING | G_SIGNAL_TYPE_STATIC_SCOPE);
 
 	g_type_class_add_private (self_class, sizeof (SbAsyncReaderPrivate));
 }
