@@ -108,16 +108,20 @@ io_watch_cb (GIOChannel  * channel,
 	SbDisplay* self = SB_DISPLAY (data);
 	gunichar read = 0;
 
-	if (G_UNLIKELY (!string)) {
-		string = g_string_new ("");
-	}
-
 	// FIXME: rewrite to non-blockingly use read()
 	state = g_io_channel_read_unichar (channel, &read, NULL);
 
 	if (G_UNLIKELY (state != G_IO_STATUS_NORMAL)) {
+		if (string) {
+			g_string_free (string, TRUE);
+			string = NULL;
+		}
 		self->_private->io_handler = 0;
 		return FALSE;
+	}
+
+	if (G_UNLIKELY (!string)) {
+		string = g_string_new ("");
 	}
 
 	if (G_LIKELY (read != '\n')) {
