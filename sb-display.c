@@ -148,8 +148,7 @@ io_watch_cb (GIOChannel  * channel,
 				 string->str);
 #endif
 		}
-		g_string_free (string, TRUE);
-		string = NULL;
+		g_string_set_size (string, 0);
 	}
 
 	return TRUE;
