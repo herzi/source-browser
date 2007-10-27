@@ -40,6 +40,9 @@ GType          sb_async_reader_get_type    (void);
 SbAsyncReader* sb_async_reader_new         (gint input_fd);
 GIOChannel*    sb_async_reader_get_channel (SbAsyncReader const* self);
 gint           sb_async_reader_get_fd      (SbAsyncReader const* self);
+guint          sb_async_reader_get_io_tag  (SbAsyncReader const* self);
+void           sb_async_reader_set_io_tag  (SbAsyncReader      * self,
+					    guint                io_tag);
 
 struct _SbAsyncReader {
 	GObject               base_instance;

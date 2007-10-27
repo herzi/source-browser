@@ -25,6 +25,7 @@
 
 struct _SbAsyncReaderPrivate {
 	gint        file_descriptor;
+	guint       io_tag;
 	GIOChannel* channel;
 };
 
@@ -138,5 +139,22 @@ sb_async_reader_get_fd (SbAsyncReader const* self)
 	g_return_val_if_fail (SB_IS_ASYNC_READER (self), 0);
 
 	return self->_private->file_descriptor;
+}
+
+guint
+sb_async_reader_get_io_tag (SbAsyncReader const* self)
+{
+	g_return_val_if_fail (SB_IS_ASYNC_READER (self), 0);
+
+	return self->_private->io_tag;
+}
+
+void
+sb_async_reader_set_io_tag (SbAsyncReader* self,
+			    guint          io_tag)
+{
+	g_return_if_fail (SB_IS_ASYNC_READER (self));
+
+	self->_private->io_tag = io_tag;
 }
 
