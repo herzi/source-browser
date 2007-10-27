@@ -72,7 +72,7 @@ reader_get_property (GObject   * object,
 	}
 }
 
-gboolean
+static gboolean
 io_watch_cb (GIOChannel  * channel,
 	     GIOCondition  condition,
 	     gpointer      data)
