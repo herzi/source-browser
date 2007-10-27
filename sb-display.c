@@ -107,6 +107,12 @@ io_watch_cb (GIOChannel  * channel,
 	}
 
 	state = g_io_channel_read_unichar (channel, &read, NULL);
+
+	if (state != G_IO_STATUS_NORMAL) {
+		self->_private->io_handler = 0;
+		return FALSE;
+	}
+
 	if (G_LIKELY (read != '\n')) {
 		g_string_append_unichar (string, read);
 	} else {
@@ -131,11 +137,6 @@ io_watch_cb (GIOChannel  * channel,
 		}
 		g_string_free (string, TRUE);
 		string = NULL;
-	}
-
-	if (state != G_IO_STATUS_NORMAL) {
-		self->_private->io_handler = 0;
-		return FALSE;
 	}
 
 	return TRUE;
