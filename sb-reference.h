@@ -36,7 +36,8 @@ typedef struct _SbReferenceClass   SbReferenceClass;
 #define SB_REFERENCE(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_REFERENCE, SbReference))
 
 GType        sb_reference_get_type (void);
-SbReference* sb_reference_new      (SbRevision* revision);
+SbReference* sb_reference_new      (SbRevision* revision,
+				    guint       current_start);
 
 struct _SbReference {
 	GObject             base_instance;

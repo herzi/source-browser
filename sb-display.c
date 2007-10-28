@@ -26,7 +26,7 @@
 #include "sb-async-reader.h"
 #include "sb-callback-data.h"
 #include "sb-comparable.h"
-#include "sb-revision.h"
+#include "sb-reference.h"
 
 struct _SbDisplayPrivate {
 	GList        * references;
@@ -35,7 +35,8 @@ struct _SbDisplayPrivate {
 	// FIXME: move them into an SbHistoryLoader
 	SbAsyncReader* reader;
 	GHashTable   * revisions;
-	SbRevision   * revision;
+	SbRevision   * revision; // FIXME: drop this one
+	SbReference  * reference;
 };
 
 enum {
@@ -104,6 +105,14 @@ sb_display_new (void)
 	return g_object_new (SB_TYPE_DISPLAY, NULL);
 }
 
+static gint
+sort_refs_by_target_line (gconstpointer a,
+			  gconstpointer b)
+{
+	// FIXME: add implementation
+	return 0;
+}
+
 static void
 display_parse_line (SbAsyncReader* reader,
 		    gchar const  * line,
@@ -113,28 +122,43 @@ display_parse_line (SbAsyncReader* reader,
 
 	// FIXME: make sure we have a new hash table each time
 	if (G_UNLIKELY (!self->_private->revision)) {
-		// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
-		gchar     ** words = g_strsplit (line, " ", -1);
+		/* from git-annotate (1)
+		 * "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
+		 */
+		gchar     **words = g_strsplit (line, " ", -1);
 		SbRevision* revision = sb_revision_new (words[0]);
+		gint        n_lines  = atoi (words[3]);
 
 		self->_private->revision = g_hash_table_lookup (self->_private->revisions,
 								revision);
 
 		if (!self->_private->revision) {
 			self->_private->revision = g_object_ref (revision);
+			// FIXME: create an API for SbHashedVector
 			g_hash_table_insert (self->_private->revisions,
 					     self->_private->revision,
 					     self->_private->revision);
 		}
+
+		self->_private->reference = sb_reference_new (self->_private->revision,
+							      atoi (words[2]));
+
 		g_signal_emit (self,
 			       signals[LOAD_PROGRESS],
 			       0,
-			       atoi (words[3]));
+			       n_lines);
+
 		g_object_unref (revision);
 		g_strfreev (words);
 	} else if (g_str_has_prefix (line, "filename ")) {
 		g_print ("%s\n", sb_revision_get_name (self->_private->revision));
 		self->_private->revision = NULL;
+		// FIXME: use a GSequence for the revisions (maybe that would make the API nicer too)
+		self->_private->references = g_list_insert_sorted (self->_private->references,
+								   g_object_ref (self->_private->reference),
+								   sort_refs_by_target_line);
+		g_object_unref (self->_private->reference);
+		self->_private->reference = NULL;
 #if 0
 	} else {
 		// FIXME: meta-information about the commit
