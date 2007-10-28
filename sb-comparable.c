@@ -40,6 +40,7 @@ sb_comparable_equals (SbComparable const* self,
 	if (!iface->equals) {
 		g_warning ("%s doesn't implement SbComparableIface::equals()",
 			   G_OBJECT_TYPE_NAME (self));
+		return FALSE;
 	}
 
 	return iface->equals (self, other);
