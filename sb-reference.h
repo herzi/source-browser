@@ -24,5 +24,28 @@
 #ifndef SB_REFERENCE_H
 #define SB_REFERENCE_H
 
+#include <glib-object.h>
+
+G_BEGIN_DECLS
+
+typedef struct _SbReference        SbReference;
+typedef struct _SbReferencePrivate SbReferencePrivate;
+typedef struct _SbReferenceClass   SbReferenceClass;
+
+#define SB_TYPE_REFERENCE         (sb_reference_get_type ())
+
+GType        sb_reference_get_type (void);
+SbReference* sb_reference_new      (void);
+
+struct _SbReference {
+	GObject             base_instance;
+	SbReferencePrivate* _private;
+};
+
+struct _SbReferenceClass {
+	GObjectClass base_class;
+};
+
+G_END_DECLS
 
 #endif /* !SB_REFERENCE_H */

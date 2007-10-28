@@ -23,3 +23,20 @@
 
 #include "sb-reference.h"
 
+G_DEFINE_TYPE (SbReference, sb_reference, G_TYPE_OBJECT);
+
+static void
+sb_reference_init (SbReference* self)
+{}
+
+static void
+sb_reference_class_init (SbReferenceClass* self_class)
+{}
+
+SbReference*
+sb_reference_new (void)
+{
+	return g_object_new (SB_TYPE_REFERENCE,
+			     NULL);
+}
+
