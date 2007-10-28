@@ -25,11 +25,13 @@
 
 #include "sb-async-reader.h"
 #include "sb-callback-data.h"
+#include "sb-revision.h"
 
 struct _SbDisplayPrivate {
 	/* the following are only valid during history loading */
 	// FIXME: move them into an SbHistoryLoader
 	SbAsyncReader* reader;
+	SbRevision   * revision;
 };
 
 enum {
@@ -89,26 +91,26 @@ sb_display_new (void)
 	return g_object_new (SB_TYPE_DISPLAY, NULL);
 }
 
-static inline void
+static void
 display_parse_line (SbAsyncReader* reader,
 		    gchar const  * line,
 		    SbDisplay    * self)
 {
-	static gchar* revision = NULL;
+	g_return_if_fail (SB_IS_DISPLAY (self));
 
-	if (G_UNLIKELY (!revision)) {
+	if (G_UNLIKELY (!self->_private->revision)) {
 		// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 		gchar** words = g_strsplit (line, " ", -1);
-		revision = g_strdup (words[0]);
+		self->_private->revision = sb_revision_new (words[0]);
 		g_signal_emit (self,
 			       signals[LOAD_PROGRESS],
 			       0,
 			       atoi (words[3]));
 		g_strfreev (words);
 	} else if (g_str_has_prefix (line, "filename ")) {
-		g_print ("%s\n", revision);
-		g_free (revision);
-		revision = NULL;
+		g_print ("%s\n", sb_revision_get_name (self->_private->revision));
+		g_object_unref (self->_private->revision);
+		self->_private->revision = NULL;
 #if 0
 	} else {
 		// FIXME: meta-information about the commit
