@@ -53,15 +53,34 @@ reference_finalize (GObject* object)
 }
 
 static void
+reference_get_property (GObject   * object,
+			guint       prop_id,
+			GValue    * value,
+			GParamSpec* pspec)
+{
+	SbReference* self = SB_REFERENCE (object);
+
+	switch (prop_id) {
+	case PROP_REVISION:
+		g_value_set_object (value, self->_private->revision);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
 sb_reference_class_init (SbReferenceClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
-	object_class->finalize = reference_finalize;
+	object_class->finalize     = reference_finalize;
+	object_class->get_property = reference_get_property;
 
 	g_object_class_install_property (object_class, PROP_REVISION,
 					 g_param_spec_object ("revision", "revision", "revision",
-							      SB_TYPE_REVISION, 0));
+							      SB_TYPE_REVISION, G_PARAM_READABLE));
 
 	g_type_class_add_private (self_class, sizeof (SbReferencePrivate));
 }
