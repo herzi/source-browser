@@ -27,6 +27,11 @@ struct _SbReferencePrivate {
 	SbRevision* revision;
 };
 
+enum {
+	PROP_0,
+	PROP_REVISION
+};
+
 G_DEFINE_TYPE (SbReference, sb_reference, G_TYPE_OBJECT);
 
 static void
@@ -53,6 +58,10 @@ sb_reference_class_init (SbReferenceClass* self_class)
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
 	object_class->finalize = reference_finalize;
+
+	g_object_class_install_property (object_class, PROP_REVISION,
+					 g_param_spec_object ("revision", "revision", "revision",
+							      SB_TYPE_REVISION, 0));
 
 	g_type_class_add_private (self_class, sizeof (SbReferencePrivate));
 }
