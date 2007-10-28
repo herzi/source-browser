@@ -24,7 +24,7 @@
 #ifndef SB_REFERENCE_H
 #define SB_REFERENCE_H
 
-#include <glib-object.h>
+#include "sb-revision.h"
 
 G_BEGIN_DECLS
 
@@ -35,7 +35,7 @@ typedef struct _SbReferenceClass   SbReferenceClass;
 #define SB_TYPE_REFERENCE         (sb_reference_get_type ())
 
 GType        sb_reference_get_type (void);
-SbReference* sb_reference_new      (void);
+SbReference* sb_reference_new      (SbRevision* revision);
 
 struct _SbReference {
 	GObject             base_instance;

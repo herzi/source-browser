@@ -34,7 +34,7 @@ sb_reference_class_init (SbReferenceClass* self_class)
 {}
 
 SbReference*
-sb_reference_new (void)
+sb_reference_new (SbRevision* revision)
 {
 	return g_object_new (SB_TYPE_REFERENCE,
 			     NULL);
