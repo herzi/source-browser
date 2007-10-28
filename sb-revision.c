@@ -34,8 +34,9 @@ enum {
 	PROP_NAME
 };
 
+static void implement_comparable (SbComparableIface* iface);
 G_DEFINE_TYPE_WITH_CODE (SbRevision, sb_revision, G_TYPE_OBJECT,
-			 G_IMPLEMENT_INTERFACE (SB_TYPE_COMPARABLE, NULL););
+			 G_IMPLEMENT_INTERFACE (SB_TYPE_COMPARABLE, implement_comparable););
 
 static void
 sb_revision_init (SbRevision* self)
@@ -123,5 +124,21 @@ sb_revision_get_name (SbRevision const* self)
 	g_return_val_if_fail (SB_IS_REVISION (self), NULL);
 
 	return self->_private->name;
+}
+
+/* SbComparableIface */
+static guint
+revision_hash (SbComparable const* comparable)
+{
+	SbRevision const* self = SB_REVISION (comparable);
+
+	return g_str_hash (self->_private->name); // FIXME: has also on a repository somehow
+}
+
+static void
+implement_comparable (SbComparableIface* iface)
+{
+	// iface->equals
+	iface->hash = revision_hash;
 }
 
