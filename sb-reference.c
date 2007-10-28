@@ -110,6 +110,7 @@ SbReference*
 sb_reference_new (SbRevision* revision)
 {
 	return g_object_new (SB_TYPE_REFERENCE,
+			     "revision", revision,
 			     NULL);
 }
 
