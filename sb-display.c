@@ -29,6 +29,8 @@
 #include "sb-revision.h"
 
 struct _SbDisplayPrivate {
+	GList        * references;
+
 	/* the following are only valid during history loading */
 	// FIXME: move them into an SbHistoryLoader
 	SbAsyncReader* reader;
@@ -39,8 +41,8 @@ struct _SbDisplayPrivate {
 enum {
 	LOAD_STARTED,
 	LOAD_PROGRESS,
-	// LOAD_DONE,
-	// LOAD_CANCELLED,
+	// FIXME: LOAD_DONE,
+	// FIXME: LOAD_CANCELLED,
 	N_SIGNALS
 };
 
@@ -175,6 +177,9 @@ load_history (SbDisplay  * self,
 	gint out_fd = 0;
 
 	g_return_if_fail (!self->_private->reader); // protect against multiple execution
+
+	g_list_foreach (self->_private->references, (GFunc)g_object_unref, NULL);
+	g_list_free    (self->_private->references);
 
 	working_folder = g_path_get_dirname (file_path);
 	argv[2] = g_path_get_basename (file_path);
