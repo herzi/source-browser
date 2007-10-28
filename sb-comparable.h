@@ -37,12 +37,16 @@ typedef struct _SbComparableIface SbComparableIface;
 #define SB_COMPARABLE_GET_IFACE(i) (G_TYPE_INSTANCE_GET_INTERFACE ((i), SB_TYPE_COMPARABLE, SbComparableIface))
 
 GType    sb_comparable_get_type (void);
+gboolean sb_comparable_equals   (SbComparable const* self,
+				 SbComparable const* other);
 guint    sb_comparable_hash     (SbComparable const* self);
 
 struct _SbComparableIface {
 	GTypeInterface base_interface;
 
 	/* vtable */
+	gboolean (*equals) (SbComparable const* self,
+			    SbComparable const* other);
 	guint    (*hash)   (SbComparable const* self);
 };
 

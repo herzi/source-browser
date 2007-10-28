@@ -27,6 +27,24 @@
 
 G_DEFINE_IFACE (SbComparable, sb_comparable, G_TYPE_INTERFACE);
 
+gboolean
+sb_comparable_equals (SbComparable const* self,
+		      SbComparable const* other)
+{
+	SbComparableIface* iface;
+
+	g_return_val_if_fail (SB_IS_COMPARABLE (self), FALSE);
+	g_return_val_if_fail (SB_IS_COMPARABLE (other), FALSE);
+
+	iface = SB_COMPARABLE_GET_IFACE (self);
+	if (!iface->equals) {
+		g_warning ("%s doesn't implement SbComparableIface::equals()",
+			   G_OBJECT_TYPE_NAME (self));
+	}
+
+	return iface->equals (self, other);
+}
+
 guint
 sb_comparable_hash (SbComparable const* self)
 {
