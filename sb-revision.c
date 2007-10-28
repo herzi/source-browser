@@ -23,6 +23,8 @@
 
 #include "sb-revision.h"
 
+#include "sb-comparable.h"
+
 struct _SbRevisionPrivate {
 	gchar* name;
 };
@@ -32,7 +34,8 @@ enum {
 	PROP_NAME
 };
 
-G_DEFINE_TYPE (SbRevision, sb_revision, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (SbRevision, sb_revision, G_TYPE_OBJECT,
+			 G_IMPLEMENT_INTERFACE (SB_TYPE_COMPARABLE, NULL););
 
 static void
 sb_revision_init (SbRevision* self)
