@@ -1,4 +1,4 @@
-/* This file is part of ...
+/* This file is part of source browser
  *
  * AUTHORS
  *     Sven Herzberg  <herzi@gnome-de.org>
@@ -22,4 +22,8 @@
  */
 
 #include "sb-comparable.h"
+
+#include "gobject-helpers.h"
+
+G_DEFINE_IFACE (SbComparable, sb_comparable, G_TYPE_INTERFACE);
 
