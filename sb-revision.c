@@ -127,6 +127,15 @@ sb_revision_get_name (SbRevision const* self)
 }
 
 /* SbComparableIface */
+static gboolean
+revision_equals (SbComparable const* comparable,
+		 SbComparable const* other)
+{
+	SbRevision* self = SB_REVISION (comparable);
+	return SB_IS_REVISION (other) &&
+	       !strcmp (self->_private->name, SB_REVISION (other)->_private->name);
+}
+
 static guint
 revision_hash (SbComparable const* comparable)
 {
@@ -138,7 +147,7 @@ revision_hash (SbComparable const* comparable)
 static void
 implement_comparable (SbComparableIface* iface)
 {
-	// iface->equals
-	iface->hash = revision_hash;
+	iface->equals = revision_equals;
+	iface->hash   = revision_hash;
 }
 
