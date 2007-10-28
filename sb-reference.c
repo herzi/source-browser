@@ -64,7 +64,7 @@ reference_get_property (GObject   * object,
 
 	switch (prop_id) {
 	case PROP_CURRENT_START:
-		g_value_set_uint (value, self->_private->current_start);
+		g_value_set_uint (value, sb_reference_get_current_start (self));
 		break;
 	case PROP_REVISION:
 		g_value_set_object (value, self->_private->revision);
@@ -128,5 +128,13 @@ sb_reference_new (SbRevision* revision,
 			     "current-start", current_start,
 			     "revision",      revision,
 			     NULL);
+}
+
+guint
+sb_reference_get_current_start (SbReference const* self)
+{
+	g_return_val_if_fail (SB_IS_REFERENCE (self), 0);
+
+	return self->_private->current_start;
 }
 

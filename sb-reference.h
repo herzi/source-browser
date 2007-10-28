@@ -34,10 +34,12 @@ typedef struct _SbReferenceClass   SbReferenceClass;
 
 #define SB_TYPE_REFERENCE         (sb_reference_get_type ())
 #define SB_REFERENCE(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_REFERENCE, SbReference))
+#define SB_IS_REFERENCE(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), SB_TYPE_REFERENCE))
 
-GType        sb_reference_get_type (void);
-SbReference* sb_reference_new      (SbRevision* revision,
-				    guint       current_start);
+GType        sb_reference_get_type	    (void);
+SbReference* sb_reference_new		    (SbRevision       * revision,
+					     guint              current_start);
+guint        sb_reference_get_current_start (SbReference const* self);
 
 struct _SbReference {
 	GObject             base_instance;
