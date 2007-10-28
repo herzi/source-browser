@@ -23,15 +23,25 @@
 
 #include "sb-reference.h"
 
+struct _SbReferencePrivate {
+	SbRevision* revision;
+};
+
 G_DEFINE_TYPE (SbReference, sb_reference, G_TYPE_OBJECT);
 
 static void
 sb_reference_init (SbReference* self)
-{}
+{
+	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
+						      SB_TYPE_REFERENCE,
+						      SbReferencePrivate);
+}
 
 static void
 sb_reference_class_init (SbReferenceClass* self_class)
-{}
+{
+	g_type_class_add_private (self_class, sizeof (SbReferencePrivate));
+}
 
 SbReference*
 sb_reference_new (SbRevision* revision)
