@@ -53,6 +53,24 @@ revision_finalize (GObject* object)
 }
 
 static void
+revision_get_property (GObject   * object,
+		       guint       prop_id,
+		       GValue    * value,
+		       GParamSpec* pspec)
+{
+	SbRevision* self = SB_REVISION (object);
+
+	switch (prop_id) {
+	case PROP_NAME:
+		g_value_set_string (value, sb_revision_get_name (self));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
 revision_set_property (GObject     * object,
 		       guint         prop_id,
 		       GValue const* value,
@@ -77,12 +95,13 @@ sb_revision_class_init (SbRevisionClass* self_class)
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
 	object_class->finalize     = revision_finalize;
+	object_class->get_property = revision_get_property;
 	object_class->set_property = revision_set_property;
 
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
 					 g_param_spec_string ("name", "name", "name",
-							      NULL, G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+							      NULL, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_type_class_add_private (self_class, sizeof (SbRevisionPrivate));
 }
@@ -93,5 +112,13 @@ sb_revision_new (gchar const* name)
 	return g_object_new (SB_TYPE_REVISION,
 			     "name", name,
 			     NULL);
+}
+
+gchar const*
+sb_revision_get_name (SbRevision const* self)
+{
+	g_return_val_if_fail (SB_IS_REVISION (self), NULL);
+
+	return self->_private->name;
 }
 
