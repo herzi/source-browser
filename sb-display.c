@@ -109,18 +109,29 @@ display_parse_line (SbAsyncReader* reader,
 {
 	g_return_if_fail (SB_IS_DISPLAY (self));
 
+	// FIXME: make sure we have a new hash table each time
 	if (G_UNLIKELY (!self->_private->revision)) {
 		// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
-		gchar** words = g_strsplit (line, " ", -1);
-		self->_private->revision = sb_revision_new (words[0]);
+		gchar     ** words = g_strsplit (line, " ", -1);
+		SbRevision* revision = sb_revision_new (words[0]);
+
+		self->_private->revision = g_hash_table_lookup (self->_private->revisions,
+								revision);
+
+		if (!self->_private->revision) {
+			self->_private->revision = g_object_ref (revision);
+			g_hash_table_insert (self->_private->revisions,
+					     self->_private->revision,
+					     self->_private->revision);
+		}
 		g_signal_emit (self,
 			       signals[LOAD_PROGRESS],
 			       0,
 			       atoi (words[3]));
+		g_object_unref (revision);
 		g_strfreev (words);
 	} else if (g_str_has_prefix (line, "filename ")) {
 		g_print ("%s\n", sb_revision_get_name (self->_private->revision));
-		g_object_unref (self->_private->revision);
 		self->_private->revision = NULL;
 #if 0
 	} else {
