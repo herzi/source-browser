@@ -109,8 +109,7 @@ static gint
 sort_refs_by_target_line (gconstpointer a,
 			  gconstpointer b)
 {
-	// FIXME: add implementation
-	return 0;
+	return sb_reference_get_current_start (a) - sb_reference_get_current_start (b);
 }
 
 static void
