@@ -33,6 +33,7 @@ typedef struct _SbReferencePrivate SbReferencePrivate;
 typedef struct _SbReferenceClass   SbReferenceClass;
 
 #define SB_TYPE_REFERENCE         (sb_reference_get_type ())
+#define SB_REFERENCE(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_REFERENCE, SbReference))
 
 GType        sb_reference_get_type (void);
 SbReference* sb_reference_new      (SbRevision* revision);

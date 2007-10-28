@@ -38,8 +38,22 @@ sb_reference_init (SbReference* self)
 }
 
 static void
+reference_finalize (GObject* object)
+{
+	SbReference* self = SB_REFERENCE (object);
+
+	g_object_unref (self->_private->revision);
+
+	G_OBJECT_CLASS (sb_reference_parent_class)->finalize (object);
+}
+
+static void
 sb_reference_class_init (SbReferenceClass* self_class)
 {
+	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+	object_class->finalize = reference_finalize;
+
 	g_type_class_add_private (self_class, sizeof (SbReferencePrivate));
 }
 
