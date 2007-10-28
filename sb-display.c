@@ -25,12 +25,14 @@
 
 #include "sb-async-reader.h"
 #include "sb-callback-data.h"
+#include "sb-comparable.h"
 #include "sb-revision.h"
 
 struct _SbDisplayPrivate {
 	/* the following are only valid during history loading */
 	// FIXME: move them into an SbHistoryLoader
 	SbAsyncReader* reader;
+	GHashTable   * revisions;
 	SbRevision   * revision;
 };
 
@@ -52,11 +54,20 @@ sb_display_init (SbDisplay* self)
 	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
 						      SB_TYPE_DISPLAY,
 						      SbDisplayPrivate);
+
+	self->_private->revisions = g_hash_table_new_full ((GHashFunc)sb_comparable_hash,
+							   (GEqualFunc)sb_comparable_equals,
+							   NULL,
+							   g_object_unref);
 }
 
 static void
 display_finalize (GObject* object)
 {
+	SbDisplay* self = SB_DISPLAY (object);
+
+	g_hash_table_destroy (self->_private->revisions);
+
 	G_OBJECT_CLASS (sb_display_parent_class)->finalize (object);
 }
 
