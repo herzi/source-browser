@@ -71,16 +71,37 @@ reference_get_property (GObject   * object,
 }
 
 static void
+reference_set_property (GObject     * object,
+			guint         prop_id,
+			GValue const* value,
+			GParamSpec  * pspec)
+{
+	SbReference* self = SB_REFERENCE (object);
+
+	switch (prop_id) {
+	case PROP_REVISION:
+		// FIXME: drop the cast from glib 2.14 onwards
+		self->_private->revision = SB_REVISION (g_value_dup_object (value));
+		g_object_notify (object, "revision");
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
 sb_reference_class_init (SbReferenceClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
 	object_class->finalize     = reference_finalize;
 	object_class->get_property = reference_get_property;
+	object_class->set_property = reference_set_property;
 
 	g_object_class_install_property (object_class, PROP_REVISION,
 					 g_param_spec_object ("revision", "revision", "revision",
-							      SB_TYPE_REVISION, G_PARAM_READABLE));
+							      SB_TYPE_REVISION, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_type_class_add_private (self_class, sizeof (SbReferencePrivate));
 }
