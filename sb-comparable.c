@@ -27,3 +27,20 @@
 
 G_DEFINE_IFACE (SbComparable, sb_comparable, G_TYPE_INTERFACE);
 
+guint
+sb_comparable_hash (SbComparable const* self)
+{
+	SbComparableIface* iface;
+
+	g_return_val_if_fail (SB_IS_COMPARABLE (self), 0);
+
+	iface = SB_COMPARABLE_GET_IFACE (self);
+	if (!iface->hash) {
+		g_warning ("%s doesn't implement SbComparableIface::hash()",
+			   G_OBJECT_TYPE_NAME (self));
+		return 0;
+	}
+
+	return iface->hash (self);
+}
+

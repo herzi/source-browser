@@ -34,14 +34,16 @@ typedef struct _SbComparableIface SbComparableIface;
 #define SB_TYPE_COMPARABLE         (sb_comparable_get_type ())
 #define SB_COMPARABLE(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_COMPARABLE, SbComparable))
 #define SB_IS_COMPARABLE(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), SB_TYPE_COMPARABLE))
-#define SB_COMPARABLE_GET_CLASS(i) (G_TYPE_INSTANCE_GET_INTERFACE ((i), SB_TYPE_COMPARABLE, SbComparableIface))
+#define SB_COMPARABLE_GET_IFACE(i) (G_TYPE_INSTANCE_GET_INTERFACE ((i), SB_TYPE_COMPARABLE, SbComparableIface))
 
-GType sb_comparable_get_type (void);
+GType    sb_comparable_get_type (void);
+guint    sb_comparable_hash     (SbComparable const* self);
 
 struct _SbComparableIface {
 	GTypeInterface base_interface;
 
 	/* vtable */
+	guint    (*hash)   (SbComparable const* self);
 };
 
 G_END_DECLS
