@@ -29,7 +29,22 @@
 
 G_BEGIN_DECLS
 
+typedef struct _SbReferenceLabel        SbReferenceLabel;
+typedef struct _SbReferenceLabelPrivate SbReferenceLabelPrivate;
+typedef struct _SbReferenceLabelClass   SbReferenceLabelClass;
+
+#define SB_TYPE_REFERENCE_LABEL         (sb_reference_label_get_type ())
+
 GtkWidget* sb_reference_label_new (SbReference* reference);
+
+struct _SbReferenceLabel {
+	GtkLabel                 base_instance;
+	SbReferenceLabelPrivate* _private;
+};
+
+struct _SbReferenceLabelClass {
+	GtkLabelClass            base_class;
+};
 
 G_END_DECLS
 

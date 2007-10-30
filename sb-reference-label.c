@@ -23,9 +23,21 @@
 
 #include "sb-reference-label.h"
 
+G_DEFINE_TYPE (SbReferenceLabel, sb_reference_label, GTK_TYPE_LABEL);
+
+static void
+sb_reference_label_init (SbReferenceLabel* self)
+{}
+
+static void
+sb_reference_label_class_init (SbReferenceLabelClass* self_class)
+{}
+
 GtkWidget*
 sb_reference_label_new (SbReference* reference)
 {
-	return gtk_label_new (sb_revision_get_name (sb_reference_get_revision (reference)));
+	return g_object_new (SB_TYPE_REFERENCE_LABEL,
+			     "label", sb_revision_get_name (sb_reference_get_revision (reference)),
+			     NULL);
 }
 
