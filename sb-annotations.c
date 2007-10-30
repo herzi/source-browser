@@ -23,6 +23,10 @@
 
 #include "sb-annotations.h"
 
+struct _SbAnnotationsPrivate {
+	GList* references;
+};
+
 G_DEFINE_TYPE (SbAnnotations, sb_annotations, GTK_TYPE_LAYOUT);
 
 static void
@@ -30,6 +34,11 @@ sb_annotations_init (SbAnnotations* self)
 {
 	GtkWidget* result = GTK_WIDGET (self);
 	GtkWidget* label  = gtk_label_new ("Annotation");
+
+	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
+						      SB_TYPE_ANNOTATIONS,
+						      SbAnnotationsPrivate);
+
 	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
 	gtk_widget_show (label);
 	gtk_layout_put (GTK_LAYOUT (result),
@@ -40,7 +49,9 @@ sb_annotations_init (SbAnnotations* self)
 
 static void
 sb_annotations_class_init (SbAnnotationsClass* self_class)
-{}
+{
+	g_type_class_add_private (self_class, sizeof (SbAnnotationsClass));
+}
 
 GtkWidget*
 sb_annotations_new (void)
