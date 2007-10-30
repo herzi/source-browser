@@ -111,27 +111,31 @@ display_set_scroll_adjustments (SbDisplay    * self,
 				GtkAdjustment* vertical)
 {
 	if (self->_private->horizontal) {
+		self->_private->anno_horizontal = NULL;
 		g_object_unref (self->_private->horizontal);
 		self->_private->horizontal = NULL;
 	}
 
 	if (horizontal) {
 		self->_private->horizontal = g_object_ref_sink (horizontal);
+		self->_private->anno_horizontal = g_object_new (GTK_TYPE_ADJUSTMENT, NULL);
 	}
 
 	if (self->_private->vertical) {
+		self->_private->anno_vertical = NULL;
 		g_object_unref (self->_private->vertical);
 		self->_private->vertical = NULL;
 	}
 
 	if (vertical) {
 		self->_private->vertical = g_object_ref_sink (vertical);
+		self->_private->anno_vertical = g_object_new (GTK_TYPE_ADJUSTMENT, NULL);
 	}
 
 	// FIXME: the display should have its own pair of scroll adjustments and sync the other two
 	gtk_widget_set_scroll_adjustments (GTK_WIDGET (self->_private->annotations),
-					   horizontal,
-					   vertical);
+					   self->_private->anno_horizontal,
+					   self->_private->anno_vertical);
 	gtk_widget_set_scroll_adjustments (GTK_WIDGET (self->_private->text_view),
 					   horizontal,
 					   vertical);
