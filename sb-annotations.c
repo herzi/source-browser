@@ -31,7 +31,8 @@ struct _SbAnnotationsPrivate {
 
 enum {
 	PROP_0,
-	PROP_REFERENCES
+	PROP_REFERENCES,
+	PROP_TEXT_VIEW
 };
 
 G_DEFINE_TYPE (SbAnnotations, sb_annotations, GTK_TYPE_LAYOUT);
@@ -93,6 +94,9 @@ sb_annotations_class_init (SbAnnotationsClass* self_class)
 	g_object_class_install_property (object_class, PROP_REFERENCES,
 					 g_param_spec_pointer ("references", "references", "references",
 							       G_PARAM_WRITABLE));
+	g_object_class_install_property (object_class, PROP_TEXT_VIEW,
+					 g_param_spec_object ("text-view", "text-view", "text-view",
+							      GTK_TYPE_TEXT_VIEW, 0));
 
 	g_type_class_add_private (self_class, sizeof (SbAnnotationsClass));
 }
