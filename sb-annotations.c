@@ -107,17 +107,16 @@ static inline void
 update_labels (SbAnnotations* self)
 {
 	GList* children = gtk_container_get_children (GTK_CONTAINER (self));
-	gint i;
 	g_list_foreach (children, (GFunc)gtk_object_destroy, NULL);
 	g_list_free    (children);
 
-	for (i = 0, children = self->_private->references; children; children = children->next, i++) {
+	for (children = self->_private->references; children; children = children->next) {
 		GtkWidget* label = gtk_label_new (sb_revision_get_name (sb_reference_get_revision (children->data)));
 		gtk_widget_show (label);
 		gtk_layout_put (GTK_LAYOUT (self),
 				label,
 				0,
-				19*i);
+				19 * (sb_reference_get_current_start (children->data) - 1));
 	}
 }
 
