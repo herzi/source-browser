@@ -29,6 +29,7 @@
 #include "sb-reference.h"
 
 struct _SbDisplayPrivate {
+	GtkTextView  * text_view;
 	GList        * references;
 
 	/* the following are only valid during history loading */
@@ -57,6 +58,8 @@ sb_display_init (SbDisplay* self)
 	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
 						      SB_TYPE_DISPLAY,
 						      SbDisplayPrivate);
+
+	self->_private->text_view = GTK_TEXT_VIEW (self);
 
 	self->_private->revisions = g_hash_table_new_full ((GHashFunc)sb_comparable_hash,
 							   (GEqualFunc)sb_comparable_equals,
@@ -110,7 +113,7 @@ sb_display_get_n_lines (SbDisplay const* self)
 {
 	g_return_val_if_fail (SB_IS_DISPLAY (self), 0);
 
-	return gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (self)));
+	return gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (self->_private->text_view));
 }
 
 static gint
@@ -260,7 +263,7 @@ sb_display_load_path (SbDisplay  * self,
 	GMappedFile  * file;
 
 	file = g_mapped_file_new (path, FALSE, error);
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self));
+	buffer = gtk_text_view_get_buffer (self->_private->text_view);
 
 	gtk_text_buffer_set_text (buffer,
 				  g_mapped_file_get_contents (file),
