@@ -29,10 +29,22 @@
 G_BEGIN_DECLS
 
 typedef struct _SbAnnotations        SbAnnotations;
+typedef struct _SbAnnotationsPrivate SbAnnotationsPrivate;
+typedef struct _SbAnnotationsClass   SbAnnotationsClass;
 
-#define SB_ANNOTATIONS(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TYPE_LAYOUT, SbAnnotations))
+#define SB_TYPE_ANNOTATIONS         (sb_annotations_get_type ())
+#define SB_ANNOTATIONS(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_ANNOTATIONS, SbAnnotations))
 
 GtkWidget* sb_annotations_new (void);
+
+struct _SbAnnotations {
+	GtkLayout             base_instance;
+	SbAnnotationsPrivate* _private;
+};
+
+struct _SbAnnotationsClass {
+	GtkLayoutClass        base_class;
+};
 
 G_END_DECLS
 

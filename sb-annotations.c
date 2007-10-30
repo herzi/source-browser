@@ -23,10 +23,20 @@
 
 #include "sb-annotations.h"
 
+G_DEFINE_TYPE (SbAnnotations, sb_annotations, GTK_TYPE_LAYOUT);
+
+static void
+sb_annotations_init (SbAnnotations* self)
+{}
+
+static void
+sb_annotations_class_init (SbAnnotationsClass* self_class)
+{}
+
 GtkWidget*
 sb_annotations_new (void)
 {
-	GtkWidget* result = gtk_layout_new (NULL, NULL);
+	GtkWidget* result = g_object_new (SB_TYPE_ANNOTATIONS, NULL);
 	GtkWidget* label  = gtk_label_new ("Annotation");
 	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
 	gtk_widget_show (label);
