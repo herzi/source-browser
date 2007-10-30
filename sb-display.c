@@ -34,8 +34,13 @@ struct _SbDisplayPrivate {
 	SbAnnotations* annotations;
 	GtkTextView  * text_view;
 
+	/* these two are ours */
 	GtkAdjustment* horizontal;
 	GtkAdjustment* vertical;
+
+	/* the two are for the annotation */
+	GtkAdjustment* anno_horizontal;
+	GtkAdjustment* anno_vertical;
 
 	/* the following are only valid during history loading */
 	// FIXME: move them into an SbHistoryLoader
