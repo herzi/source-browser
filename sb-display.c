@@ -116,7 +116,7 @@ display_set_scroll_adjustments (SbDisplay    * self,
 	}
 
 	if (horizontal) {
-		self->_private->horizontal = g_object_ref (horizontal);
+		self->_private->horizontal = g_object_ref_sink (horizontal);
 	}
 
 	if (self->_private->vertical) {
@@ -125,7 +125,7 @@ display_set_scroll_adjustments (SbDisplay    * self,
 	}
 
 	if (vertical) {
-		self->_private->vertical   = g_object_ref (vertical);
+		self->_private->vertical = g_object_ref_sink (vertical);
 	}
 
 	// FIXME: the display should have its own pair of scroll adjustments and sync the other two
