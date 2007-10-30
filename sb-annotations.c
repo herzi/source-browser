@@ -23,7 +23,7 @@
 
 #include "sb-annotations.h"
 
-#include "sb-reference.h"
+#include "sb-reference-label.h"
 
 struct _SbAnnotationsPrivate {
 	GList      * references;
@@ -120,7 +120,7 @@ update_labels (SbAnnotations* self)
 	g_list_free    (children);
 
 	for (children = self->_private->references; children; children = children->next) {
-		GtkWidget* label = gtk_label_new (sb_revision_get_name (sb_reference_get_revision (children->data)));
+		GtkWidget* label = sb_reference_label_new (children->data);
 		gtk_widget_show (label);
 		gtk_layout_put (GTK_LAYOUT (self),
 				label,
@@ -168,7 +168,7 @@ sb_annotations_set_text_view (SbAnnotations* self,
 	}
 
 	if (text_view) {
-		self->_private->text_view = g_object_ref_sink (self->_private->text_view);
+		self->_private->text_view = g_object_ref_sink (text_view);
 		// FIXME: connect to destroy() and act properly
 	}
 
