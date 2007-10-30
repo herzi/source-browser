@@ -67,7 +67,7 @@ reference_get_property (GObject   * object,
 		g_value_set_uint (value, sb_reference_get_current_start (self));
 		break;
 	case PROP_REVISION:
-		g_value_set_object (value, self->_private->revision);
+		g_value_set_object (value, sb_reference_get_revision (self));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -136,5 +136,13 @@ sb_reference_get_current_start (SbReference const* self)
 	g_return_val_if_fail (SB_IS_REFERENCE (self), 0);
 
 	return self->_private->current_start;
+}
+
+SbRevision*
+sb_reference_get_revision (SbReference const* self)
+{
+	g_return_val_if_fail (SB_IS_REFERENCE (self), NULL);
+
+	return self->_private->revision;
 }
 
