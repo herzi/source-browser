@@ -27,7 +27,16 @@ G_DEFINE_TYPE (SbAnnotations, sb_annotations, GTK_TYPE_LAYOUT);
 
 static void
 sb_annotations_init (SbAnnotations* self)
-{}
+{
+	GtkWidget* result = GTK_WIDGET (self);
+	GtkWidget* label  = gtk_label_new ("Annotation");
+	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
+	gtk_widget_show (label);
+	gtk_layout_put (GTK_LAYOUT (result),
+			label,
+			10,10);
+	gtk_widget_set_size_request (result, 100, 100);
+}
 
 static void
 sb_annotations_class_init (SbAnnotationsClass* self_class)
@@ -36,14 +45,6 @@ sb_annotations_class_init (SbAnnotationsClass* self_class)
 GtkWidget*
 sb_annotations_new (void)
 {
-	GtkWidget* result = g_object_new (SB_TYPE_ANNOTATIONS, NULL);
-	GtkWidget* label  = gtk_label_new ("Annotation");
-	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
-	gtk_widget_show (label);
-	gtk_layout_put (GTK_LAYOUT (result),
-			label,
-			10,10);
-	gtk_widget_set_size_request (result, 100, 100);
-	return result;
+	return g_object_new (SB_TYPE_ANNOTATIONS, NULL);
 }
 
