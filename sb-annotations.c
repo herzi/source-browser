@@ -26,8 +26,14 @@
 GtkWidget*
 sb_annotations_new (void)
 {
-	GtkWidget* result = gtk_label_new ("Annotation");
-	gtk_misc_set_alignment (GTK_MISC (result), 0.0, 0.0);
+	GtkWidget* result = gtk_layout_new (NULL, NULL);
+	GtkWidget* label  = gtk_label_new ("Annotation");
+	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
+	gtk_widget_show (label);
+	gtk_layout_put (GTK_LAYOUT (result),
+			label,
+			10,10);
+	gtk_widget_set_size_request (result, 100, 100);
 	return result;
 }
 

@@ -30,7 +30,7 @@ G_BEGIN_DECLS
 
 typedef struct _SbAnnotations        SbAnnotations;
 
-#define SB_ANNOTATIONS(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TYPE_LABEL, SbAnnotations))
+#define SB_ANNOTATIONS(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TYPE_LAYOUT, SbAnnotations))
 
 GtkWidget* sb_annotations_new (void);
 
