@@ -100,6 +100,9 @@ display_set_scroll_adjustments (SbDisplay    * self,
 				GtkAdjustment* horizontal,
 				GtkAdjustment* vertical)
 {
+	gtk_widget_set_scroll_adjustments (GTK_WIDGET (self->_private->annotations),
+					   horizontal,
+					   vertical);
 	gtk_widget_set_scroll_adjustments (GTK_WIDGET (self->_private->text_view),
 					   horizontal,
 					   vertical);
