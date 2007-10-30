@@ -47,12 +47,17 @@ void       sb_display_load_path   (SbDisplay      * self,
 				   GError         **error);
 
 struct _SbDisplay {
-	GtkTextView       base_instance;
+	GtkHBox           base_instance;
 	SbDisplayPrivate* _private;
 };
 
 struct _SbDisplayClass {
-	GtkTextViewClass  base_class;
+	GtkHBoxClass      base_class;
+
+	/* signals */
+	void (*set_scroll_adjustments) (SbDisplay    * self,
+					GtkAdjustment* horizontal,
+					GtkAdjustment* vertical);
 };
 
 G_END_DECLS

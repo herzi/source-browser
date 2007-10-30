@@ -26,6 +26,7 @@
 #include "sb-async-reader.h"
 #include "sb-callback-data.h"
 #include "sb-comparable.h"
+#include "sb-marshallers.h"
 #include "sb-reference.h"
 
 struct _SbDisplayPrivate {
@@ -50,7 +51,7 @@ enum {
 
 static guint signals[N_SIGNALS] = {0};
 
-G_DEFINE_TYPE (SbDisplay, sb_display, GTK_TYPE_TEXT_VIEW);
+G_DEFINE_TYPE (SbDisplay, sb_display, GTK_TYPE_HBOX);
 
 static void
 sb_display_init (SbDisplay* self)
@@ -59,7 +60,10 @@ sb_display_init (SbDisplay* self)
 						      SB_TYPE_DISPLAY,
 						      SbDisplayPrivate);
 
-	self->_private->text_view = GTK_TEXT_VIEW (self);
+	self->_private->text_view = GTK_TEXT_VIEW (gtk_text_view_new ());
+	gtk_widget_show (GTK_WIDGET (self->_private->text_view));
+	gtk_box_pack_start_defaults (GTK_BOX (self),
+				     GTK_WIDGET (self->_private->text_view));
 
 	self->_private->revisions = g_hash_table_new_full ((GHashFunc)sb_comparable_hash,
 							   (GEqualFunc)sb_comparable_equals,
@@ -78,28 +82,50 @@ display_finalize (GObject* object)
 }
 
 static void
+display_set_scroll_adjustments (SbDisplay    * self,
+				GtkAdjustment* horizontal,
+				GtkAdjustment* vertical)
+{
+	gtk_widget_set_scroll_adjustments (GTK_WIDGET (self->_private->text_view),
+					   horizontal,
+					   vertical);
+}
+
+static void
 sb_display_class_init (SbDisplayClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+	GtkWidgetClass* widget_class = GTK_WIDGET_CLASS (self_class);
 
-	object_class->finalize = display_finalize;
+	object_class->finalize             = display_finalize;
+
+	self_class->set_scroll_adjustments = display_set_scroll_adjustments;
 
 	g_type_class_add_private (self_class, sizeof (SbDisplayPrivate));
+
+	widget_class->set_scroll_adjustments_signal =
+				g_signal_new ("set-scroll-adjustments",
+					      SB_TYPE_DISPLAY,
+					      G_SIGNAL_RUN_LAST, G_STRUCT_OFFSET (SbDisplayClass, set_scroll_adjustments),
+					      NULL, NULL,
+					      sb_cclosure_marshal_VOID__BOXED_BOXED,
+					      G_TYPE_NONE, 2,
+					      GTK_TYPE_ADJUSTMENT,
+					      GTK_TYPE_ADJUSTMENT);
 
 	signals[LOAD_STARTED] = g_signal_new ("load-started",
 					      SB_TYPE_DISPLAY,
 					      0, 0,
 					      NULL, NULL,
 					      g_cclosure_marshal_VOID__VOID,
-					      G_TYPE_NONE,
-					      0);
+					      G_TYPE_NONE, 0);
 	signals[LOAD_PROGRESS] = g_signal_new ("load-progress",
 					       SB_TYPE_DISPLAY,
 					       0, 0,
 					       NULL, NULL,
 					       g_cclosure_marshal_VOID__INT,
-					       G_TYPE_NONE,
-					       1, G_TYPE_INT);
+					       G_TYPE_NONE, 1,
+					       G_TYPE_INT);
 }
 
 GtkWidget*
