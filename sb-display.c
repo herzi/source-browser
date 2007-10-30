@@ -34,6 +34,9 @@ struct _SbDisplayPrivate {
 	SbAnnotations* annotations;
 	GtkTextView  * text_view;
 
+	GtkAdjustment* horizontal;
+	GtkAdjustment* vertical;
+
 	/* the following are only valid during history loading */
 	// FIXME: move them into an SbHistoryLoader
 	GList        * references;
@@ -90,6 +93,8 @@ display_finalize (GObject* object)
 {
 	SbDisplay* self = SB_DISPLAY (object);
 
+	// FIXME: g_warn_if_fail (!self->_private->horizontal)
+	// FIXME: g_warn_if_fail (!self->_private->vertical)
 	g_hash_table_destroy (self->_private->revisions);
 
 	G_OBJECT_CLASS (sb_display_parent_class)->finalize (object);
@@ -100,6 +105,15 @@ display_set_scroll_adjustments (SbDisplay    * self,
 				GtkAdjustment* horizontal,
 				GtkAdjustment* vertical)
 {
+	if (horizontal) {
+		self->_private->horizontal = g_object_ref (horizontal);
+	}
+
+	if (vertical) {
+		self->_private->vertical   = g_object_ref (vertical);
+	}
+
+	// FIXME: the display should have its own pair of scroll adjustments and sync the other two
 	gtk_widget_set_scroll_adjustments (GTK_WIDGET (self->_private->annotations),
 					   horizontal,
 					   vertical);
