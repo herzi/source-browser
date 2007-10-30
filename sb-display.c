@@ -105,6 +105,14 @@ sb_display_new (void)
 	return g_object_new (SB_TYPE_DISPLAY, NULL);
 }
 
+gint
+sb_display_get_n_lines (SbDisplay const* self)
+{
+	g_return_val_if_fail (SB_IS_DISPLAY (self), 0);
+
+	return gtk_text_buffer_get_line_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (self)));
+}
+
 static gint
 sort_refs_by_target_line (gconstpointer a,
 			  gconstpointer b)
