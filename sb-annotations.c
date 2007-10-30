@@ -63,15 +63,34 @@ annotations_dispose (GObject* object)
 }
 
 static void
+annotations_set_property (GObject     * object,
+			  guint         prop_id,
+			  GValue const* value,
+			  GParamSpec  * pspec)
+{
+	SbAnnotations* self = SB_ANNOTATIONS (object);
+
+	switch (prop_id) {
+	case PROP_REFERENCES:
+		sb_annotations_set_references (self, g_value_get_pointer (value));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
 sb_annotations_class_init (SbAnnotationsClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
-	object_class->dispose = annotations_dispose;
+	object_class->dispose      = annotations_dispose;
+	object_class->set_property = annotations_set_property;
 
 	g_object_class_install_property (object_class, PROP_REFERENCES,
 					 g_param_spec_pointer ("references", "references", "references",
-							       0));
+							       G_PARAM_WRITABLE));
 
 	g_type_class_add_private (self_class, sizeof (SbAnnotationsClass));
 }
