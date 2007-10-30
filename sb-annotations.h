@@ -39,6 +39,8 @@ typedef struct _SbAnnotationsClass   SbAnnotationsClass;
 GtkWidget* sb_annotations_new            (void);
 void       sb_annotations_set_references (SbAnnotations* self,
 					  GList        * references);
+void       sb_annotations_set_text_view  (SbAnnotations* self,
+					  GtkTextView  * text_view);
 
 struct _SbAnnotations {
 	GtkLayout             base_instance;

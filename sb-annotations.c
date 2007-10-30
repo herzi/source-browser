@@ -26,7 +26,8 @@
 #include "sb-reference.h"
 
 struct _SbAnnotationsPrivate {
-	GList* references;
+	GList      * references;
+	GtkTextView* text_view;
 };
 
 enum {
@@ -61,6 +62,7 @@ annotations_dispose (GObject* object)
 	SbAnnotations* self = SB_ANNOTATIONS (object);
 
 	sb_annotations_set_references (self, NULL);
+	sb_annotations_set_text_view  (self, NULL); // FIXME: should go into destroy()
 
 	G_OBJECT_CLASS (sb_annotations_parent_class)->dispose (object);
 }
@@ -76,6 +78,9 @@ annotations_set_property (GObject     * object,
 	switch (prop_id) {
 	case PROP_REFERENCES:
 		sb_annotations_set_references (self, g_value_get_pointer (value));
+		break;
+	case PROP_TEXT_VIEW:
+		sb_annotations_set_text_view  (self, g_value_get_object (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -141,8 +146,32 @@ sb_annotations_set_references (SbAnnotations* self,
 		g_list_foreach (self->_private->references, (GFunc)g_object_ref, NULL);
 	}
 
-	// g_object_notify (G_OBJECT (self), "references");
+	g_object_notify (G_OBJECT (self), "references");
 
 	update_labels (self);
+}
+
+void
+sb_annotations_set_text_view (SbAnnotations* self,
+			      GtkTextView  * text_view)
+{
+	g_return_if_fail (SB_IS_ANNOTATIONS (self));
+	g_return_if_fail (!text_view || GTK_IS_TEXT_VIEW (text_view));
+
+	if (text_view == self->_private->text_view) {
+		return;
+	}
+
+	if (self->_private->text_view) {
+		g_object_unref (self->_private->text_view);
+		self->_private->text_view = NULL;
+	}
+
+	if (text_view) {
+		self->_private->text_view = g_object_ref_sink (self->_private->text_view);
+		// FIXME: connect to destroy() and act properly
+	}
+
+	g_object_notify (G_OBJECT (self), "text-view");
 }
 
