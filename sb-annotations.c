@@ -48,8 +48,24 @@ sb_annotations_init (SbAnnotations* self)
 }
 
 static void
+annotations_dispose (GObject* object)
+{
+	SbAnnotations* self = SB_ANNOTATIONS (object);
+
+	g_list_foreach (self->_private->references, (GFunc)g_object_unref, NULL);
+	g_list_free    (self->_private->references);
+	self->_private->references = NULL;
+
+	G_OBJECT_CLASS (sb_annotations_parent_class)->dispose (object);
+}
+
+static void
 sb_annotations_class_init (SbAnnotationsClass* self_class)
 {
+	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+	object_class->dispose = annotations_dispose;
+
 	g_type_class_add_private (self_class, sizeof (SbAnnotationsClass));
 }
 
