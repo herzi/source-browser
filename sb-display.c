@@ -168,6 +168,14 @@ display_parse_line (SbAsyncReader* reader,
 }
 
 static void
+debug_reference (SbReference const* self)
+{
+	g_print ("%3.d: %s\n",
+		 sb_reference_get_current_start (self),
+		 sb_revision_get_name (sb_reference_get_revision (self)));
+}
+
+static void
 child_watch_cb (GPid pid,
 		gint status_,
 		gpointer data)
@@ -178,6 +186,8 @@ child_watch_cb (GPid pid,
 	sb_reader_flush (display->_private->reader);
 	g_print ("done.\n");
 	g_spawn_close_pid (pid);
+
+	g_list_foreach (display->_private->references, (GFunc)debug_reference, NULL);
 
 	g_object_unref (display->_private->reader);
 	display->_private->reader = NULL;
