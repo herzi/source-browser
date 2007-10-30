@@ -110,8 +110,18 @@ display_set_scroll_adjustments (SbDisplay    * self,
 				GtkAdjustment* horizontal,
 				GtkAdjustment* vertical)
 {
+	if (self->_private->horizontal) {
+		g_object_unref (self->_private->horizontal);
+		self->_private->horizontal = NULL;
+	}
+
 	if (horizontal) {
 		self->_private->horizontal = g_object_ref (horizontal);
+	}
+
+	if (self->_private->vertical) {
+		g_object_unref (self->_private->vertical);
+		self->_private->vertical = NULL;
 	}
 
 	if (vertical) {
