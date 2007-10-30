@@ -106,6 +106,22 @@ display_finalize (GObject* object)
 }
 
 static void
+update_range (GtkAdjustment* master,
+	      SbDisplay    * self)
+{
+	gtk_layout_set_size (GTK_LAYOUT (self->_private->annotations),
+			     100, // FIXME: get the 100 scalable in some way
+			     master->upper - master->lower);
+}
+
+static void
+update_value (GtkAdjustment* master,
+	      SbDisplay    * self)
+{
+	gtk_adjustment_set_value (self->_private->anno_vertical, master->value);
+}
+
+static void
 display_set_scroll_adjustments (SbDisplay    * self,
 				GtkAdjustment* horizontal,
 				GtkAdjustment* vertical)
@@ -122,6 +138,8 @@ display_set_scroll_adjustments (SbDisplay    * self,
 	}
 
 	if (self->_private->vertical) {
+		g_signal_handlers_disconnect_by_func (self->_private->vertical, update_range, self);
+		g_signal_handlers_disconnect_by_func (self->_private->vertical, update_value, self);
 		self->_private->anno_vertical = NULL;
 		g_object_unref (self->_private->vertical);
 		self->_private->vertical = NULL;
@@ -130,6 +148,10 @@ display_set_scroll_adjustments (SbDisplay    * self,
 	if (vertical) {
 		self->_private->vertical = g_object_ref_sink (vertical);
 		self->_private->anno_vertical = g_object_new (GTK_TYPE_ADJUSTMENT, NULL);
+		g_signal_connect (self->_private->vertical, "changed",
+				  G_CALLBACK (update_range), self);
+		g_signal_connect (self->_private->vertical, "value-changed",
+				  G_CALLBACK (update_value), self);
 	}
 
 	// FIXME: the display should have its own pair of scroll adjustments and sync the other two
