@@ -117,7 +117,7 @@ update_labels (SbAnnotations* self)
 		gtk_layout_put (GTK_LAYOUT (self),
 				label,
 				0,
-				12*i);
+				19*i);
 	}
 }
 
