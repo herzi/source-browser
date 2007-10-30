@@ -87,6 +87,9 @@ sb_display_init (SbDisplay* self)
 				     widget);
 	self->_private->text_view = GTK_TEXT_VIEW (widget);
 
+	sb_annotations_set_text_view (self->_private->annotations,
+				      self->_private->text_view);
+
 	self->_private->revisions = g_hash_table_new_full ((GHashFunc)sb_comparable_hash,
 							   (GEqualFunc)sb_comparable_equals,
 							   NULL,
