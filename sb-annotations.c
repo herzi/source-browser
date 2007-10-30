@@ -57,9 +57,7 @@ annotations_dispose (GObject* object)
 {
 	SbAnnotations* self = SB_ANNOTATIONS (object);
 
-	g_list_foreach (self->_private->references, (GFunc)g_object_unref, NULL);
-	g_list_free    (self->_private->references);
-	self->_private->references = NULL;
+	sb_annotations_set_references (self, NULL);
 
 	G_OBJECT_CLASS (sb_annotations_parent_class)->dispose (object);
 }
@@ -82,5 +80,25 @@ GtkWidget*
 sb_annotations_new (void)
 {
 	return g_object_new (SB_TYPE_ANNOTATIONS, NULL);
+}
+
+void
+sb_annotations_set_references (SbAnnotations* self,
+			       GList        * references)
+{
+	g_return_if_fail (SB_IS_ANNOTATIONS (self));
+
+	if (self->_private->references) {
+		g_list_foreach (self->_private->references, (GFunc)g_object_unref, NULL);
+		g_list_free    (self->_private->references);
+		self->_private->references = NULL;
+	}
+
+	if (references) {
+		self->_private->references = g_list_copy (references);
+		g_list_foreach (self->_private->references, (GFunc)g_object_ref, NULL);
+	}
+
+	// g_object_notify (G_OBJECT (self), "references");
 }
 

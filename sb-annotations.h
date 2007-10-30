@@ -34,8 +34,11 @@ typedef struct _SbAnnotationsClass   SbAnnotationsClass;
 
 #define SB_TYPE_ANNOTATIONS         (sb_annotations_get_type ())
 #define SB_ANNOTATIONS(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_ANNOTATIONS, SbAnnotations))
+#define SB_IS_ANNOTATIONS(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), SB_TYPE_ANNOTATIONS))
 
-GtkWidget* sb_annotations_new (void);
+GtkWidget* sb_annotations_new            (void);
+void       sb_annotations_set_references (SbAnnotations* self,
+					  GList        * references);
 
 struct _SbAnnotations {
 	GtkLayout             base_instance;
