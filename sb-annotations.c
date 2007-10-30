@@ -27,6 +27,11 @@ struct _SbAnnotationsPrivate {
 	GList* references;
 };
 
+enum {
+	PROP_0,
+	PROP_REFERENCES
+};
+
 G_DEFINE_TYPE (SbAnnotations, sb_annotations, GTK_TYPE_LAYOUT);
 
 static void
@@ -65,6 +70,10 @@ sb_annotations_class_init (SbAnnotationsClass* self_class)
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
 	object_class->dispose = annotations_dispose;
+
+	g_object_class_install_property (object_class, PROP_REFERENCES,
+					 g_param_spec_pointer ("references", "references", "references",
+							       0));
 
 	g_type_class_add_private (self_class, sizeof (SbAnnotationsClass));
 }
