@@ -33,10 +33,10 @@
 struct _SbDisplayPrivate {
 	SbAnnotations* annotations;
 	GtkTextView  * text_view;
-	GList        * references;
 
 	/* the following are only valid during history loading */
 	// FIXME: move them into an SbHistoryLoader
+	GList        * references;
 	SbAsyncReader* reader;
 	GHashTable   * revisions;
 	SbRevision   * revision; // FIXME: drop this one
@@ -241,6 +241,8 @@ child_watch_cb (GPid pid,
 	g_print ("done.\n");
 	g_spawn_close_pid (pid);
 
+	sb_annotations_set_references (display->_private->annotations,
+				       display->_private->references);
 	g_list_foreach (display->_private->references, (GFunc)debug_reference, NULL);
 
 	g_object_unref (display->_private->reader);
