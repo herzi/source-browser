@@ -23,6 +23,8 @@
 
 #include "sb-annotations.h"
 
+#include "sb-reference.h"
+
 struct _SbAnnotationsPrivate {
 	GList* references;
 };
@@ -101,6 +103,24 @@ sb_annotations_new (void)
 	return g_object_new (SB_TYPE_ANNOTATIONS, NULL);
 }
 
+static inline void
+update_labels (SbAnnotations* self)
+{
+	GList* children = gtk_container_get_children (GTK_CONTAINER (self));
+	gint i;
+	g_list_foreach (children, (GFunc)gtk_object_destroy, NULL);
+	g_list_free    (children);
+
+	for (i = 0, children = self->_private->references; children; children = children->next, i++) {
+		GtkWidget* label = gtk_label_new (sb_revision_get_name (sb_reference_get_revision (children->data)));
+		gtk_widget_show (label);
+		gtk_layout_put (GTK_LAYOUT (self),
+				label,
+				0,
+				12*i);
+	}
+}
+
 void
 sb_annotations_set_references (SbAnnotations* self,
 			       GList        * references)
@@ -119,5 +139,7 @@ sb_annotations_set_references (SbAnnotations* self,
 	}
 
 	// g_object_notify (G_OBJECT (self), "references");
+
+	update_labels (self);
 }
 
