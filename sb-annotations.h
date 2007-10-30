@@ -24,5 +24,16 @@
 #ifndef SB_ANNOTATIONS_H
 #define SB_ANNOTATIONS_H
 
+#include <gtk/gtk.h>
+
+G_BEGIN_DECLS
+
+typedef struct _SbAnnotations        SbAnnotations;
+
+#define SB_ANNOTATIONS(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TYPE_LABEL, SbAnnotations))
+
+GtkWidget* sb_annotations_new (void);
+
+G_END_DECLS
 
 #endif /* !SB_ANNOTATIONS_H */

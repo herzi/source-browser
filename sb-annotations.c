@@ -23,3 +23,11 @@
 
 #include "sb-annotations.h"
 
+GtkWidget*
+sb_annotations_new (void)
+{
+	GtkWidget* result = gtk_label_new ("Annotation");
+	gtk_misc_set_alignment (GTK_MISC (result), 0.0, 0.0);
+	return result;
+}
+
