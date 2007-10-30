@@ -23,6 +23,7 @@
 
 #include "sb-display.h"
 
+#include "sb-annotations.h"
 #include "sb-async-reader.h"
 #include "sb-callback-data.h"
 #include "sb-comparable.h"
@@ -30,6 +31,7 @@
 #include "sb-reference.h"
 
 struct _SbDisplayPrivate {
+	SbAnnotations* annotations;
 	GtkTextView  * text_view;
 	GList        * references;
 
@@ -56,14 +58,26 @@ G_DEFINE_TYPE (SbDisplay, sb_display, GTK_TYPE_HBOX);
 static void
 sb_display_init (SbDisplay* self)
 {
+	GtkWidget* widget;
+
 	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
 						      SB_TYPE_DISPLAY,
 						      SbDisplayPrivate);
 
-	self->_private->text_view = GTK_TEXT_VIEW (gtk_text_view_new ());
-	gtk_widget_show (GTK_WIDGET (self->_private->text_view));
+	widget = sb_annotations_new ();
+	gtk_widget_show (widget);
+	gtk_box_pack_start (GTK_BOX (self),
+			    widget,
+			    FALSE,
+			    FALSE,
+			    0);
+	self->_private->annotations = SB_ANNOTATIONS (widget);
+
+	widget = gtk_text_view_new ();
+	gtk_widget_show (widget);
 	gtk_box_pack_start_defaults (GTK_BOX (self),
-				     GTK_WIDGET (self->_private->text_view));
+				     widget);
+	self->_private->text_view = GTK_TEXT_VIEW (widget);
 
 	self->_private->revisions = g_hash_table_new_full ((GHashFunc)sb_comparable_hash,
 							   (GEqualFunc)sb_comparable_equals,
