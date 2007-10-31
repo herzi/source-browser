@@ -78,10 +78,9 @@ label_get_property (GObject   * object,
 }
 
 static inline void
-update_background (SbReferenceLabel* self)
+set_color (SbReferenceLabel* self,
+	   GdkColor        * color)
 {
-	gchar const* name = sb_revision_get_name (sb_reference_get_revision (self->_private->reference));
-	guint        hash = name ? g_str_hash (name) : 0;
 	GdkColor colors[] = {
 		{0, 0xfcfc, 0xe9e9, 0x4f4f}, // butter
 		{0, 0xfcfc, 0xafaf, 0x3e3e}, // orange
@@ -93,9 +92,20 @@ update_background (SbReferenceLabel* self)
 		{0, 0xeeee, 0xeeee, 0xecec}  // aluminium
 	};
 
+	gchar const* name = sb_revision_get_name (sb_reference_get_revision (self->_private->reference));
+	guint        hash = name ? g_str_hash (name) : 0;
+
+	*color = colors[hash & 0x7];
+}
+
+static inline void
+update_background (SbReferenceLabel* self)
+{
+	GdkColor  color = {0, 0xeeee, 0xeeee, 0xeeee}; // aluminium
+	set_color (self, &color);
 	gtk_widget_modify_bg (GTK_WIDGET (self),
 			      GTK_STATE_NORMAL,
-			      &colors[hash & 0x7]);
+			      &color);
 }
 
 static void
