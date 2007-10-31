@@ -64,7 +64,7 @@ label_get_property (GObject   * object,
 
 	switch (prop_id) {
 	case PROP_REFERENCE:
-		g_value_set_object (value, self->_private->reference);
+		g_value_set_object (value, sb_reference_label_get_reference (self));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -117,5 +117,13 @@ sb_reference_label_new (SbReference* reference)
 	return g_object_new (SB_TYPE_REFERENCE_LABEL,
 			     "reference", reference,
 			     NULL);
+}
+
+SbReference*
+sb_reference_label_get_reference (SbReferenceLabel const* self)
+{
+	g_return_val_if_fail (SB_IS_REFERENCE_LABEL (self), NULL);
+
+	return self->_private->reference;
 }
 

@@ -35,8 +35,10 @@ typedef struct _SbReferenceLabelClass   SbReferenceLabelClass;
 
 #define SB_TYPE_REFERENCE_LABEL         (sb_reference_label_get_type ())
 #define SB_REFERENCE_LABEL(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_REFERENCE_LABEL, SbReferenceLabel))
+#define SB_IS_REFERENCE_LABEL(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), SB_TYPE_REFERENCE_LABEL))
 
-GtkWidget* sb_reference_label_new (SbReference* reference);
+GtkWidget*   sb_reference_label_new           (SbReference           * reference);
+SbReference* sb_reference_label_get_reference (SbReferenceLabel const* self);
 
 struct _SbReferenceLabel {
 	GtkLabel                 base_instance;
