@@ -55,15 +55,34 @@ label_finalize (GObject* object)
 }
 
 static void
+label_get_property (GObject   * object,
+		    guint       prop_id,
+		    GValue    * value,
+		    GParamSpec* pspec)
+{
+	SbReferenceLabel* self = SB_REFERENCE_LABEL (object);
+
+	switch (prop_id) {
+	case PROP_REFERENCE:
+		g_value_set_object (value, self->_private->reference);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
 sb_reference_label_class_init (SbReferenceLabelClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
-	object_class->finalize = label_finalize;
+	object_class->finalize     = label_finalize;
+	object_class->get_property = label_get_property;
 
 	g_object_class_install_property (object_class, PROP_REFERENCE,
 					 g_param_spec_object ("reference", "reference", "reference",
-							      SB_TYPE_REFERENCE, 0));
+							      SB_TYPE_REFERENCE, G_PARAM_READABLE));
 
 	g_type_class_add_private (self_class, sizeof (SbReferenceLabelPrivate));
 }
