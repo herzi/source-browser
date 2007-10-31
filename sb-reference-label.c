@@ -33,7 +33,7 @@ enum {
 	PROP_REFERENCE
 };
 
-G_DEFINE_TYPE (SbReferenceLabel, sb_reference_label, GTK_TYPE_LABEL);
+G_DEFINE_TYPE (SbReferenceLabel, sb_reference_label, GTK_TYPE_EVENT_BOX);
 
 static void
 sb_reference_label_init (SbReferenceLabel* self)
@@ -42,7 +42,9 @@ sb_reference_label_init (SbReferenceLabel* self)
 						      SB_TYPE_REFERENCE_LABEL,
 						      SbReferenceLabelPrivate);
 
-	self->_private->label = GTK_LABEL (self);
+	self->_private->label = GTK_LABEL (gtk_label_new (""));
+	gtk_widget_show (GTK_WIDGET (self->_private->label));
+	gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (self->_private->label));
 }
 
 static void

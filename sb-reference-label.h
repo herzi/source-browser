@@ -41,12 +41,12 @@ GtkWidget*   sb_reference_label_new           (SbReference           * reference
 SbReference* sb_reference_label_get_reference (SbReferenceLabel const* self);
 
 struct _SbReferenceLabel {
-	GtkLabel                 base_instance;
+	GtkEventBox              base_instance;
 	SbReferenceLabelPrivate* _private;
 };
 
 struct _SbReferenceLabelClass {
-	GtkLabelClass            base_class;
+	GtkEventBoxClass         base_class;
 };
 
 G_END_DECLS
