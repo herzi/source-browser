@@ -89,6 +89,22 @@ annotations_set_property (GObject     * object,
 }
 
 static void
+annotations_layout (SbAnnotations* self)
+{
+	GList* children = gtk_container_get_children (GTK_CONTAINER (self));
+	GList* iterator;
+
+	for (iterator = children; iterator; iterator = iterator->next) {
+		gtk_layout_move (GTK_LAYOUT (self),
+				 iterator->data,
+				 0,
+				 19 * (sb_reference_get_current_start (sb_reference_label_get_reference (iterator->data)) - 1));
+	}
+
+	g_list_free (children);
+}
+
+static void
 sb_annotations_class_init (SbAnnotationsClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
@@ -122,11 +138,9 @@ update_labels (SbAnnotations* self)
 	for (children = self->_private->references; children; children = children->next) {
 		GtkWidget* label = sb_reference_label_new (children->data);
 		gtk_widget_show (label);
-		gtk_layout_put (GTK_LAYOUT (self),
-				label,
-				0,
-				19 * (sb_reference_get_current_start (children->data) - 1));
+		gtk_container_add (GTK_CONTAINER (self), label);
 	}
+	annotations_layout (self);
 }
 
 void
