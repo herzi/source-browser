@@ -86,6 +86,8 @@ label_set_property (GObject     * object,
 		// FIXME: drop the cast once depending on glib 2.14
 		self->_private->reference = SB_REFERENCE (g_value_dup_object (value));
 		g_object_notify (object, "reference");
+
+		g_object_set (self, "label", sb_revision_get_name (sb_reference_get_revision (self->_private->reference)), NULL);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -104,7 +106,7 @@ sb_reference_label_class_init (SbReferenceLabelClass* self_class)
 
 	g_object_class_install_property (object_class, PROP_REFERENCE,
 					 g_param_spec_object ("reference", "reference", "reference",
-							      SB_TYPE_REFERENCE, G_PARAM_READWRITE));
+							      SB_TYPE_REFERENCE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_type_class_add_private (self_class, sizeof (SbReferenceLabelPrivate));
 }
@@ -113,7 +115,7 @@ GtkWidget*
 sb_reference_label_new (SbReference* reference)
 {
 	return g_object_new (SB_TYPE_REFERENCE_LABEL,
-			     "label", sb_revision_get_name (sb_reference_get_revision (reference)),
+			     "reference", reference,
 			     NULL);
 }
 
