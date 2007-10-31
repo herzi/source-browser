@@ -293,6 +293,7 @@ child_watch_cb (GPid pid,
 
 	sb_annotations_set_references (display->_private->annotations,
 				       display->_private->references);
+	display->_private->references = NULL;
 
 	g_object_unref (display->_private->reader);
 	display->_private->reader = NULL;
@@ -318,6 +319,7 @@ load_history (SbDisplay  * self,
 
 	g_list_foreach (self->_private->references, (GFunc)g_object_unref, NULL);
 	g_list_free    (self->_private->references);
+	self->_private->references = NULL;
 
 	working_folder = g_path_get_dirname (file_path);
 	argv[2] = g_path_get_basename (file_path);
