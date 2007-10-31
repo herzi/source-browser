@@ -24,6 +24,7 @@
 #include "sb-reference-label.h"
 
 struct _SbReferenceLabelPrivate {
+	GtkLabel   * label;
 	SbReference* reference;
 };
 
@@ -40,6 +41,8 @@ sb_reference_label_init (SbReferenceLabel* self)
 	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
 						      SB_TYPE_REFERENCE_LABEL,
 						      SbReferenceLabelPrivate);
+
+	self->_private->label = GTK_LABEL (self);
 }
 
 static void
@@ -87,7 +90,7 @@ label_set_property (GObject     * object,
 		self->_private->reference = SB_REFERENCE (g_value_dup_object (value));
 		g_object_notify (object, "reference");
 
-		g_object_set (self, "label", sb_revision_get_name (sb_reference_get_revision (self->_private->reference)), NULL);
+		g_object_set (self->_private->label, "label", sb_revision_get_name (sb_reference_get_revision (self->_private->reference)), NULL);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
