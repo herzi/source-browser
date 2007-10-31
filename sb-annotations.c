@@ -91,6 +91,8 @@ annotations_layout (SbAnnotations* self)
 	for (iterator = children; iterator; iterator = iterator->next) {
 		GtkTextIter  iter;
 		gint         offset = 0;
+		gint         offset2 = 0;
+		gint         height = 0;
 		gtk_text_buffer_get_iter_at_line (gtk_text_view_get_buffer (self->_private->text_view),
 						  &iter,
 						  sb_reference_get_current_start (sb_reference_label_get_reference (iterator->data)) - 1);
@@ -102,6 +104,16 @@ annotations_layout (SbAnnotations* self)
 				 iterator->data,
 				 0,
 				 offset);
+		gtk_text_buffer_get_iter_at_line (gtk_text_view_get_buffer (self->_private->text_view),
+						  &iter,
+						  sb_reference_get_current_end (sb_reference_label_get_reference (iterator->data)) - 1);
+		gtk_text_view_get_line_yrange    (self->_private->text_view,
+						  &iter,
+						  &offset2,
+						  &height);
+		gtk_widget_set_size_request (iterator->data,
+						     -1,
+						     MAX (-1, offset2 + height - offset));
 	}
 
 	g_list_free (children);
