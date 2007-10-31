@@ -38,8 +38,24 @@ sb_reference_label_init (SbReferenceLabel* self)
 }
 
 static void
+label_finalize (GObject* object)
+{
+	SbReferenceLabel* self = SB_REFERENCE_LABEL (object);
+
+	if (G_LIKELY (self->_private->reference)) {
+		g_object_unref (self->_private->reference);
+	}
+
+	G_OBJECT_CLASS (sb_reference_label_parent_class)->finalize (object);
+}
+
+static void
 sb_reference_label_class_init (SbReferenceLabelClass* self_class)
 {
+	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+	object_class->finalize = label_finalize;
+
 	g_type_class_add_private (self_class, sizeof (SbReferenceLabelPrivate));
 }
 

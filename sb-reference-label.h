@@ -34,6 +34,7 @@ typedef struct _SbReferenceLabelPrivate SbReferenceLabelPrivate;
 typedef struct _SbReferenceLabelClass   SbReferenceLabelClass;
 
 #define SB_TYPE_REFERENCE_LABEL         (sb_reference_label_get_type ())
+#define SB_REFERENCE_LABEL(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_REFERENCE_LABEL, SbReferenceLabel))
 
 GtkWidget* sb_reference_label_new (SbReference* reference);
 
