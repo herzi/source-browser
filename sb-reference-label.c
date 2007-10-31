@@ -73,16 +73,38 @@ label_get_property (GObject   * object,
 }
 
 static void
+label_set_property (GObject     * object,
+		    guint         prop_id,
+		    GValue const* value,
+		    GParamSpec  * pspec)
+{
+	SbReferenceLabel* self = SB_REFERENCE_LABEL (object);
+
+	switch (prop_id) {
+	case PROP_REFERENCE:
+		g_return_if_fail (!self->_private->reference);
+		// FIXME: drop the cast once depending on glib 2.14
+		self->_private->reference = SB_REFERENCE (g_value_dup_object (value));
+		g_object_notify (object, "reference");
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
 sb_reference_label_class_init (SbReferenceLabelClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
 	object_class->finalize     = label_finalize;
 	object_class->get_property = label_get_property;
+	object_class->set_property = label_set_property;
 
 	g_object_class_install_property (object_class, PROP_REFERENCE,
 					 g_param_spec_object ("reference", "reference", "reference",
-							      SB_TYPE_REFERENCE, G_PARAM_READABLE));
+							      SB_TYPE_REFERENCE, G_PARAM_READWRITE));
 
 	g_type_class_add_private (self_class, sizeof (SbReferenceLabelPrivate));
 }
