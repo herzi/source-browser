@@ -26,11 +26,13 @@
 struct _SbReferencePrivate {
 	SbRevision* revision;
 	guint       current_start;
+	guint       current_end;
 };
 
 enum {
 	PROP_0,
 	PROP_CURRENT_START,
+	PROP_CURRENT_END,
 	PROP_REVISION
 };
 
@@ -66,6 +68,9 @@ reference_get_property (GObject   * object,
 	case PROP_CURRENT_START:
 		g_value_set_uint (value, sb_reference_get_current_start (self));
 		break;
+	case PROP_CURRENT_END:
+		g_value_set_uint (value, sb_reference_get_current_end (self));
+		break;
 	case PROP_REVISION:
 		g_value_set_object (value, sb_reference_get_revision (self));
 		break;
@@ -87,6 +92,10 @@ reference_set_property (GObject     * object,
 	case PROP_CURRENT_START:
 		self->_private->current_start = g_value_get_uint (value);
 		g_object_notify (object, "current-start");
+		break;
+	case PROP_CURRENT_END:
+		self->_private->current_end = g_value_get_uint (value);
+		g_object_notify (object, "current-end");
 		break;
 	case PROP_REVISION:
 		// FIXME: drop the cast from glib 2.14 onwards
@@ -112,6 +121,10 @@ sb_reference_class_init (SbReferenceClass* self_class)
 					 g_param_spec_uint ("current-start", "current-start", "current-start",
 							    0, G_MAXUINT, 0,
 							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property (object_class, PROP_CURRENT_END,
+					 g_param_spec_uint ("current-end", "current-end", "current-end",
+							    0, G_MAXUINT, 0,
+							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property (object_class, PROP_REVISION,
 					 g_param_spec_object ("revision", "revision", "revision",
 							      SB_TYPE_REVISION,
@@ -122,10 +135,12 @@ sb_reference_class_init (SbReferenceClass* self_class)
 
 SbReference*
 sb_reference_new (SbRevision* revision,
-		  guint       current_start)
+		  guint       current_start,
+		  guint       current_end)
 {
 	return g_object_new (SB_TYPE_REFERENCE,
 			     "current-start", current_start,
+			     "current-end",   current_end,
 			     "revision",      revision,
 			     NULL);
 }
@@ -136,6 +151,14 @@ sb_reference_get_current_start (SbReference const* self)
 	g_return_val_if_fail (SB_IS_REFERENCE (self), 0);
 
 	return self->_private->current_start;
+}
+
+guint
+sb_reference_get_current_end (SbReference const* self)
+{
+	g_return_val_if_fail (SB_IS_REFERENCE (self), 0);
+
+	return self->_private->current_end;
 }
 
 SbRevision*

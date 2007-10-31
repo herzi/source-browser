@@ -252,7 +252,8 @@ display_parse_line (SbAsyncReader* reader,
 		}
 
 		self->_private->reference = sb_reference_new (self->_private->revision,
-							      atoi (words[2]));
+							      atoi (words[2]),
+							      atoi (words[2]) + n_lines - 1);
 
 		g_signal_emit (self,
 			       signals[LOAD_PROGRESS],

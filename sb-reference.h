@@ -38,8 +38,10 @@ typedef struct _SbReferenceClass   SbReferenceClass;
 
 GType        sb_reference_get_type	    (void);
 SbReference* sb_reference_new		    (SbRevision       * revision,
-					     guint              current_start);
+					     guint              current_start,
+					     guint              current_end);
 guint        sb_reference_get_current_start (SbReference const* self);
+guint        sb_reference_get_current_end   (SbReference const* self);
 SbRevision*  sb_reference_get_revision      (SbReference const* self);
 
 struct _SbReference {
