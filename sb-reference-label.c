@@ -27,6 +27,11 @@ struct _SbReferenceLabelPrivate {
 	SbReference* reference;
 };
 
+enum {
+	PROP_0,
+	PROP_REFERENCE
+};
+
 G_DEFINE_TYPE (SbReferenceLabel, sb_reference_label, GTK_TYPE_LABEL);
 
 static void
@@ -55,6 +60,10 @@ sb_reference_label_class_init (SbReferenceLabelClass* self_class)
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
 	object_class->finalize = label_finalize;
+
+	g_object_class_install_property (object_class, PROP_REFERENCE,
+					 g_param_spec_object ("reference", "reference", "reference",
+							      SB_TYPE_REFERENCE, 0));
 
 	g_type_class_add_private (self_class, sizeof (SbReferenceLabelPrivate));
 }
