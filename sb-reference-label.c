@@ -77,6 +77,26 @@ label_get_property (GObject   * object,
 	}
 }
 
+static inline void
+update_background (SbReferenceLabel* self)
+{
+	guint hash = g_str_hash (sb_revision_get_name (sb_reference_get_revision (self->_private->reference)));
+	GdkColor colors[] = {
+		{0, 0xfcfc, 0xe9e9, 0x4f4f}, // butter
+		{0, 0xfcfc, 0xafaf, 0x3e3e}, // orange
+		{0, 0xe9e9, 0xb9b9, 0x6e6e}, // chocolate
+		{0, 0x8a8a, 0xe2e2, 0x3434}, // chameleon
+		{0, 0x7272, 0x9f9f, 0xcfcf}, // sky blue
+		{0, 0xadad, 0x7f7f, 0xa8a8}, // plum
+		{0, 0xefef, 0x2929, 0x2929}, // scarlet red
+		{0, 0xeeee, 0xeeee, 0xecec}  // aluminium
+	};
+
+	gtk_widget_modify_bg (GTK_WIDGET (self),
+			      GTK_STATE_NORMAL,
+			      &colors[hash & 0x7]);
+}
+
 static void
 label_set_property (GObject     * object,
 		    guint         prop_id,
@@ -93,6 +113,7 @@ label_set_property (GObject     * object,
 		g_object_notify (object, "reference");
 
 		g_object_set (self->_private->label, "label", sb_revision_get_name (sb_reference_get_revision (self->_private->reference)), NULL);
+		update_background (self);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
