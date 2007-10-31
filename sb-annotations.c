@@ -42,17 +42,11 @@ static void
 sb_annotations_init (SbAnnotations* self)
 {
 	GtkWidget* result = GTK_WIDGET (self);
-	GtkWidget* label  = gtk_label_new ("Annotation");
 
 	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
 						      SB_TYPE_ANNOTATIONS,
 						      SbAnnotationsPrivate);
 
-	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
-	gtk_widget_show (label);
-	gtk_layout_put (GTK_LAYOUT (result),
-			label,
-			10,10);
 	gtk_widget_set_size_request (result, 100, 100);
 }
 
@@ -95,10 +89,19 @@ annotations_layout (SbAnnotations* self)
 	GList* iterator;
 
 	for (iterator = children; iterator; iterator = iterator->next) {
+		GtkTextIter  iter;
+		gint         offset = 0;
+		gtk_text_buffer_get_iter_at_line (gtk_text_view_get_buffer (self->_private->text_view),
+						  &iter,
+						  sb_reference_get_current_start (sb_reference_label_get_reference (iterator->data)) - 1);
+		gtk_text_view_get_line_yrange    (self->_private->text_view,
+						  &iter,
+						  &offset,
+						  NULL);
 		gtk_layout_move (GTK_LAYOUT (self),
 				 iterator->data,
 				 0,
-				 19 * (sb_reference_get_current_start (sb_reference_label_get_reference (iterator->data)) - 1));
+				 offset);
 	}
 
 	g_list_free (children);
@@ -179,6 +182,14 @@ sb_annotations_set_references (SbAnnotations* self,
 	update_labels (self);
 }
 
+static void
+textview_size_allocate_cb (GtkWidget    * text_view,
+			   GtkAllocation* allocation,
+			   SbAnnotations* self)
+{
+	annotations_layout (self);
+}
+
 void
 sb_annotations_set_text_view (SbAnnotations* self,
 			      GtkTextView  * text_view)
@@ -191,6 +202,7 @@ sb_annotations_set_text_view (SbAnnotations* self,
 	}
 
 	if (self->_private->text_view) {
+		g_signal_handlers_disconnect_by_func (self->_private->text_view, textview_size_allocate_cb, self);
 		g_object_unref (self->_private->text_view);
 		self->_private->text_view = NULL;
 	}
@@ -198,6 +210,8 @@ sb_annotations_set_text_view (SbAnnotations* self,
 	if (text_view) {
 		self->_private->text_view = g_object_ref_sink (text_view);
 		// FIXME: connect to destroy() and act properly
+		g_signal_connect_after (self->_private->text_view, "size-allocate",
+					G_CALLBACK (textview_size_allocate_cb), self);
 	}
 
 	g_object_notify (G_OBJECT (self), "text-view");
