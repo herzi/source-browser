@@ -80,7 +80,8 @@ label_get_property (GObject   * object,
 static inline void
 update_background (SbReferenceLabel* self)
 {
-	guint hash = g_str_hash (sb_revision_get_name (sb_reference_get_revision (self->_private->reference)));
+	gchar const* name = sb_revision_get_name (sb_reference_get_revision (self->_private->reference));
+	guint        hash = name ? g_str_hash (name) : 0;
 	GdkColor colors[] = {
 		{0, 0xfcfc, 0xe9e9, 0x4f4f}, // butter
 		{0, 0xfcfc, 0xafaf, 0x3e3e}, // orange
