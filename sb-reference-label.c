@@ -23,15 +23,25 @@
 
 #include "sb-reference-label.h"
 
+struct _SbReferenceLabelPrivate {
+	SbReference* reference;
+};
+
 G_DEFINE_TYPE (SbReferenceLabel, sb_reference_label, GTK_TYPE_LABEL);
 
 static void
 sb_reference_label_init (SbReferenceLabel* self)
-{}
+{
+	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
+						      SB_TYPE_REFERENCE_LABEL,
+						      SbReferenceLabelPrivate);
+}
 
 static void
 sb_reference_label_class_init (SbReferenceLabelClass* self_class)
-{}
+{
+	g_type_class_add_private (self_class, sizeof (SbReferenceLabelPrivate));
+}
 
 GtkWidget*
 sb_reference_label_new (SbReference* reference)
