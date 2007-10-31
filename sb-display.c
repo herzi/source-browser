@@ -72,6 +72,8 @@ sb_display_init (SbDisplay* self)
 						      SB_TYPE_DISPLAY,
 						      SbDisplayPrivate);
 
+	gtk_box_set_spacing (GTK_BOX (self), 6);
+
 	widget = sb_annotations_new ();
 	gtk_widget_show (widget);
 	gtk_box_pack_start (GTK_BOX (self),
