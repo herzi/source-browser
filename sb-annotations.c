@@ -105,12 +105,26 @@ annotations_layout (SbAnnotations* self)
 }
 
 static void
+annotations_style_set (GtkWidget* widget,
+		       GtkStyle * old_style)
+{
+	if (GTK_WIDGET_CLASS (sb_annotations_parent_class)->style_set) {
+		GTK_WIDGET_CLASS (sb_annotations_parent_class)->style_set (widget, old_style);
+	}
+
+	annotations_layout (SB_ANNOTATIONS (widget));
+}
+
+static void
 sb_annotations_class_init (SbAnnotationsClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+	GtkWidgetClass* widget_class = GTK_WIDGET_CLASS (self_class);
 
 	object_class->dispose      = annotations_dispose;
 	object_class->set_property = annotations_set_property;
+
+	widget_class->style_set    = annotations_style_set;
 
 	g_object_class_install_property (object_class, PROP_REFERENCES,
 					 g_param_spec_pointer ("references", "references", "references",
