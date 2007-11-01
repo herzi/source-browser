@@ -25,10 +25,16 @@ source_browser_SOURCES=\
 	sb-window.h \
 	$(NULL)
 
+source_browser_CSOURCES:=$(filter %c,$(source_browser_SOURCES))
+source_browser_OBJECTS:=$(source_browser_CSOURCES:.c=.o)
+
 all: source-browser test-async-io
 
-source-browser: $(source_browser_SOURCES)
-	gcc -g3 -o $@ $^ $(shell pkg-config --cflags --libs gtk+-2.0)
+source-browser: $(source_browser_OBJECTS)
+	gcc -g3 -o $@ $^ $(shell pkg-config --libs gtk+-2.0)
+
+.c.o:
+	gcc -g3 -c -o $@ $< $(shell pkg-config --cflags gtk+-2.0)
 
 sb-marshallers.c: sb-marshallers.list
 	@echo "Creating $@"
