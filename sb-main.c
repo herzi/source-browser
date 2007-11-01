@@ -28,12 +28,21 @@
 static GtkWidget* tview  = NULL;
 static GtkWidget* status = NULL;
 static gint lines_read = 0;
+static guint io = 0;
+
+static gboolean io_watch_cb (GIOChannel  * channel,
+			     GIOCondition  condition,
+			     gpointer      unused);
 
 static void
 watch_cb (GPid pid,
 	  gint status_,
 	  gpointer data)
 {
+	while (io_watch_cb (data, G_IO_IN, NULL)) {} // FIXME: finish
+	g_source_remove (io);
+	io = 0;
+	g_print ("done.\n");
 	g_spawn_close_pid (pid);
 }
 
@@ -76,7 +85,11 @@ io_watch_cb (GIOChannel  * channel,
 	}
 	g_string_free (string, TRUE);
 
-	return state == G_IO_STATUS_NORMAL;
+	if (state == G_IO_STATUS_NORMAL) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
 }
 
 static void
@@ -114,14 +127,14 @@ load_history (GdkScreen  * screen,
 	g_free (argv[2]);
 	g_free (working_folder);
 
-	g_child_watch_add (pid,
-			   watch_cb,
-			   out_chan);
-
-	g_io_add_watch    (out_chan,
+	io = g_io_add_watch    (out_chan,
 			   G_IO_IN,
 			   io_watch_cb,
 			   NULL);
+
+	g_child_watch_add (pid,
+			   watch_cb,
+			   out_chan);
 }
 
 static void
