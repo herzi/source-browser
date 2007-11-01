@@ -1,0 +1,8 @@
+AC_INIT(autotool,0.0.1,mailto:herzi@gnome-de.org)
+AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+
+AC_PROG_CC
+
+PKG_CHECK_MODULES([SB],[gtk+-2.0])
+
+AC_OUTPUT(Makefile)
