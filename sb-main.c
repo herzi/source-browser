@@ -39,8 +39,9 @@ watch_cb (GPid pid,
 	  gint status_,
 	  gpointer data)
 {
+	g_print ("pre-done.\n");
 	while (io_watch_cb (data, G_IO_IN, NULL)) {} // FIXME: finish
-	g_source_remove (io);
+	//g_source_remove (io);
 	io = 0;
 	g_print ("done.\n");
 	g_spawn_close_pid (pid);
@@ -52,13 +53,22 @@ io_watch_cb (GIOChannel  * channel,
 	     gpointer      unused)
 {
 	GIOStatus state = G_IO_STATUS_NORMAL;
-	GString* string = g_string_new ("");
-	gchar* revision = NULL;
+	static GString* string = NULL;
+	static gchar* revision = NULL;
+	gunichar read = 0;
 
-	for (state = g_io_channel_read_line_string (channel, string, NULL, NULL);
-	     state == G_IO_STATUS_NORMAL;
-	     state = g_io_channel_read_line_string (channel, string, NULL, NULL))
-	{
+	if (G_UNLIKELY (!string)) {
+		string = g_string_new ("");
+	}
+
+	if (condition != 1)
+	g_print ("%d\n", condition);
+
+	state = g_io_channel_read_unichar (channel, &read, NULL);
+	if (G_LIKELY (read != '\n')) {
+		//g_string_append_unichar (string, read);
+	} else {
+#if 0
 		if (!revision) {
 			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 			gchar** words = g_strsplit (string->str, " ", -1);
@@ -72,9 +82,9 @@ io_watch_cb (GIOChannel  * channel,
 						   message);
 			g_free (message);
 		} else if (g_str_has_prefix (string->str, "filename ")) {
+			g_print ("%s\n", revision);
 			g_free (revision);
 			revision = NULL;
-			break;
 #if 0
 		} else {
 			// FIXME: meta-information about the commit
@@ -82,8 +92,10 @@ io_watch_cb (GIOChannel  * channel,
 				 string->str);
 #endif
 		}
+#endif
+		//g_string_set_size (string, 0);
 	}
-	g_string_free (string, TRUE);
+	//g_string_free (string, TRUE);
 
 	if (state == G_IO_STATUS_NORMAL) {
 		return TRUE;
@@ -127,10 +139,10 @@ load_history (GdkScreen  * screen,
 	g_free (argv[2]);
 	g_free (working_folder);
 
-	io = g_io_add_watch    (out_chan,
-			   G_IO_IN,
-			   io_watch_cb,
-			   NULL);
+	io = g_io_add_watch (out_chan,
+			     G_IO_IN | G_IO_PRI,
+			     io_watch_cb,
+			     NULL);
 
 	g_child_watch_add (pid,
 			   watch_cb,
