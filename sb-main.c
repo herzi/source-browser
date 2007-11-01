@@ -34,12 +34,22 @@ watch_cb (GPid pid,
 	  gint status_,
 	  gpointer data)
 {
-	GIOChannel* channel = data;
-	GString* string = g_string_new ("");
+	g_spawn_close_pid (pid);
+}
 
+static gboolean
+io_watch_cb (GIOChannel  * channel,
+	     GIOCondition  condition,
+	     gpointer      unused)
+{
+	GIOStatus state = G_IO_STATUS_NORMAL;
+	GString* string = g_string_new ("");
 	gchar* revision = NULL;
 
-	while (G_IO_STATUS_NORMAL == g_io_channel_read_line_string (channel, string, NULL, NULL)) {
+	for (state = g_io_channel_read_line_string (channel, string, NULL, NULL);
+	     state == G_IO_STATUS_NORMAL;
+	     state = g_io_channel_read_line_string (channel, string, NULL, NULL))
+	{
 		if (!revision) {
 			// "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 			gchar** words = g_strsplit (string->str, " ", -1);
@@ -55,6 +65,7 @@ watch_cb (GPid pid,
 		} else if (g_str_has_prefix (string->str, "filename ")) {
 			g_free (revision);
 			revision = NULL;
+			break;
 #if 0
 		} else {
 			// FIXME: meta-information about the commit
@@ -63,9 +74,9 @@ watch_cb (GPid pid,
 #endif
 		}
 	}
-
 	g_string_free (string, TRUE);
-	g_spawn_close_pid (pid);
+
+	return state == G_IO_STATUS_NORMAL;
 }
 
 static void
@@ -106,6 +117,11 @@ load_history (GdkScreen  * screen,
 	g_child_watch_add (pid,
 			   watch_cb,
 			   out_chan);
+
+	g_io_add_watch    (out_chan,
+			   G_IO_IN,
+			   io_watch_cb,
+			   NULL);
 }
 
 static void
