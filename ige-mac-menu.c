@@ -570,6 +570,8 @@ menu_event_handler_func (EventHandlerCallRef  event_handler_call_ref,
   return CallNextEventHandler (event_handler_call_ref, event_ref);
 }
 
+static gboolean is_setup = FALSE;
+
 static void
 setup_menu_event_handler (void)
 {
@@ -581,6 +583,9 @@ setup_menu_event_handler (void)
     { kEventClassMenu, kEventMenuOpening },
     { kEventClassMenu, kEventMenuClosed }
   };
+
+  if (is_setup)
+    return;
 
   /* FIXME: We might have to install one per window? */
 
@@ -594,6 +599,7 @@ setup_menu_event_handler (void)
   RemoveEventHandler(menu_event_handler_ref);
   DisposeEventHandlerUPP(menu_event_handler_upp);
 #endif
+  is_setup = TRUE;
 }
 
 static void
@@ -777,6 +783,19 @@ ige_mac_menu_set_menu_bar (GtkMenuShell *menu_shell)
   SetRootMenu (carbon_menubar);
 
   setup_menu_event_handler ();
+
+  emission_hook_id =
+    g_signal_add_emission_hook (g_signal_lookup ("parent-set",
+						 GTK_TYPE_WIDGET),
+				0,
+				parent_set_emission_hook,
+				carbon_menubar, NULL);
+
+  g_signal_connect (menu_shell, "destroy",
+		    G_CALLBACK (parent_set_emission_hook_remove),
+		    NULL);
+
+  sync_menu_shell (menu_shell, carbon_menubar, TRUE, FALSE);
 }
 
 void
@@ -786,6 +805,8 @@ ige_mac_menu_set_quit_menu_item (GtkMenuItem *menu_item)
   MenuItemIndex index;
 
   g_return_if_fail (GTK_IS_MENU_ITEM (menu_item));
+
+  setup_menu_event_handler ();
 
   if (GetIndMenuItemWithCommandID (NULL, kHICommandQuit, 1,
                                    &appmenu, &index) == noErr)
