@@ -25,6 +25,7 @@
 
 #include "sb-display.h"
 #include "sb-progress.h"
+#include "sb-statusbar.h"
 #include <glib/gi18n.h>
 
 struct _SbWindowPrivate {
@@ -126,7 +127,7 @@ sb_window_init (SbWindow* self)
 	gtk_container_add (GTK_CONTAINER (scrolled),
 			   display);
 
-	self->_private->status = gtk_statusbar_new ();
+	self->_private->status = sb_status_bar_new ();
 	gtk_widget_show (self->_private->status);
 	gtk_box_pack_start (GTK_BOX (vbox),
 			    self->_private->status,

@@ -32,6 +32,8 @@ source_browser_SOURCES=\
 	sb-reference-label.h \
 	sb-revision.c \
 	sb-revision.h \
+	sb-statusbar.c \
+	sb-statusbar.h \
 	sb-window.c \
 	sb-window.h \
 	$(NULL)
