@@ -119,6 +119,12 @@ sb_window_init (SbWindow* self)
 
 #ifdef HAVE_PLATFORM_OSX
 	self->_private->quit_item = gtk_menu_item_new_with_label ("Quit");
+	{
+		/* FIXME: this is butt-ugly and needs to get refactored into
+		   some class that just needs to be used */
+		GtkWidget* menubar = gtk_menu_bar_new ();
+		ige_mac_menu_set_menu_bar (GTK_MENU_SHELL (menubar));
+	}
 	g_signal_connect_swapped (self->_private->quit_item, "activate",
 				  G_CALLBACK (gtk_widget_destroy), self);
 	ige_mac_menu_set_quit_menu_item (self->_private->quit_item);
