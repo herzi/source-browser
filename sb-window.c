@@ -27,6 +27,10 @@
 #include "sb-progress.h"
 #include <glib/gi18n.h>
 
+struct _SbWindowPrivate {
+	GtkWidget* quit_item;
+};
+
 G_DEFINE_TYPE (SbWindow, sb_window, GTK_TYPE_WINDOW);
 
 static void
@@ -69,6 +73,11 @@ sb_window_init (SbWindow* self)
 	GtkWidget* scrolled;
 	GtkWidget* status;
 
+	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
+						      SB_TYPE_WINDOW,
+						      SbWindowPrivate);
+
+	// FIXME: perform in class_init
 	g_signal_connect (result, "destroy",
 			  G_CALLBACK (gtk_main_quit), NULL);
 	gtk_window_set_default_size (GTK_WINDOW (result),
@@ -107,11 +116,39 @@ sb_window_init (SbWindow* self)
 			    FALSE,
 			    FALSE,
 			    0);
+
+#ifdef HAVE_PLATFORM_OSX
+	self->_private->quit_item = gtk_menu_item_new_with_label ("Quit");
+	g_signal_connect_swapped (self->_private->quit_item, "activate",
+				  G_CALLBACK (gtk_widget_destroy), self);
+	ige_mac_menu_set_quit_menu_item (self->_private->quit_item);
+#endif
+}
+
+static void
+window_destroy (GtkObject* object)
+{
+#ifdef HAVE_PLATFORM_OSX
+	SbWindow* self = SB_WINDOW (object);
+
+	if (self->_private->quit_item) {
+		gtk_widget_destroy (self->_private->quit_item);
+		self->_private->quit_item = NULL;
+	}
+#endif
+
+	GTK_OBJECT_CLASS (sb_window_parent_class)->destroy (object);
 }
 
 static void
 sb_window_class_init (SbWindowClass* self_class)
-{}
+{
+	GtkObjectClass* gtk_object_class = GTK_OBJECT_CLASS (self_class);
+
+	gtk_object_class->destroy = window_destroy;
+
+	g_type_class_add_private (self_class, sizeof (SbWindowPrivate));
+}
 
 GtkWidget*
 sb_window_new (void)

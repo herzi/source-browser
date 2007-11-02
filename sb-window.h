@@ -33,6 +33,7 @@ typedef struct _SbWindowPrivate SbWindowPrivate;
 typedef struct _SbWindowClass   SbWindowClass;
 
 #define SB_TYPE_WINDOW         (sb_window_get_type ())
+#define SB_WINDOW(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_WINDOW, SbWindow))
 
 GType      sb_window_get_type    (void);
 GtkWidget* sb_window_new         (void);
