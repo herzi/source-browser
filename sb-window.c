@@ -28,6 +28,7 @@
 #include <glib/gi18n.h>
 
 struct _SbWindowPrivate {
+	GtkWidget* progress;
 	GtkWidget* status;
 #ifdef HAVE_PLATFORM_OSX
 	GtkWidget* quit_item;
@@ -74,7 +75,6 @@ sb_window_init (SbWindow* self)
 	GtkWidget* chooser;
 	GtkWidget* display;
 	GtkWidget* scrolled;
-	GtkWidget* status;
 
 	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
 						      SB_TYPE_WINDOW,
@@ -113,17 +113,17 @@ sb_window_init (SbWindow* self)
 	gtk_container_add (GTK_CONTAINER (scrolled),
 			   display);
 
-	status = sb_progress_new ();
-	gtk_box_pack_start (GTK_BOX (vbox),
-			    status,
-			    FALSE,
-			    FALSE,
-			    0);
-
 	self->_private->status = gtk_statusbar_new ();
 	gtk_widget_show (self->_private->status);
 	gtk_box_pack_start (GTK_BOX (vbox),
 			    self->_private->status,
+			    FALSE,
+			    FALSE,
+			    0);
+
+	self->_private->progress = sb_progress_new ();
+	gtk_box_pack_start (GTK_BOX (self->_private->status),
+			    self->_private->progress,
 			    FALSE,
 			    FALSE,
 			    0);
@@ -196,7 +196,7 @@ sb_window_get_status (GtkWidget* self)
 {
 	g_return_val_if_fail (GTK_IS_WINDOW (self), NULL);
 
-	return sb_window_get_nth_in_box (self, 2);
+	return SB_WINDOW (self)->_private->progress;
 }
 
 GtkWidget*
