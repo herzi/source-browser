@@ -136,11 +136,17 @@ sb_window_init (SbWindow* self)
 			    0);
 
 	self->_private->progress = sb_progress_new ();
+#if 0
+	/* FIXME: http://bugzilla.gnome.org/show_bug.cgi?id=492855 */
 	gtk_box_pack_start (GTK_BOX (self->_private->status),
 			    self->_private->progress,
 			    FALSE,
 			    FALSE,
 			    0);
+#else
+	gtk_container_add  (GTK_CONTAINER (self->_private->status),
+			    self->_private->progress);
+#endif
 
 	gtk_widget_show (vbox);
 
