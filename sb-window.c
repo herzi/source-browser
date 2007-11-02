@@ -103,6 +103,7 @@ sb_window_init (SbWindow* self)
 					       GTK_FILE_CHOOSER_ACTION_OPEN);
 	g_signal_connect (chooser, "selection-changed",
 			  G_CALLBACK (chooser_selection_changed_cb), result);
+	gtk_widget_show    (chooser);
 	gtk_box_pack_start (GTK_BOX (vbox),
 			    chooser,
 			    FALSE,
@@ -110,6 +111,7 @@ sb_window_init (SbWindow* self)
 			    0);
 
 	scrolled = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrolled);
 	gtk_box_pack_start_defaults (GTK_BOX (vbox),
 				     scrolled);
 
@@ -120,6 +122,7 @@ sb_window_init (SbWindow* self)
 			   G_CALLBACK (display_load_progress_cb), result);
 	g_signal_connect  (display, "load-done",
 			   G_CALLBACK (display_load_done_cb), result);
+	gtk_widget_show   (display);
 	gtk_container_add (GTK_CONTAINER (scrolled),
 			   display);
 
@@ -137,6 +140,8 @@ sb_window_init (SbWindow* self)
 			    FALSE,
 			    FALSE,
 			    0);
+
+	gtk_widget_show (vbox);
 
 #ifdef HAVE_PLATFORM_OSX
 	self->_private->quit_item = gtk_menu_item_new_with_label ("Quit");

@@ -28,7 +28,7 @@ main (int   argc,
       char**argv)
 {
 	gtk_init (&argc, &argv);
-	gtk_widget_show_all (sb_window_new ());
+	gtk_widget_show (sb_window_new ());
 	gtk_main ();
 	return 0;
 }
