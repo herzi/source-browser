@@ -51,6 +51,7 @@ static void
 display_load_started_cb (SbDisplay* display,
 			 GtkWidget* window)
 {
+	gtk_widget_show (sb_window_get_status (window));
 	sb_progress_set_target (SB_PROGRESS (sb_window_get_status (window)),
 				sb_display_get_n_lines (SB_DISPLAY (sb_window_get_display (window))));
 
@@ -65,6 +66,13 @@ display_load_progress_cb (SbDisplay* display,
 {
 	sb_progress_advance (SB_PROGRESS (sb_window_get_status (window)),
 			     lines);
+}
+
+static void
+display_load_done_cb (SbDisplay* display,
+		      SbWindow * self)
+{
+	gtk_widget_hide (sb_window_get_status (GTK_WIDGET (self)));
 }
 
 static void
@@ -110,6 +118,8 @@ sb_window_init (SbWindow* self)
 			   G_CALLBACK (display_load_started_cb), result);
 	g_signal_connect  (display, "load-progress",
 			   G_CALLBACK (display_load_progress_cb), result);
+	g_signal_connect  (display, "load-done",
+			   G_CALLBACK (display_load_done_cb), result);
 	gtk_container_add (GTK_CONTAINER (scrolled),
 			   display);
 
