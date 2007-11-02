@@ -5,4 +5,23 @@ AC_PROG_CC
 
 PKG_CHECK_MODULES([SB],[gtk+-2.0])
 
+dnl  -----------------------
+dnl | GTK+ platform check   |----------------------------------
+dnl  -----------------------
+
+IGE_PLATFORM_CHECK
+if test "x$IGE_PLATFORM" = xx11; then
+   PLATFORM_CFLAGS=
+   PLATFORM_LDFLAGS=
+else
+   PLATFORM_CFLAGS=
+   PLATFORM_LDFLAGS="-framework Carbon"
+fi
+AC_SUBST(PLATFORM_CFLAGS)
+AC_SUBST(PLATFORM_LDFLAGS)
+
+dnl  --------
+dnl | Output |-------------------------------------------------
+dnl  --------
+
 AC_OUTPUT(Makefile)

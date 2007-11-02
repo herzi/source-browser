@@ -5,6 +5,11 @@ BUILT_SOURCES=\
 	sb-marshallers.c \
 	sb-marshallers.h \
 	$(NULL)
+dist_ige_mac_menu_sources=\
+	ige-mac-menu.c \
+	ige-mac-menu.h \
+	$(NULL)
+
 source_browser_SOURCES=\
 	$(BUILT_SOURCES) \
 	gobject-helpers.h \
@@ -30,8 +35,12 @@ source_browser_SOURCES=\
 	sb-window.c \
 	sb-window.h \
 	$(NULL)
-AM_CPPFLAGS=$(SB_CFLAGS)
-LDADD=$(SB_LIBS)
+AM_CPPFLAGS=$(SB_CFLAGS) $(PLATFORM_CFLAGS)
+LDADD=$(SB_LIBS) $(PLATFORM_LDFLAGS)
+
+if HAVE_PLATFORM_OSX
+source_browser_SOURCES+=$(dist_ige_mac_menu_sources)
+endif
 
 sb-marshallers.c: sb-marshallers.list Makefile
 	glib-genmarshal --prefix=sb_cclosure_marshal --body $< > $@
