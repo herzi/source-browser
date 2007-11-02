@@ -54,7 +54,7 @@ struct _SbDisplayPrivate {
 enum {
 	LOAD_STARTED,
 	LOAD_PROGRESS,
-	// FIXME: LOAD_DONE,
+	LOAD_DONE,
 	// FIXME: LOAD_CANCELLED,
 	N_SIGNALS
 };
@@ -203,6 +203,12 @@ sb_display_class_init (SbDisplayClass* self_class)
 					       g_cclosure_marshal_VOID__INT,
 					       G_TYPE_NONE, 1,
 					       G_TYPE_INT);
+	signals[LOAD_DONE] = g_signal_new     ("load-done",
+					       SB_TYPE_DISPLAY,
+					       0, 0,
+					       NULL, NULL,
+					       g_cclosure_marshal_VOID__VOID,
+					       G_TYPE_NONE, 0);
 }
 
 GtkWidget*
@@ -300,6 +306,10 @@ child_watch_cb (GPid pid,
 
 	g_object_unref (display->_private->reader);
 	display->_private->reader = NULL;
+
+	g_signal_emit (display,
+		       signals[LOAD_DONE],
+		       0);
 }
 
 static inline void // FIXME: rename function
