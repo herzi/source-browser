@@ -27,6 +27,8 @@
 #include "sb-progress.h"
 #include <glib/gi18n.h>
 
+G_DEFINE_TYPE (SbWindow, sb_window, GTK_TYPE_WINDOW);
+
 static void
 chooser_selection_changed_cb (GtkFileChooser* chooser,
 			      GtkWidget     * window)
@@ -57,10 +59,10 @@ display_load_progress_cb (SbDisplay* display,
 			     lines);
 }
 
-GtkWidget*
-sb_window_new (void)
+static void
+sb_window_init (SbWindow* self)
 {
-	GtkWidget* result = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	GtkWidget* result = GTK_WIDGET (self);
 	GtkWidget* vbox   = gtk_vbox_new (FALSE, 6);
 	GtkWidget* chooser;
 	GtkWidget* display;
@@ -105,8 +107,16 @@ sb_window_new (void)
 			    FALSE,
 			    FALSE,
 			    0);
+}
 
-	return result;
+static void
+sb_window_class_init (SbWindowClass* self_class)
+{}
+
+GtkWidget*
+sb_window_new (void)
+{
+	return g_object_new (SB_TYPE_WINDOW, NULL);
 }
 
 GtkWidget*

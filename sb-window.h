@@ -28,6 +28,13 @@
 
 G_BEGIN_DECLS
 
+typedef struct _SbWindow        SbWindow;
+typedef struct _SbWindowPrivate SbWindowPrivate;
+typedef struct _SbWindowClass   SbWindowClass;
+
+#define SB_TYPE_WINDOW         (sb_window_get_type ())
+
+GType      sb_window_get_type    (void);
 GtkWidget* sb_window_new         (void);
 GtkWidget* sb_window_get_display (GtkWidget  * self);
 GtkWidget* sb_window_get_status  (GtkWidget  * self);
@@ -35,6 +42,15 @@ GtkWidget* sb_window_get_swin    (GtkWidget  * self);
 GtkWidget* sb_window_get_vbox    (GtkWidget  * self);
 void       sb_window_open        (GtkWidget  * self,
 				  gchar const* path);
+
+struct _SbWindow {
+	GtkWindow        base_instance;
+	SbWindowPrivate* _private;
+};
+
+struct _SbWindowClass {
+	GtkWindowClass   base_class;
+};
 
 G_END_DECLS
 
