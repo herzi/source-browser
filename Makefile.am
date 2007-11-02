@@ -1,9 +1,12 @@
 bin_PROGRAMS=source-browser
 check_PROGRAMS=test-async-io
 
-source_browser_SOURCES=\
+BUILT_SOURCES=\
 	sb-marshallers.c \
 	sb-marshallers.h \
+	$(NULL)
+source_browser_SOURCES=\
+	$(BUILT_SOURCES) \
 	gobject-helpers.h \
 	sb-annotations.c \
 	sb-annotations.h \
@@ -29,4 +32,10 @@ source_browser_SOURCES=\
 	$(NULL)
 AM_CPPFLAGS=$(SB_CFLAGS)
 LDADD=$(SB_LIBS)
+
+sb-marshallers.c: sb-marshallers.list Makefile
+	glib-genmarshal --prefix=sb_cclosure_marshal --body $< > $@
+
+sb-marshallers.h: sb-marshallers.list Makefile
+	glib-genmarshal --prefix=sb_cclosure_marshal --header $< > $@
 
