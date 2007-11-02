@@ -28,7 +28,10 @@
 #include <glib/gi18n.h>
 
 struct _SbWindowPrivate {
+	GtkWidget* status;
+#ifdef HAVE_PLATFORM_OSX
 	GtkWidget* quit_item;
+#endif
 };
 
 G_DEFINE_TYPE (SbWindow, sb_window, GTK_TYPE_WINDOW);
@@ -113,6 +116,14 @@ sb_window_init (SbWindow* self)
 	status = sb_progress_new ();
 	gtk_box_pack_start (GTK_BOX (vbox),
 			    status,
+			    FALSE,
+			    FALSE,
+			    0);
+
+	self->_private->status = gtk_statusbar_new ();
+	gtk_widget_show (self->_private->status);
+	gtk_box_pack_start (GTK_BOX (vbox),
+			    self->_private->status,
 			    FALSE,
 			    FALSE,
 			    0);
