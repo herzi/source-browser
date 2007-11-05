@@ -95,21 +95,29 @@ io_watch_cb (GIOChannel  * channel,
 	gunichar read = 0;
 
 	// FIXME: rewrite to non-blockingly use read()
-	state = g_io_channel_read_unichar (channel, &read, NULL);
+	while (state == G_IO_STATUS_NORMAL) {
+		state = g_io_channel_read_unichar (channel, &read, NULL);
 
-	if (G_UNLIKELY (state != G_IO_STATUS_NORMAL)) {
-		sb_async_reader_set_io_tag (self,
-					    0);
-		return FALSE;
-	}
-
-	if (G_LIKELY (read != '\n')) {
-		g_string_append_unichar (self->_private->buffer, read);
-	} else {
-		g_signal_emit_by_name (self,
-				       "read-line",
-				       self->_private->buffer->str); // FIXME: emit by signal id
-		g_string_set_size (self->_private->buffer, 0);
+		switch (state) {
+		case G_IO_STATUS_NORMAL:
+			if (G_LIKELY (read != '\n')) {
+				g_string_append_unichar (self->_private->buffer, read);
+			} else {
+				g_signal_emit_by_name (self,
+						       "read-line",
+						       self->_private->buffer->str); // FIXME: emit by signal id
+				g_string_set_size (self->_private->buffer, 0);
+			}
+			break;
+		case G_IO_STATUS_AGAIN:
+			/* no data right now... try again later */
+			break;
+		case G_IO_STATUS_ERROR:
+		case G_IO_STATUS_EOF:
+			sb_async_reader_set_io_tag (self,
+						    0);
+			return FALSE;
+		}
 	}
 
 	return TRUE;
@@ -129,6 +137,7 @@ reader_set_property (GObject     * object,
 		g_object_notify (object, "file-descriptor");
 		// FIXME: move the channel stuff into the constructed() function
 		self->_private->channel = g_io_channel_unix_new (self->_private->file_descriptor);
+		g_io_channel_set_flags (self->_private->channel, G_IO_FLAG_NONBLOCK, NULL); // FIXME: return value and GError
 		g_io_channel_set_close_on_unref (self->_private->channel, TRUE);
 
 		sb_async_reader_set_io_tag (self,
