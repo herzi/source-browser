@@ -223,7 +223,7 @@ sb_async_reader_set_io_tag (SbAsyncReader* self,
 void
 sb_reader_flush (SbAsyncReader* reader)
 {
-	GIOChannel* channel    = sb_async_reader_get_channel (reader);
+	GIOChannel* channel;
 	guint       io_handler = sb_async_reader_get_io_tag (reader);
 
 	if (G_UNLIKELY (!io_handler)) {
@@ -231,7 +231,8 @@ sb_reader_flush (SbAsyncReader* reader)
 	}
 
 	g_source_remove (io_handler);
-	while (io_watch_cb (channel, G_IO_IN, reader))
-		; // parse trailing lines
+
+	channel = sb_async_reader_get_channel (reader);
+	io_watch_cb (channel, G_IO_IN, reader); // parse trailing lines
 }
 
