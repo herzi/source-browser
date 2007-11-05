@@ -94,20 +94,19 @@ io_watch_cb (GIOChannel  * channel,
 	SbAsyncReader* self = SB_ASYNC_READER (data);
 	gunichar read = 0;
 
-	// FIXME: rewrite to non-blockingly use read()
 	while (state == G_IO_STATUS_NORMAL) {
-		state = g_io_channel_read_unichar (channel, &read, NULL);
+		gchar buffer[512];
+		gsize delim = 0;
 
+		// FIXME: add GError here
+		state = g_io_channel_read_line_string (channel, self->_private->buffer, &delim, NULL);
 		switch (state) {
 		case G_IO_STATUS_NORMAL:
-			if (G_LIKELY (read != '\n')) {
-				g_string_append_unichar (self->_private->buffer, read);
-			} else {
-				g_signal_emit_by_name (self,
-						       "read-line",
-						       self->_private->buffer->str); // FIXME: emit by signal id
-				g_string_set_size (self->_private->buffer, 0);
-			}
+			g_string_set_size (self->_private->buffer, delim);
+			g_signal_emit_by_name (self,
+					       "read-line",
+					       self->_private->buffer->str); // FIXME: emit by signal id
+			g_string_set_size (self->_private->buffer, 0);
 			break;
 		case G_IO_STATUS_AGAIN:
 			/* no data right now... try again later */
