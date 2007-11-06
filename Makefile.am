@@ -40,6 +40,9 @@ source_browser_SOURCES=\
 	sb-window.c \
 	sb-window.h \
 	$(NULL)
+source_browser_LDADD=\
+	libgfc.la \
+	$(LDADD)
 AM_CPPFLAGS=$(SB_CFLAGS) $(PLATFORM_CFLAGS)
 LDADD=$(SB_LIBS) $(PLATFORM_LDFLAGS)
 
