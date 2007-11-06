@@ -1,3 +1,4 @@
+*.lo
 *.o
 .deps
 .libs
@@ -14,7 +15,6 @@ config.status
 config.sub
 configure
 depcomp
-gfc-job.lo
 ignore
 install-sh
 libgfc.la
