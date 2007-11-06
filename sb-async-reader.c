@@ -28,7 +28,6 @@
 
 struct _SbAsyncReaderPrivate {
 	guint       io_tag;
-	GString   * buffer;
 };
 
 enum {
@@ -46,8 +45,6 @@ sb_async_reader_init (SbAsyncReader* self)
 	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
 						      SB_TYPE_ASYNC_READER,
 						      SbAsyncReaderPrivate);
-
-	self->_private->buffer = g_string_sized_new (0);
 }
 
 static gboolean
@@ -55,6 +52,7 @@ io_watch_cb (GIOChannel  * channel,
 	     GIOCondition  condition,
 	     gpointer      data)
 {
+	GString* buffer = g_string_new ("");
 	GIOStatus state = G_IO_STATUS_NORMAL;
 	SbAsyncReader* self = SB_ASYNC_READER (data);
 
@@ -62,14 +60,14 @@ io_watch_cb (GIOChannel  * channel,
 		gsize delim = 0;
 
 		// FIXME: add GError here
-		state = g_io_channel_read_line_string (channel, self->_private->buffer, &delim, NULL);
+		state = g_io_channel_read_line_string (channel, buffer, &delim, NULL);
 		switch (state) {
 		case G_IO_STATUS_NORMAL:
-			g_string_set_size (self->_private->buffer, delim);
+			g_string_set_size (buffer, delim);
 			g_signal_emit_by_name (self,
 					       "read-line",
-					       self->_private->buffer->str); // FIXME: emit by signal id
-			g_string_set_size (self->_private->buffer, 0);
+					       buffer->str); // FIXME: emit by signal id
+			g_string_set_size (buffer, 0);
 			break;
 		case G_IO_STATUS_AGAIN:
 			/* no data right now... try again later */
@@ -79,10 +77,12 @@ io_watch_cb (GIOChannel  * channel,
 			// FIXME: call g_source_remove() here instead of flush()?
 			sb_async_reader_set_io_tag (self,
 						    0);
+			g_string_free (buffer, TRUE);
 			return FALSE;
 		}
 	}
 
+	g_string_free (buffer, TRUE);
 	return TRUE;
 }
 
@@ -103,22 +103,11 @@ reader_constructed (GObject* object)
 }
 
 static void
-reader_finalize (GObject* object)
-{
-	SbAsyncReader* self = SB_ASYNC_READER (object);
-
-	g_string_free (self->_private->buffer, TRUE);
-
-	G_OBJECT_CLASS (sb_async_reader_parent_class)->finalize (object);
-}
-
-static void
 sb_async_reader_class_init (SbAsyncReaderClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
 	object_class->constructed  = reader_constructed;
-	object_class->finalize     = reader_finalize;
 
 	signals[READ_LINE] = g_signal_new ("read-line",
 					   SB_TYPE_ASYNC_READER,
