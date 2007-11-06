@@ -45,7 +45,7 @@ enum {
 
 static guint signals[N_SIGNALS] = {0};
 
-G_DEFINE_TYPE (SbAsyncReader, sb_async_reader, G_TYPE_OBJECT);
+G_DEFINE_TYPE (SbAsyncReader, sb_async_reader, GFC_TYPE_READER);
 
 static void
 sb_async_reader_init (SbAsyncReader* self)

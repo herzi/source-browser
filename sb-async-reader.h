@@ -24,7 +24,7 @@
 #ifndef SB_ASYNC_READER_H
 #define SB_ASYNC_READER_H
 
-#include <glib-object.h>
+#include <gfc/gfc-reader.h>
 
 G_BEGIN_DECLS
 
@@ -46,12 +46,12 @@ void           sb_async_reader_set_io_tag  (SbAsyncReader      * self,
 void           sb_reader_flush             (SbAsyncReader      * reader);
 
 struct _SbAsyncReader {
-	GObject               base_instance;
+	GfcReader             base_instance;
 	SbAsyncReaderPrivate* _private;
 };
 
 struct _SbAsyncReaderClass {
-	GObjectClass          base_class;
+	GfcReaderClass        base_class;
 };
 
 G_END_DECLS
