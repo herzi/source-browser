@@ -57,10 +57,8 @@ io_watch_cb (GIOChannel  * channel,
 {
 	GIOStatus state = G_IO_STATUS_NORMAL;
 	SbAsyncReader* self = SB_ASYNC_READER (data);
-	gunichar read = 0;
 
 	while (state == G_IO_STATUS_NORMAL) {
-		gchar buffer[512];
 		gsize delim = 0;
 
 		// FIXME: add GError here
