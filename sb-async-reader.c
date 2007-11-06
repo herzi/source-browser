@@ -23,103 +23,15 @@
 
 #include "sb-async-reader.h"
 
-// FIXME: remove this include
-#include "sb-display.h"
-
-struct _SbAsyncReaderPrivate {
-	guint       io_tag;
-};
-
-enum {
-	READ_LINE,
-	N_SIGNALS
-};
-
-static guint signals[N_SIGNALS] = {0};
-
 G_DEFINE_TYPE (SbAsyncReader, sb_async_reader, GFC_TYPE_READER);
 
 static void
 sb_async_reader_init (SbAsyncReader* self)
-{
-	self->_private = G_TYPE_INSTANCE_GET_PRIVATE (self,
-						      SB_TYPE_ASYNC_READER,
-						      SbAsyncReaderPrivate);
-}
-
-static gboolean
-io_watch_cb (GIOChannel  * channel,
-	     GIOCondition  condition,
-	     gpointer      data)
-{
-	GString* buffer = g_string_new ("");
-	GIOStatus state = G_IO_STATUS_NORMAL;
-	SbAsyncReader* self = SB_ASYNC_READER (data);
-
-	while (state == G_IO_STATUS_NORMAL) {
-		gsize delim = 0;
-
-		// FIXME: add GError here
-		state = g_io_channel_read_line_string (channel, buffer, &delim, NULL);
-		switch (state) {
-		case G_IO_STATUS_NORMAL:
-			g_string_set_size (buffer, delim);
-			g_signal_emit_by_name (self,
-					       "read-line",
-					       buffer->str); // FIXME: emit by signal id
-			g_string_set_size (buffer, 0);
-			break;
-		case G_IO_STATUS_AGAIN:
-			/* no data right now... try again later */
-			break;
-		case G_IO_STATUS_ERROR:
-		case G_IO_STATUS_EOF:
-			// FIXME: call g_source_remove() here instead of flush()?
-			sb_async_reader_set_io_tag (self,
-						    0);
-			g_string_free (buffer, TRUE);
-			return FALSE;
-		}
-	}
-
-	g_string_free (buffer, TRUE);
-	return TRUE;
-}
-
-static void
-reader_constructed (GObject* object)
-{
-	SbAsyncReader* self = SB_ASYNC_READER (object);
-
-	if (G_OBJECT_CLASS (sb_async_reader_parent_class)->constructed) {
-		G_OBJECT_CLASS (sb_async_reader_parent_class)->constructed (object);
-	}
-
-	sb_async_reader_set_io_tag (self,
-				    g_io_add_watch (gfc_reader_get_channel (GFC_READER (self)),
-						    G_IO_IN,
-						    io_watch_cb,
-						    self));
-}
+{}
 
 static void
 sb_async_reader_class_init (SbAsyncReaderClass* self_class)
-{
-	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
-
-	object_class->constructed  = reader_constructed;
-
-	signals[READ_LINE] = g_signal_new ("read-line",
-					   SB_TYPE_ASYNC_READER,
-					   0, 0,
-					   NULL, NULL,
-					   g_cclosure_marshal_VOID__STRING,
-					   G_TYPE_NONE,
-					   1,
-					   G_TYPE_STRING | G_SIGNAL_TYPE_STATIC_SCOPE);
-
-	g_type_class_add_private (self_class, sizeof (SbAsyncReaderPrivate));
-}
+{}
 
 SbAsyncReader*
 sb_async_reader_new (gint input_fd)
@@ -129,36 +41,11 @@ sb_async_reader_new (gint input_fd)
 			     NULL);
 }
 
-guint
-sb_async_reader_get_io_tag (SbAsyncReader const* self)
-{
-	g_return_val_if_fail (SB_IS_ASYNC_READER (self), 0);
-
-	return self->_private->io_tag;
-}
-
 void
-sb_async_reader_set_io_tag (SbAsyncReader* self,
-			    guint          io_tag)
+sb_reader_flush (SbAsyncReader* self)
 {
 	g_return_if_fail (SB_IS_ASYNC_READER (self));
 
-	self->_private->io_tag = io_tag;
-}
-
-void
-sb_reader_flush (SbAsyncReader* reader)
-{
-	guint       io_handler = sb_async_reader_get_io_tag (reader);
-
-	if (G_UNLIKELY (!io_handler)) {
-		return;
-	}
-
-	g_source_remove (io_handler);
-
-	io_watch_cb (gfc_reader_get_channel (GFC_READER (reader)),
-		     G_IO_IN,
-		     reader); // parse trailing lines
+	gfc_reader_flush (GFC_READER (self));
 }
 
