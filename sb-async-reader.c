@@ -97,7 +97,7 @@ reader_constructed (GObject* object)
 	}
 
 	sb_async_reader_set_io_tag (self,
-				    g_io_add_watch (sb_async_reader_get_channel (self),
+				    g_io_add_watch (gfc_reader_get_channel (GFC_READER (self)),
 						    G_IO_IN,
 						    io_watch_cb,
 						    self));
@@ -141,14 +141,6 @@ sb_async_reader_new (gint input_fd)
 			     NULL);
 }
 
-GIOChannel*
-sb_async_reader_get_channel (SbAsyncReader const* self)
-{
-	g_return_val_if_fail (SB_IS_ASYNC_READER (self), NULL);
-
-	return gfc_reader_get_channel (GFC_READER (self));
-}
-
 guint
 sb_async_reader_get_io_tag (SbAsyncReader const* self)
 {
@@ -178,7 +170,7 @@ sb_reader_flush (SbAsyncReader* reader)
 
 	g_source_remove (io_handler);
 
-	channel = sb_async_reader_get_channel (reader);
+	channel = gfc_reader_get_channel (GFC_READER (reader));
 	io_watch_cb (channel, G_IO_IN, reader); // parse trailing lines
 }
 
