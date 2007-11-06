@@ -57,34 +57,6 @@ sb_async_reader_init (SbAsyncReader* self)
 	self->_private->buffer = g_string_sized_new (0);
 }
 
-static void
-reader_finalize (GObject* object)
-{
-	SbAsyncReader* self = SB_ASYNC_READER (object);
-
-	g_string_free (self->_private->buffer, TRUE);
-
-	G_OBJECT_CLASS (sb_async_reader_parent_class)->finalize (object);
-}
-
-static void
-reader_get_property (GObject   * object,
-		     guint       prop_id,
-		     GValue    * value,
-		     GParamSpec* pspec)
-{
-	SbAsyncReader* self = SB_ASYNC_READER (object);
-
-	switch (prop_id) {
-	case PROP_FD:
-		g_value_set_int (value, self->_private->file_descriptor);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
 static gboolean
 io_watch_cb (GIOChannel  * channel,
 	     GIOCondition  condition,
@@ -123,6 +95,54 @@ io_watch_cb (GIOChannel  * channel,
 }
 
 static void
+reader_constructed (GObject* object)
+{
+	SbAsyncReader* self = SB_ASYNC_READER (object);
+
+	self->_private->channel = g_io_channel_unix_new (self->_private->file_descriptor);
+	g_io_channel_set_flags (self->_private->channel, G_IO_FLAG_NONBLOCK, NULL); // FIXME: return value and GError
+	g_io_channel_set_close_on_unref (self->_private->channel, TRUE);
+
+	sb_async_reader_set_io_tag (self,
+				    g_io_add_watch (sb_async_reader_get_channel (self),
+						    G_IO_IN,
+						    io_watch_cb,
+						    self));
+
+	if (G_OBJECT_CLASS (sb_async_reader_parent_class)->constructed) {
+		G_OBJECT_CLASS (sb_async_reader_parent_class)->constructed (object);
+	}
+}
+
+static void
+reader_finalize (GObject* object)
+{
+	SbAsyncReader* self = SB_ASYNC_READER (object);
+
+	g_string_free (self->_private->buffer, TRUE);
+
+	G_OBJECT_CLASS (sb_async_reader_parent_class)->finalize (object);
+}
+
+static void
+reader_get_property (GObject   * object,
+		     guint       prop_id,
+		     GValue    * value,
+		     GParamSpec* pspec)
+{
+	SbAsyncReader* self = SB_ASYNC_READER (object);
+
+	switch (prop_id) {
+	case PROP_FD:
+		g_value_set_int (value, self->_private->file_descriptor);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
 reader_set_property (GObject     * object,
 		     guint         prop_id,
 		     GValue const* value,
@@ -134,16 +154,6 @@ reader_set_property (GObject     * object,
 	case PROP_FD:
 		self->_private->file_descriptor = g_value_get_int (value);
 		g_object_notify (object, "file-descriptor");
-		// FIXME: move the channel stuff into the constructed() function
-		self->_private->channel = g_io_channel_unix_new (self->_private->file_descriptor);
-		g_io_channel_set_flags (self->_private->channel, G_IO_FLAG_NONBLOCK, NULL); // FIXME: return value and GError
-		g_io_channel_set_close_on_unref (self->_private->channel, TRUE);
-
-		sb_async_reader_set_io_tag (self,
-					    g_io_add_watch (sb_async_reader_get_channel (self),
-							    G_IO_IN,
-							    io_watch_cb,
-							    self));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -156,6 +166,7 @@ sb_async_reader_class_init (SbAsyncReaderClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
+	object_class->constructed  = reader_constructed;
 	object_class->finalize     = reader_finalize;
 	object_class->get_property = reader_get_property;
 	object_class->set_property = reader_set_property;
