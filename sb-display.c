@@ -23,8 +23,9 @@
 
 #include "sb-display.h"
 
+#include <gfc/gfc-reader.h>
+
 #include "sb-annotations.h"
-#include "sb-async-reader.h"
 #include "sb-callback-data.h"
 #include "sb-comparable.h"
 #include "sb-marshallers.h"
@@ -45,7 +46,7 @@ struct _SbDisplayPrivate {
 	/* the following are only valid during history loading */
 	// FIXME: move them into an SbHistoryLoader
 	GList        * references;
-	SbAsyncReader* reader;
+	GfcReader    * reader;
 	GHashTable   * revisions;
 	SbRevision   * revision; // FIXME: drop this one
 	SbReference  * reference;
@@ -233,9 +234,9 @@ sort_refs_by_target_line (gconstpointer a,
 }
 
 static void
-display_parse_line (SbAsyncReader* reader,
-		    gchar const  * line,
-		    SbDisplay    * self)
+display_parse_line (GfcReader  * reader,
+		    gchar const* line,
+		    SbDisplay  * self)
 {
 	g_return_if_fail (SB_IS_DISPLAY (self));
 
@@ -296,7 +297,7 @@ child_watch_cb (GPid pid,
 	SbDisplay * display = SB_DISPLAY (data); // FIXME: call self
 
 	g_print ("pre-done.\n");
-	sb_reader_flush (display->_private->reader);
+	gfc_reader_flush (display->_private->reader);
 	g_print ("done.\n");
 	g_spawn_close_pid (pid);
 
@@ -349,7 +350,7 @@ load_history (SbDisplay  * self,
 			     NULL,
 			     NULL); // FIXME: error, pipes
 
-	self->_private->reader = sb_async_reader_new (out_fd);
+	self->_private->reader = gfc_reader_new (out_fd);
 	g_free (argv[2]);
 	g_free (working_folder);
 

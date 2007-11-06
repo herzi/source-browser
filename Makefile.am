@@ -18,8 +18,6 @@ source_browser_SOURCES=\
 	gobject-helpers.h \
 	sb-annotations.c \
 	sb-annotations.h \
-	sb-async-reader.c \
-	sb-async-reader.h \
 	sb-comparable.c \
 	sb-comparable.h \
 	sb-contributor.c \
