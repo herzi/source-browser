@@ -27,15 +27,9 @@
 #include "sb-display.h"
 
 struct _SbAsyncReaderPrivate {
-	gint        file_descriptor;
 	guint       io_tag;
 	GIOChannel* channel;
 	GString   * buffer;
-};
-
-enum {
-	PROP_0,
-	PROP_FD
 };
 
 enum {
@@ -98,8 +92,10 @@ static void
 reader_constructed (GObject* object)
 {
 	SbAsyncReader* self = SB_ASYNC_READER (object);
+	gint fd = 0;
 
-	self->_private->channel = g_io_channel_unix_new (self->_private->file_descriptor);
+	g_object_get (self, "file-descriptor", &fd, NULL);
+	self->_private->channel = g_io_channel_unix_new (fd);
 	g_io_channel_set_flags (self->_private->channel, G_IO_FLAG_NONBLOCK, NULL); // FIXME: return value and GError
 	g_io_channel_set_close_on_unref (self->_private->channel, TRUE);
 
@@ -125,56 +121,12 @@ reader_finalize (GObject* object)
 }
 
 static void
-reader_get_property (GObject   * object,
-		     guint       prop_id,
-		     GValue    * value,
-		     GParamSpec* pspec)
-{
-	SbAsyncReader* self = SB_ASYNC_READER (object);
-
-	switch (prop_id) {
-	case PROP_FD:
-		g_value_set_int (value, self->_private->file_descriptor);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-static void
-reader_set_property (GObject     * object,
-		     guint         prop_id,
-		     GValue const* value,
-		     GParamSpec  * pspec)
-{
-	SbAsyncReader* self = SB_ASYNC_READER (object);
-
-	switch (prop_id) {
-	case PROP_FD:
-		self->_private->file_descriptor = g_value_get_int (value);
-		g_object_notify (object, "file-descriptor");
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-static void
 sb_async_reader_class_init (SbAsyncReaderClass* self_class)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
 	object_class->constructed  = reader_constructed;
 	object_class->finalize     = reader_finalize;
-	object_class->get_property = reader_get_property;
-	object_class->set_property = reader_set_property;
-
-	g_object_class_install_property (object_class, PROP_FD,
-					 g_param_spec_int ("file-descriptor", "file-descriptor", "file-descriptor",
-							   0, G_MAXINT, 0,
-							   G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	signals[READ_LINE] = g_signal_new ("read-line",
 					   SB_TYPE_ASYNC_READER,
@@ -202,15 +154,6 @@ sb_async_reader_get_channel (SbAsyncReader const* self)
 	g_return_val_if_fail (SB_IS_ASYNC_READER (self), NULL);
 
 	return self->_private->channel;
-}
-
-gint
-sb_async_reader_get_fd (SbAsyncReader const* self)
-{
-	// FIXME: remove this function, we shouldn't expose this
-	g_return_val_if_fail (SB_IS_ASYNC_READER (self), 0);
-
-	return self->_private->file_descriptor;
 }
 
 guint
