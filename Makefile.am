@@ -1,6 +1,9 @@
 bin_PROGRAMS=source-browser
 check_PROGRAMS=test-async-io
 
+gfc_src_dir=$(top_srcdir)/gfc
+include gfc/Makefile.inc
+
 BUILT_SOURCES=\
 	sb-marshallers.c \
 	sb-marshallers.h \
