@@ -28,7 +28,6 @@
 
 struct _SbAsyncReaderPrivate {
 	guint       io_tag;
-	GIOChannel* channel;
 	GString   * buffer;
 };
 
@@ -97,8 +96,6 @@ reader_constructed (GObject* object)
 		G_OBJECT_CLASS (sb_async_reader_parent_class)->constructed (object);
 	}
 
-	self->_private->channel = g_io_channel_ref (gfc_reader_get_channel (GFC_READER (self)));
-
 	sb_async_reader_set_io_tag (self,
 				    g_io_add_watch (sb_async_reader_get_channel (self),
 						    G_IO_IN,
@@ -149,7 +146,7 @@ sb_async_reader_get_channel (SbAsyncReader const* self)
 {
 	g_return_val_if_fail (SB_IS_ASYNC_READER (self), NULL);
 
-	return self->_private->channel;
+	return gfc_reader_get_channel (GFC_READER (self));
 }
 
 guint
