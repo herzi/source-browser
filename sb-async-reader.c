@@ -92,22 +92,18 @@ static void
 reader_constructed (GObject* object)
 {
 	SbAsyncReader* self = SB_ASYNC_READER (object);
-	gint fd = 0;
 
-	g_object_get (self, "file-descriptor", &fd, NULL);
-	self->_private->channel = g_io_channel_unix_new (fd);
-	g_io_channel_set_flags (self->_private->channel, G_IO_FLAG_NONBLOCK, NULL); // FIXME: return value and GError
-	g_io_channel_set_close_on_unref (self->_private->channel, TRUE);
+	if (G_OBJECT_CLASS (sb_async_reader_parent_class)->constructed) {
+		G_OBJECT_CLASS (sb_async_reader_parent_class)->constructed (object);
+	}
+
+	self->_private->channel = g_io_channel_ref (gfc_reader_get_channel (GFC_READER (self)));
 
 	sb_async_reader_set_io_tag (self,
 				    g_io_add_watch (sb_async_reader_get_channel (self),
 						    G_IO_IN,
 						    io_watch_cb,
 						    self));
-
-	if (G_OBJECT_CLASS (sb_async_reader_parent_class)->constructed) {
-		G_OBJECT_CLASS (sb_async_reader_parent_class)->constructed (object);
-	}
 }
 
 static void
