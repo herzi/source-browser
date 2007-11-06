@@ -78,6 +78,7 @@ io_watch_cb (GIOChannel  * channel,
 			break;
 		case G_IO_STATUS_ERROR:
 		case G_IO_STATUS_EOF:
+			// FIXME: call g_source_remove() here instead of flush()?
 			sb_async_reader_set_io_tag (self,
 						    0);
 			return FALSE;
@@ -161,7 +162,6 @@ sb_async_reader_set_io_tag (SbAsyncReader* self,
 void
 sb_reader_flush (SbAsyncReader* reader)
 {
-	GIOChannel* channel;
 	guint       io_handler = sb_async_reader_get_io_tag (reader);
 
 	if (G_UNLIKELY (!io_handler)) {
@@ -170,7 +170,8 @@ sb_reader_flush (SbAsyncReader* reader)
 
 	g_source_remove (io_handler);
 
-	channel = gfc_reader_get_channel (GFC_READER (reader));
-	io_watch_cb (channel, G_IO_IN, reader); // parse trailing lines
+	io_watch_cb (gfc_reader_get_channel (GFC_READER (reader)),
+		     G_IO_IN,
+		     reader); // parse trailing lines
 }
 
