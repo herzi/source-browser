@@ -238,6 +238,7 @@ display_parse_line (GfcReader  * reader,
 		    gchar const* line,
 		    SbDisplay  * self)
 {
+#undef DEBUG_DISPLAY
 	g_return_if_fail (SB_IS_DISPLAY (self));
 
 	// FIXME: make sure we have a new hash table each time
@@ -272,15 +273,20 @@ display_parse_line (GfcReader  * reader,
 		g_object_unref (revision);
 		g_strfreev (words);
 	} else if (g_str_has_prefix (line, "filename ")) {
-		//g_print ("%s\n", sb_revision_get_name (self->_private->revision));
+		gchar** vector = g_strsplit (line, " ", 2);
+#ifdef DEBUG_DISPLAY
+		g_print ("%s\n", sb_revision_get_name (self->_private->revision));
+#endif
 		self->_private->revision = NULL;
+		sb_reference_set_filename (self->_private->reference,
+					   vector[1]);
 		// FIXME: use a GSequence for the revisions (maybe that would make the API nicer too)
 		self->_private->references = g_list_insert_sorted (self->_private->references,
 								   g_object_ref (self->_private->reference),
 								   sort_refs_by_target_line);
 		g_object_unref (self->_private->reference);
 		self->_private->reference = NULL;
-#if 0
+#ifdef DEBUG_DISPLAY
 	} else {
 		// FIXME: meta-information about the commit
 		g_debug ("Got unknown line: %s",
@@ -296,9 +302,13 @@ child_watch_cb (GPid pid,
 {
 	SbDisplay * display = SB_DISPLAY (data); // FIXME: call self
 
+#ifdef DEBUG_DISPLAY
 	g_print ("pre-done.\n");
+#endif
 	gfc_reader_flush (display->_private->reader);
+#ifdef DEBUG_DISPLAY
 	g_print ("done.\n");
+#endif
 	g_spawn_close_pid (pid);
 
 	sb_annotations_set_references (display->_private->annotations,
