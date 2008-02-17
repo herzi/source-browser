@@ -1,9 +1,9 @@
 /* This file is part of source browser
  *
  * AUTHORS
- *     Sven Herzberg  <herzi@gnome-de.org>
+ *     Sven Herzberg
  *
- * Copyright (C) 2007  Sven Herzberg
+ * Copyright (C) 2007,2008  Sven Herzberg
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -42,7 +42,10 @@ SbReference* sb_reference_new		    (SbRevision       * revision,
 					     guint              current_end);
 guint        sb_reference_get_current_start (SbReference const* self);
 guint        sb_reference_get_current_end   (SbReference const* self);
+gchar const* sb_reference_get_filename      (SbReference const* self);
 SbRevision*  sb_reference_get_revision      (SbReference const* self);
+void         sb_reference_set_filename      (SbReference      * self,
+					     gchar const      * filename);
 
 struct _SbReference {
 	GObject             base_instance;

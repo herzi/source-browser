@@ -25,6 +25,7 @@
 
 struct _SbReferencePrivate {
 	SbRevision* revision;
+	gchar*      filename;
 	guint       current_start;
 	guint       current_end;
 };
@@ -52,6 +53,7 @@ reference_finalize (GObject* object)
 	SbReference* self = SB_REFERENCE (object);
 
 	g_object_unref (self->_private->revision);
+	g_free (self->_private->filename);
 
 	G_OBJECT_CLASS (sb_reference_parent_class)->finalize (object);
 }
@@ -161,11 +163,36 @@ sb_reference_get_current_end (SbReference const* self)
 	return self->_private->current_end;
 }
 
+gchar const*
+sb_reference_get_filename (SbReference const* self)
+{
+	g_return_val_if_fail (SB_IS_REFERENCE (self), NULL);
+
+	return self->_private->filename;
+}
+
 SbRevision*
 sb_reference_get_revision (SbReference const* self)
 {
 	g_return_val_if_fail (SB_IS_REFERENCE (self), NULL);
 
 	return self->_private->revision;
+}
+
+void
+sb_reference_set_filename (SbReference* self,
+			   gchar const* filename)
+{
+	g_return_if_fail (SB_IS_REFERENCE (self));
+
+	if (self->_private->filename == filename) {
+		return;
+	}
+
+	g_free (self->_private->filename);
+	self->_private->filename = g_strdup (filename);
+
+	// FIXME: make a GObject property
+	// g_object_notify (G_OBJECT (self), "filename");
 }
 
