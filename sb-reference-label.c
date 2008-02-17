@@ -108,6 +108,19 @@ update_background (SbReferenceLabel* self)
 			      &color);
 }
 
+static inline void
+update_tooltip (SbReferenceLabel* self)
+{
+	SbRevision* rev = sb_reference_get_revision (self->_private->reference);
+	GString* tooltip = g_string_new ("");
+	g_string_append_printf (tooltip, "%.7s:%s",
+				sb_revision_get_name (rev),
+				sb_reference_get_filename (self->_private->reference));
+	gtk_widget_set_tooltip_text (GTK_WIDGET (self),
+				     tooltip->str);
+	g_string_free (tooltip, TRUE);
+}
+
 static void
 label_set_property (GObject     * object,
 		    guint         prop_id,
@@ -123,8 +136,11 @@ label_set_property (GObject     * object,
 		self->_private->reference = SB_REFERENCE (g_value_dup_object (value));
 		g_object_notify (object, "reference");
 
-		g_object_set (self->_private->label, "label", sb_revision_get_name (sb_reference_get_revision (self->_private->reference)), NULL);
+		g_object_set (self->_private->label,
+			      "label", sb_revision_get_name (sb_reference_get_revision (self->_private->reference)),
+			      NULL);
 		update_background (self);
+		update_tooltip (self);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
