@@ -245,7 +245,7 @@ display_parse_line (GfcReader  * reader,
 		/* from git-annotate (1)
 		 * "<40-byte hex sha1> <sourceline> <resultline> <num_lines>"
 		 */
-		gchar     **words = g_strsplit (line, " ", -1);
+		gchar     **words    = g_strsplit (line, " ", -1);
 		SbRevision* revision = sb_revision_new (words[0]);
 		gint        n_lines  = atoi (words[3]);
 
@@ -272,7 +272,7 @@ display_parse_line (GfcReader  * reader,
 		g_object_unref (revision);
 		g_strfreev (words);
 	} else if (g_str_has_prefix (line, "filename ")) {
-		g_print ("%s\n", sb_revision_get_name (self->_private->revision));
+		//g_print ("%s\n", sb_revision_get_name (self->_private->revision));
 		self->_private->revision = NULL;
 		// FIXME: use a GSequence for the revisions (maybe that would make the API nicer too)
 		self->_private->references = g_list_insert_sorted (self->_private->references,
@@ -336,7 +336,7 @@ load_history (SbDisplay  * self,
 	self->_private->references = NULL;
 
 	working_folder = g_path_get_dirname (file_path);
-	argv[2] = g_path_get_basename (file_path);
+	argv[4] = g_path_get_basename (file_path);
 	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (self)),
 			     working_folder,
 			     argv,
@@ -351,7 +351,7 @@ load_history (SbDisplay  * self,
 			     NULL); // FIXME: error, pipes
 
 	self->_private->reader = gfc_reader_new (out_fd);
-	g_free (argv[2]);
+	g_free (argv[4]);
 	g_free (working_folder);
 
 	g_signal_connect (self->_private->reader, "read-line",
