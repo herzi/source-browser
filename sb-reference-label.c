@@ -81,7 +81,7 @@ static inline void
 set_color (SbReferenceLabel* self,
 	   GdkColor        * color)
 {
-	GdkColor colors[] = {
+	GdkColor colors[] = { // tango colors
 		{0, 0xfcfc, 0xe9e9, 0x4f4f}, // butter
 		{0, 0xfcfc, 0xafaf, 0x3e3e}, // orange
 		{0, 0xe9e9, 0xb9b9, 0x6e6e}, // chocolate
