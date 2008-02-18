@@ -27,6 +27,7 @@
 
 struct _SbRevisionPrivate {
 	gchar* name;
+	gchar* summary;
 };
 
 enum {
@@ -52,6 +53,7 @@ revision_finalize (GObject* object)
 	SbRevision* self = SB_REVISION (object);
 
 	g_free (self->_private->name);
+	g_free (self->_private->summary);
 
 	G_OBJECT_CLASS (sb_revision_parent_class)->finalize (object);
 }
@@ -124,6 +126,31 @@ sb_revision_get_name (SbRevision const* self)
 	g_return_val_if_fail (SB_IS_REVISION (self), NULL);
 
 	return self->_private->name;
+}
+
+gchar const*
+sb_revision_get_summary (SbRevision const* self)
+{
+	g_return_val_if_fail (SB_IS_REVISION (self), NULL);
+
+	return self->_private->summary;
+}
+
+void
+sb_revision_set_summary (SbRevision * self,
+			 gchar const* summary)
+{
+	g_return_if_fail (SB_IS_REVISION (self));
+
+	if (self->_private->summary == summary) {
+		return;
+	}
+
+	g_free (self->_private->summary);
+	self->_private->summary = g_strdup (summary);
+
+	// FIXME: make a GObject property
+	// g_object_notify (G_OBJECT (self), "summary");
 }
 
 /* SbComparableIface */

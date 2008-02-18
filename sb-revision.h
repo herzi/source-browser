@@ -36,9 +36,12 @@ typedef struct _SbRevisionClass   SbRevisionClass;
 #define SB_REVISION(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), SB_TYPE_REVISION, SbRevision))
 #define SB_IS_REVISION(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), SB_TYPE_REVISION))
 
-GType        sb_revision_get_type (void);
-SbRevision*  sb_revision_new      (gchar const     * name);
-gchar const* sb_revision_get_name (SbRevision const* self);
+GType        sb_revision_get_type    (void);
+SbRevision*  sb_revision_new         (gchar const     * name);
+gchar const* sb_revision_get_name    (SbRevision const* self);
+gchar const* sb_revision_get_summary (SbRevision const* self);
+void         sb_revision_set_summary (SbRevision      * self,
+				      gchar const     * summary);
 
 struct _SbRevision {
 	GObject            base_instance;
