@@ -23,11 +23,28 @@
 
 #include "sb-window.h"
 
+#include <glib/gi18n.h>
+
 int
 main (int   argc,
       char**argv)
 {
-	gtk_init (&argc, &argv);
+	GError* error = NULL;
+	GOptionContext* context = g_option_context_new (_("[FILE]"));
+
+	g_option_context_set_help_enabled (context, TRUE);
+	g_option_context_set_ignore_unknown_options (context, FALSE);
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	if (!g_option_context_parse (context, &argc, &argv, &error)) {
+		gchar* help = g_option_context_get_help (context, TRUE, NULL);
+		g_printerr ("%s\nInvalid arguments%s%s\n",
+			    help,
+			    error ? ": " : "",
+			    error ? error->message : "");
+		return 1;
+	}
+	g_option_context_free (context);
+
 	gtk_widget_show (sb_window_new ());
 	gtk_main ();
 	return 0;
