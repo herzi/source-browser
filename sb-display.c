@@ -89,6 +89,9 @@ sb_display_init (SbDisplay* self)
 	gtk_box_pack_start_defaults (GTK_BOX (self),
 				     widget);
 	self->_private->text_view = GTK_TEXT_VIEW (widget);
+	/* FIXME: update the annotations' layout when the allocation of the
+	 * text view changes
+	 */
 
 	sb_annotations_set_text_view (self->_private->annotations,
 				      self->_private->text_view);
