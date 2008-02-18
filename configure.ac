@@ -7,7 +7,7 @@ F77=no
 AC_PROG_CC
 AC_PROG_LIBTOOL
 
-PKG_CHECK_MODULES([SB],[gtk+-2.0])
+PKG_CHECK_MODULES([SB],[gio-2.0 gtk+-2.0])
 
 dnl  -----------------------
 dnl | GTK+ platform check   |----------------------------------
