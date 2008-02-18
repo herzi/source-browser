@@ -29,18 +29,35 @@ int
 main (int   argc,
       char**argv)
 {
+	gchar** files = NULL;
 	GError* error = NULL;
 	GOptionContext* context = g_option_context_new (_("[FILE]"));
+	GOptionEntry entries[] = {
+		{G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files, "", ""},
+		{NULL}
+	};
 
 	g_option_context_set_help_enabled (context, TRUE);
 	g_option_context_set_ignore_unknown_options (context, FALSE);
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	g_option_context_add_main_entries (context, entries, NULL);
 	if (!g_option_context_parse (context, &argc, &argv, &error)) {
 		gchar* help = g_option_context_get_help (context, TRUE, NULL);
 		g_printerr ("%s\nInvalid arguments%s%s\n",
 			    help,
 			    error ? ": " : "",
 			    error ? error->message : "");
+		g_option_context_free (context);
+		g_clear_error (&error);
+		g_free (help);
+		return 1;
+	}
+	if (files && g_strv_length (files) > 1) {
+		gchar* help = g_option_context_get_help (context, TRUE, NULL);
+		g_printerr ("%s\nInvalid arguments: only one file supported\n",
+			    help);
+		g_option_context_free (context);
+		g_free (help);
 		return 1;
 	}
 	g_option_context_free (context);
