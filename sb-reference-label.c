@@ -113,9 +113,10 @@ update_tooltip (SbReferenceLabel* self)
 {
 	SbRevision* rev = sb_reference_get_revision (self->_private->reference);
 	GString* tooltip = g_string_new ("");
-	g_string_append_printf (tooltip, "%.7s:%s",
+	g_string_append_printf (tooltip, "%.7s:%s\n\n%s",
 				sb_revision_get_name (rev),
-				sb_reference_get_filename (self->_private->reference));
+				sb_reference_get_filename (self->_private->reference),
+				sb_revision_get_summary (rev));
 	gtk_widget_set_tooltip_text (GTK_WIDGET (self),
 				     tooltip->str);
 	g_string_free (tooltip, TRUE);
