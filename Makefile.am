@@ -1,5 +1,7 @@
 bin_PROGRAMS=source-browser
+check_LTLIBRARIES=
 check_PROGRAMS=test-async-io
+TESTS=
 
 gfc_src_dir=$(top_srcdir)/gfc
 include gfc/Makefile.inc
@@ -41,7 +43,11 @@ source_browser_SOURCES=\
 source_browser_LDADD=\
 	libgfc.la \
 	$(LDADD)
-AM_CPPFLAGS=$(SB_CFLAGS) $(PLATFORM_CFLAGS)
+AM_CPPFLAGS=\
+	-I$(top_srcdir)/gfc \
+	$(SB_CFLAGS) \
+	$(PLATFORM_CFLAGS) \
+	$(NULL)
 LDADD=$(SB_LIBS) $(PLATFORM_LDFLAGS)
 
 if HAVE_PLATFORM_OSX
