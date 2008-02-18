@@ -29,6 +29,7 @@
 #include <glib/gi18n.h>
 
 struct _SbWindowPrivate {
+	GtkWidget* chooser;
 	GtkWidget* progress;
 	GtkWidget* status;
 #ifdef HAVE_PLATFORM_OSX
@@ -81,7 +82,6 @@ sb_window_init (SbWindow* self)
 {
 	GtkWidget* result = GTK_WIDGET (self);
 	GtkWidget* vbox   = gtk_vbox_new (FALSE, 6);
-	GtkWidget* chooser;
 	GtkWidget* display;
 	GtkWidget* scrolled;
 
@@ -100,13 +100,13 @@ sb_window_init (SbWindow* self)
 	gtk_container_add (GTK_CONTAINER (result),
 			   vbox);
 
-	chooser = gtk_file_chooser_button_new (_("Choose File"),
-					       GTK_FILE_CHOOSER_ACTION_OPEN);
-	g_signal_connect (chooser, "selection-changed",
+	self->_private->chooser = gtk_file_chooser_button_new (_("Choose File"),
+							       GTK_FILE_CHOOSER_ACTION_OPEN);
+	g_signal_connect (self->_private->chooser, "selection-changed",
 			  G_CALLBACK (chooser_selection_changed_cb), result);
-	gtk_widget_show    (chooser);
+	gtk_widget_show    (self->_private->chooser);
 	gtk_box_pack_start (GTK_BOX (vbox),
-			    chooser,
+			    self->_private->chooser,
 			    FALSE,
 			    FALSE,
 			    0);
@@ -241,7 +241,16 @@ void
 sb_window_open (GtkWidget  * window,
 		gchar const* path)
 {
-	GError       * error = NULL;
+	GError* error = NULL;
+	gchar * selection = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (SB_WINDOW (window)->_private->chooser));
+
+#if 0
+	/* FIXME: this doesn't work; find out how to change the selection of the file chooser button */
+	if (path && selection && !strcmp (selection)) {
+		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (SB_WINDOW (window)->_private->chooser),
+					       path);
+	}
+#endif
 
 	sb_display_load_path (SB_DISPLAY (sb_window_get_display (window)),
 			      path,
