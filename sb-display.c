@@ -286,6 +286,12 @@ display_parse_line (GfcReader  * reader,
 								   sort_refs_by_target_line);
 		g_object_unref (self->_private->reference);
 		self->_private->reference = NULL;
+		g_strfreev (vector);
+	} else if (g_str_has_prefix (line, "summary ")) {
+		gchar** vector = g_strsplit (line, " ", 2);
+		sb_revision_set_summary (self->_private->revision,
+					 vector[1]);
+		g_strfreev (vector);
 #ifdef DEBUG_DISPLAY
 	} else {
 		// FIXME: meta-information about the commit
