@@ -23,6 +23,7 @@
 
 #include "sb-window.h"
 
+#include <gio/gio.h>
 #include <glib/gi18n.h>
 
 int
@@ -62,7 +63,17 @@ main (int   argc,
 	}
 	g_option_context_free (context);
 
-	gtk_widget_show (sb_window_new ());
+	GtkWidget* window = sb_window_new ();
+	gtk_widget_show (window);
+
+	if (files) {
+		GFile* file = g_file_new_for_commandline_arg (files[0]);
+		gchar* path = g_file_get_path (file);
+		sb_window_open (window, path);
+		g_free (path);
+		g_object_unref (file);
+	}
+
 	gtk_main ();
 	return 0;
 }
