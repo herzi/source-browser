@@ -23,15 +23,33 @@
 
 #include "sb-settings.h"
 
+#include <gconf/gconf-client.h>
+
+static GConfClient*
+get_client (void)
+{
+	static GConfClient* client = NULL;
+
+	if (G_UNLIKELY (!client)) {
+		client = gconf_client_get_default ();
+	}
+
+	return client;
+}
+
 gboolean
 sb_settings_get_follow_copies (void)
 {
-	return TRUE;
+	return gconf_client_get_bool (get_client (),
+				      "/apps/source-browser/follow-copies",
+				      NULL);
 }
 
 gboolean
 sb_settings_get_follow_moves (void)
 {
-	return TRUE;
+	return gconf_client_get_bool (get_client (),
+				      "/apps/source-browser/follow-moves",
+				      NULL);
 }
 
