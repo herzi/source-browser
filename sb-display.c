@@ -30,6 +30,7 @@
 #include "sb-comparable.h"
 #include "sb-marshallers.h"
 #include "sb-reference.h"
+#include "sb-settings.h"
 
 struct _SbDisplayPrivate {
 	SbAnnotations* annotations;
@@ -356,8 +357,13 @@ load_history (SbDisplay  * self,
 				       + 1 /* NULL */);
 	g_ptr_array_add (array, "git-blame");
 	g_ptr_array_add (array, "--incremental");
-	g_ptr_array_add (array, "-M");
-	g_ptr_array_add (array, "-C");
+
+	if (sb_settings_get_follow_moves ()) {
+		g_ptr_array_add (array, "-M");
+	}
+	if (sb_settings_get_follow_copies ()) {
+		g_ptr_array_add (array, "-C");
+	}
 
 	working_folder = g_path_get_dirname (file_path);
 	basename = g_path_get_basename (file_path);
