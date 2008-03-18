@@ -24,5 +24,13 @@
 #ifndef SB_SETTINGS_H
 #define SB_SETTINGS_H
 
+#include <glib.h>
+
+G_BEGIN_DECLS
+
+gboolean  sb_settings_get_follow_copies (void);
+gboolean  sb_settings_get_follow_moves  (void);
+
+G_END_DECLS
 
 #endif /* !SB_SETTINGS_H */

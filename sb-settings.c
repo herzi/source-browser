@@ -23,3 +23,15 @@
 
 #include "sb-settings.h"
 
+gboolean
+sb_settings_get_follow_copies (void)
+{
+	return TRUE;
+}
+
+gboolean
+sb_settings_get_follow_moves (void)
+{
+	return TRUE;
+}
+
