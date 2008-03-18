@@ -338,9 +338,6 @@ load_history (SbDisplay  * self,
 {
 	gchar* working_folder;
 	gchar* basename;
-	gchar* argv[] = {
-		"git-blame"
-	};
 	GPtrArray* array;
 	GPid pid = 0;
 	gint out_fd = 0;
@@ -351,13 +348,13 @@ load_history (SbDisplay  * self,
 	g_list_free    (self->_private->references);
 	self->_private->references = NULL;
 
-	array = g_ptr_array_sized_new (1 /* command */
+	array = g_ptr_array_sized_new (1   /* command */
 				       + 1 /* --incremental */
 				       + 1 /* -M (?) */
 				       + 1 /* -C (?) */
 				       + 1 /* basename */
 				       + 1 /* NULL */);
-	g_ptr_array_add (array, argv[0]);
+	g_ptr_array_add (array, "git-blame");
 	g_ptr_array_add (array, "--incremental");
 	g_ptr_array_add (array, "-M");
 	g_ptr_array_add (array, "-C");
