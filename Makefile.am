@@ -3,6 +3,18 @@ check_LTLIBRARIES=
 check_PROGRAMS=test-async-io
 TESTS=
 
+## FIXME: make the schemas translatable
+schemas_DATA=source-browser.schemas
+schemasdir=$(GCONF_SCHEMA_FILE_DIR)
+
+install-data-local:
+	if test -z "$(DESTDIR)" ; then \
+		for p in $(schemas_DATA) ; do \
+			GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(top_builddir)/data/$$p; \
+		done \
+	fi
+
+
 gfc_src_dir=$(top_srcdir)/gfc
 include gfc/Makefile.inc
 

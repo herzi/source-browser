@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gconfschemafile>
+  <schemalist>
+    <schema>
+      <key>/schema/apps/source-browser/follow-copies</key>
+      <aplyto>/apps/source-browser/follow-copies</applyto>
+
+      <owner>source-browser</owner>
+      <type>bool</type>
+      <default>TRUE</default>
+      <locale name="C">
+        <short>Follow Copies</short>
+        <long>Should git-annotate follow copies?</long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schema/apps/source-browser/follow-moves</key>
+      <aplyto>/apps/source-browser/follow-moves</applyto>
+
+      <owner>source-browser</owner>
+      <type>bool</type>
+      <default>TRUE</default>
+      <locale name="C">
+        <short>Follow Copies</short>
+        <long>Should git-annotate follow moves?</long>
+      </locale>
+    </schema>
+  </schemalist>
+</gconfschemafile>
