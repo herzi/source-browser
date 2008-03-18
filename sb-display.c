@@ -337,12 +337,12 @@ load_history (SbDisplay  * self,
 	      gchar const* file_path)
 {
 	gchar* working_folder;
+	gchar* basename;
 	gchar* argv[] = {
 		"git-blame",
 		"--incremental",
 		"-M",
-		"-C",
-		NULL
+		"-C"
 	};
 	GPtrArray* array;
 	GPid pid = 0;
@@ -366,8 +366,8 @@ load_history (SbDisplay  * self,
 	g_ptr_array_add (array, argv[3]);
 
 	working_folder = g_path_get_dirname (file_path);
-	argv[4] = g_path_get_basename (file_path);
-	g_ptr_array_add (array, argv[4]);
+	basename = g_path_get_basename (file_path);
+	g_ptr_array_add (array, basename);
 	g_ptr_array_add (array, NULL);
 	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (self)),
 			     working_folder,
@@ -383,7 +383,7 @@ load_history (SbDisplay  * self,
 			     NULL); // FIXME: error, pipes
 
 	self->_private->reader = gfc_reader_new (out_fd);
-	g_free (argv[4]);
+	g_free (basename);
 	g_free (working_folder);
 
 	g_signal_connect (self->_private->reader, "read-line",
