@@ -22,8 +22,22 @@
       <type>bool</type>
       <default>TRUE</default>
       <locale name="C">
-        <short>Follow Copies</short>
+        <short>Follow Moves</short>
         <long>Should git-annotate follow moves?</long>
+      </locale>
+    </schema>
+  </schemalist>
+
+    <schema>
+      <key>/schema/apps/source-browser/ignore-whitespaces</key>
+      <aplyto>/apps/source-browser/ignore-whitespaces</applyto>
+
+      <owner>source-browser</owner>
+      <type>bool</type>
+      <default>TRUE</default>
+      <locale name="C">
+        <short>Ignore Whitespaces</short>
+        <long>Should git-annotate ignore whitespace changes?</long>
       </locale>
     </schema>
   </schemalist>

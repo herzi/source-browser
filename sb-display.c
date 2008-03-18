@@ -354,6 +354,7 @@ load_history (SbDisplay  * self,
 				       + 1 /* -M (?) */
 				       + 1 /* -C (?) */
 				       + 1 /* basename */
+				       + 1 /* ignore whitespaces */
 				       + 1 /* NULL */);
 	g_ptr_array_add (array, "git-blame");
 	g_ptr_array_add (array, "--incremental");
@@ -363,6 +364,9 @@ load_history (SbDisplay  * self,
 	}
 	if (sb_settings_get_follow_copies ()) {
 		g_ptr_array_add (array, "-C");
+	}
+	if (sb_settings_get_ignore_whitespaces ()) {
+		g_ptr_array_add (array, "-w");
 	}
 
 	working_folder = g_path_get_dirname (file_path);

@@ -28,8 +28,9 @@
 
 G_BEGIN_DECLS
 
-gboolean  sb_settings_get_follow_copies (void);
-gboolean  sb_settings_get_follow_moves  (void);
+gboolean  sb_settings_get_follow_copies      (void);
+gboolean  sb_settings_get_follow_moves       (void);
+gboolean  sb_settings_get_ignore_whitespaces (void);
 
 G_END_DECLS
 

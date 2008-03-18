@@ -53,3 +53,11 @@ sb_settings_get_follow_moves (void)
 				      NULL);
 }
 
+gboolean
+sb_settings_get_ignore_whitespaces (void)
+{
+	return gconf_client_get_bool (get_client (),
+				      "/apps/source-browser/ignore-whitespaces",
+				      NULL);
+}
+
