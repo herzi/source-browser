@@ -35,6 +35,8 @@ source_browser_SOURCES=\
 	sb-reference-label.h \
 	sb-revision.c \
 	sb-revision.h \
+	sb-settings.c \
+	sb-settings.h \
 	sb-statusbar.c \
 	sb-statusbar.h \
 	sb-window.c \
