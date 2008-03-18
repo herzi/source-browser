@@ -345,6 +345,7 @@ load_history (SbDisplay  * self,
 		NULL,
 		NULL
 	};
+	GPtrArray* array;
 	GPid pid = 0;
 	gint out_fd = 0;
 
@@ -354,11 +355,24 @@ load_history (SbDisplay  * self,
 	g_list_free    (self->_private->references);
 	self->_private->references = NULL;
 
+	array = g_ptr_array_sized_new (1 /* command */
+				       + 1 /* --incremental */
+				       + 1 /* -M (?) */
+				       + 1 /* -C (?) */
+				       + 1 /* basename */
+				       + 1 /* NULL */);
+	g_ptr_array_add (array, argv[0]);
+	g_ptr_array_add (array, argv[1]);
+	g_ptr_array_add (array, argv[2]);
+	g_ptr_array_add (array, argv[3]);
+
 	working_folder = g_path_get_dirname (file_path);
 	argv[4] = g_path_get_basename (file_path);
+	g_ptr_array_add (array, argv[4]);
+	g_ptr_array_add (array, NULL);
 	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (self)),
 			     working_folder,
-			     argv,
+			     (gchar**)array->pdata,
 			     NULL,
 			     G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
 			     NULL,
