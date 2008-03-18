@@ -342,7 +342,6 @@ load_history (SbDisplay  * self,
 		"--incremental",
 		"-M",
 		"-C",
-		NULL,
 		NULL
 	};
 	GPtrArray* array;
