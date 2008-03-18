@@ -7,7 +7,7 @@ F77=no
 AC_PROG_CC
 AC_PROG_LIBTOOL
 
-PKG_CHECK_MODULES([SB],[gio-2.0 gtk+-2.0])
+PKG_CHECK_MODULES([SB],[gconf-2.0 gio-2.0 gtk+-2.0])
 
 dnl  -----------------------
 dnl | GTK+ platform check   |----------------------------------
@@ -23,6 +23,12 @@ else
 fi
 AC_SUBST(PLATFORM_CFLAGS)
 AC_SUBST(PLATFORM_LDFLAGS)
+
+dnl  -------
+dnl | GConf |--------------------------------------------------
+dnl  -------
+
+AM_GCONF_SOURCE_2
 
 dnl  --------
 dnl | Output |-------------------------------------------------
