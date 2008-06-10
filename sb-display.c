@@ -373,6 +373,7 @@ load_history (SbDisplay  * self,
 	basename = g_path_get_basename (file_path);
 	g_ptr_array_add (array, basename);
 	g_ptr_array_add (array, NULL);
+	/* FIXME: use a GfcJob with an appropriate GfcSpawnStrategy */
 	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (self)),
 			     working_folder,
 			     (gchar**)array->pdata,
