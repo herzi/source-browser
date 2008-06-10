@@ -1,4 +1,5 @@
 bin_PROGRAMS=source-browser
+noinst_LTLIBRARIES=
 check_LTLIBRARIES=
 check_PROGRAMS=test-async-io
 TESTS=
@@ -14,7 +15,8 @@ install-data-local:
 		done \
 	fi
 
-
+GFC_CFLAGS=$(AM_CPPFLAGS)
+GFC_LIBS=$(LDADD)
 gfc_src_dir=$(top_srcdir)/gfc
 include gfc/Makefile.inc
 
