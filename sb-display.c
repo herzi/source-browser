@@ -23,7 +23,8 @@
 
 #include "sb-display.h"
 
-#include <gfc/gfc-reader.h>
+#include <gfc/gfc-job.h>
+#include <gfc/gfc-spawn-screen.h>
 
 #include "sb-annotations.h"
 #include "sb-callback-data.h"
@@ -306,29 +307,20 @@ display_parse_line (GfcReader  * reader,
 }
 
 static void
-child_watch_cb (GPid pid,
-		gint status_,
-		gpointer data)
+job_done_cb (SbDisplay* self,
+	     GfcJob   * job)
 {
-	SbDisplay * display = SB_DISPLAY (data); // FIXME: call self
+	gfc_reader_flush (self->_private->reader);
 
-#ifdef DEBUG_DISPLAY
-	g_print ("pre-done.\n");
-#endif
-	gfc_reader_flush (display->_private->reader);
-#ifdef DEBUG_DISPLAY
-	g_print ("done.\n");
-#endif
-	g_spawn_close_pid (pid);
+	sb_annotations_set_references (self->_private->annotations,
+				       self->_private->references);
+	self->_private->references = NULL;
 
-	sb_annotations_set_references (display->_private->annotations,
-				       display->_private->references);
-	display->_private->references = NULL;
+	g_object_unref (self->_private->reader);
+	self->_private->reader = NULL;
+	g_object_unref (job);
 
-	g_object_unref (display->_private->reader);
-	display->_private->reader = NULL;
-
-	g_signal_emit (display,
+	g_signal_emit (self,
 		       signals[LOAD_DONE],
 		       0);
 }
@@ -340,6 +332,7 @@ load_history (SbDisplay  * self,
 	gchar* working_folder;
 	gchar* basename;
 	GPtrArray* array;
+	GfcJob* job;
 	GPid pid = 0;
 	gint out_fd = 0;
 
@@ -373,32 +366,19 @@ load_history (SbDisplay  * self,
 	basename = g_path_get_basename (file_path);
 	g_ptr_array_add (array, basename);
 	g_ptr_array_add (array, NULL);
-	/* FIXME: use a GfcJob with an appropriate GfcSpawnStrategy */
-	gdk_spawn_on_screen_with_pipes (gtk_widget_get_screen (GTK_WIDGET (self)),
-			     working_folder,
-			     (gchar**)array->pdata,
-			     NULL,
-			     G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
-			     NULL,
-			     NULL,
-			     &pid,
-			     NULL,
-			     &out_fd,
-			     NULL,
-			     NULL); // FIXME: error, pipes
 
-	self->_private->reader = gfc_reader_new (out_fd);
+	job = gfc_job_new_full (working_folder,
+				(gchar const**)array->pdata,
+				gfc_spawn_screen_new (gtk_widget_get_screen (GTK_WIDGET (self))));
+	self->_private->reader = g_object_ref (gfc_job_get_out_reader (job));
+	g_signal_connect_swapped (job, "done",
+				  G_CALLBACK (job_done_cb), self);
+
 	g_free (basename);
 	g_free (working_folder);
 
 	g_signal_connect (self->_private->reader, "read-line",
 			  G_CALLBACK (display_parse_line), self);
-
-	g_child_watch_add_full (G_PRIORITY_DEFAULT,
-				pid,
-				child_watch_cb,
-				self,
-				NULL);
 }
 
 void
